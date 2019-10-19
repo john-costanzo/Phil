@@ -5,7 +5,8 @@
 3. [X] Implement an "undo" function that sets the state of the puzzle back to before the last pick of a suggested word.
 4. [X] Show where the symmetric square is in the puzzle. Perhaps bind this to "," which, when pressed, highlights the symmetric square to aid users before they actually black out a square.
 5. [X] Allow black/unblack square operations to be undone. (Also clear tiles?)
-6. [X] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
+6. [ ] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
+     a. [ ] But if we are showing all, ensure that the recommended are styled
 7. [X] Experiment: include suggests even if there are no letters filled in (void). Is it a performance thing? Yes; I tried it and there are *way* too many matches; the UI takes forever to update.
 8. [X] Autosave after each set number of changes
 9. [ ] Show a dictionary lookup of a clue on hover.
