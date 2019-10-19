@@ -52,6 +52,7 @@ let solveWorkerState = null;
 let solveTimeout = null;
 let solveWordlist = null;
 let solvePending = [];
+let updatesSinceLastSave = 0;
 
 //____________________
 // C L A S S E S
@@ -581,6 +582,19 @@ function updateUI() {
     if (isMutated) {
 	autoFill(true);  // quick fill
 	checkGridLegality();
+
+	let ascVal = document.getElementById('autoSaveCount').value;
+	let asc = Number( ascVal );
+	if( isNaN( asc ) ) {
+	    alert("autoSaveCount should be a number... not \"" + ascVal + "\"" );
+	} else {
+	    updatesSinceLastSave++;
+	    if( asc > 0 && updatesSinceLastSave >= asc ) {
+		console.log("updateUI: processed " + updatesSinceLastSave + " updates... autoSaving!");
+		writeFile('xw');
+		updatesSinceLastSave=0;
+	    }
+	}
     }
     updateGridUI();
     updateLabelsAndClues();

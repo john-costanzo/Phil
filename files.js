@@ -361,6 +361,8 @@ function writeFile(format) {
     case "json":
     default:
       fileContents = JSON.stringify(serialized);  // Convert JS object to JSON text
+      console.log("writeFile: zeroing out updatesSinceLastSave");
+      updatesSinceLastSave=0;
       break;
   }
   let file = new File([fileContents], filename);
