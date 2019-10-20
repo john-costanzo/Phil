@@ -283,6 +283,14 @@ let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 current.update();
 
+// Ignore undo in many of the major UI elements
+document.getElementById('autoSaveCount').addEventListener('input', (ev) => {
+    const field = document.getElementById('autoSaveCount');
+    const currentValue = field.value;
+    document.execCommand('undo');   // undo this change
+    field.value = currentValue;  // ... but immediately reset the value
+});
+
 //____________________
 // F U N C T I O N S
 

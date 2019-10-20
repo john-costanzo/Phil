@@ -158,10 +158,6 @@ function wordIsHarmonious( word, pos1, words, pos2, cache ) {
     }
 }
 
-function displayDefintion() {
-    alert("displayDefintion");
-}
-
 function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vpos, matchList ) {
     // For the given DOCUMENT, add clues for ONEWAYMATCHES (and array of candidates) considering their
     // relation to OTHERWAYMATCHES (an array of array of candidates) and the fact that the cursor is
@@ -180,51 +176,51 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
     let matchesDisplayed = 0;
     let runnersUp = [];  // The list of suggestions we'll make if we are asked to showOnlyRecommendations and there are none
 
-	for( let owmi in oneWayMatches ) {
-	    if( traceWordListSuggestions ) console.log( "\t\t[" + owmi + "]=" + oneWayMatches[owmi] );
-	    let owm = oneWayMatches[owmi];
-	    if( owm !== undefined ) {
-		let li = document.createElement("LI");
-		li.innerHTML = owm.toLowerCase();
-		li.className = "";
-		// li.addEventListener('click', printScore);
-		// li.addEventListener('mouseover', displayDefintion);
-		li.addEventListener('dblclick', fillGridWithMatch);
-		let nHarmonious = 0;
-		let harmoniousAtIntersection = false;
+    for( let owmi in oneWayMatches ) {
+	if( traceWordListSuggestions ) console.log( "\t\t[" + owmi + "]=" + oneWayMatches[owmi] );
+	let owm = oneWayMatches[owmi];
+	if( owm !== undefined ) {
+	    let li = document.createElement("LI");
+	    li.innerHTML = owm.toLowerCase();
+	    li.className = "";
+	    // li.addEventListener('click', printScore);
+	    // li.addEventListener('mouseover', displayDefintion);   // perhaps one day...
+	    li.addEventListener('dblclick', fillGridWithMatch);
+	    let nHarmonious = 0;
+	    let harmoniousAtIntersection = false;
 
-		// HARMONIOUSNESS_CHECK:
-		for( let owmj in otherWayMatches ) {
-		    let cache = new Set();
-		    if( traceWordListSuggestions ) console.log( "\t\t\tchecking otherWayMatches='"+ otherWayMatches[owmj] +"'");
-		    // At this point, if otherWayMatches[owmj] is undefined, that means that the word is complete
-		    // and we ought to consider that the word is harmonious
-		    if( otherWayMatches[owmj] !== undefined && !wordIsHarmonious( owm, parseInt(owmj, 10), otherWayMatches[owmj], vpos, cache ) ) {
-			if( traceWordListSuggestions ) console.log( "HARMONIOUSNESS_CHECK")
-		    } else {
-			nHarmonious++;
-			if( owmj == hpos ) {
-			    if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
-			    harmoniousAtIntersection = true;
-			}
-		    }
-		}
-		if( traceWordListSuggestions ) console.log( "nHarmonious=" + nHarmonious );
-		if( nHarmonious == otherWayMatches.length ) {
-		    li.setAttribute("class", "highly-recommended");
+	    // HARMONIOUSNESS_CHECK:
+	    for( let owmj in otherWayMatches ) {
+		let cache = new Set();
+		if( traceWordListSuggestions ) console.log( "\t\t\tchecking otherWayMatches='"+ otherWayMatches[owmj] +"'");
+		// At this point, if otherWayMatches[owmj] is undefined, that means that the word is complete
+		// and we ought to consider that the word is harmonious
+		if( otherWayMatches[owmj] !== undefined && !wordIsHarmonious( owm, parseInt(owmj, 10), otherWayMatches[owmj], vpos, cache ) ) {
+		    if( traceWordListSuggestions ) console.log( "HARMONIOUSNESS_CHECK")
 		} else {
-		    if( harmoniousAtIntersection ) {
-			li.setAttribute("class", "recommended");
+		    nHarmonious++;
+		    if( owmj == hpos ) {
+			if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
+			harmoniousAtIntersection = true;
 		    }
-		}
-		if( !showOnlyRecommendations || ( nHarmonious == otherWayMatches.length )) {
-		    matchList.appendChild(li);
-		    matchesDisplayed++;
-		} else {
-		    runnersUp.push( li );
 		}
 	    }
+	    if( traceWordListSuggestions ) console.log( "nHarmonious=" + nHarmonious );
+	    if( nHarmonious == otherWayMatches.length ) {
+		li.setAttribute("class", "highly-recommended");
+	    } else {
+		if( harmoniousAtIntersection ) {
+		    li.setAttribute("class", "recommended");
+		}
+	    }
+	    if( !showOnlyRecommendations || ( nHarmonious == otherWayMatches.length )) {
+		matchList.appendChild(li);
+		matchesDisplayed++;
+	    } else {
+		runnersUp.push( li );
+	    }
 	}
+    }
 
     if( !matchesDisplayed ) {  // We haven't display any matches so display them all
 	runnersUp.forEach(
@@ -236,42 +232,42 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 }
 
 function updateMatchesUI() {
-// 1. Mark suggested words with the "recommended" class when the word forms a valid word
-//    both across and down for words that intersect at the current square.
-// 2. Mark suggested words with the "highly-recommended" class when the word forms a valid word
-//    both across and down for *all* words that intersect the word.
+    // 1. Mark suggested words with the "recommended" class when the word forms a valid word
+    //    both across and down for words that intersect at the current square.
+    // 2. Mark suggested words with the "highly-recommended" class when the word forms a valid word
+    //    both across and down for *all* words that intersect the word.
 
-//  For example, with the following board and the cursor at the asterisk (which is blank):
-//
-//       +---+---+---+---+
-//       | A | * |   |   |
-//       +---+---+---+---+
-//       | B | X |   |   |
-//       +---+---+---+---+
-//       | C |   | Y |   |
-//       +---+---+---+---+
-//       | D |   |   |   |
-//       +---+---+---+---+
-//
-// Fill in suggestions for the first row (A---) and the second column (-X--).
-//
-// Suggested words for the first row (A---) that match the cross character in the list of suggested words
-// for the second column (-X--) are annotated with the class name "recommended".
-//
-// Suggested words for the first row (A---) that match the cross character in the list of suggested words
-// for *all* intersecting columns (-X--, --Y-) are annotated with the class name "highly-recommended".
-//
-// Likewise for the other direction:
-//
-// Suggested words for the first column (-X--) that match the cross character in the list of suggested words
-// for the first row (A---) are annotated with the class name "recommended".
-//
-// Suggested words for the first column (-X--) that match the cross character in the list of suggested words
-// for *all* intersecting rows (A---, BX--, C-Y- and D---) are annotated with the class name "highly-recommended".
-//
-// Only consider words that are neither completely empty nor completely full.
-//
-// If showOnlyRecommendations is true, then show only highly-recommended matches. Unless there aren't any, then show all.
+    //  For example, with the following board and the cursor at the asterisk (which is blank):
+    //
+    //       +---+---+---+---+
+    //       | A | * |   |   |
+    //       +---+---+---+---+
+    //       | B | X |   |   |
+    //       +---+---+---+---+
+    //       | C |   | Y |   |
+    //       +---+---+---+---+
+    //       | D |   |   |   |
+    //       +---+---+---+---+
+    //
+    // Fill in suggestions for the first row (A---) and the second column (-X--).
+    //
+    // Suggested words for the first row (A---) that match the cross character in the list of suggested words
+    // for the second column (-X--) are annotated with the class name "recommended".
+    //
+    // Suggested words for the first row (A---) that match the cross character in the list of suggested words
+    // for *all* intersecting columns (-X--, --Y-) are annotated with the class name "highly-recommended".
+    //
+    // Likewise for the other direction:
+    //
+    // Suggested words for the first column (-X--) that match the cross character in the list of suggested words
+    // for the first row (A---) are annotated with the class name "recommended".
+    //
+    // Suggested words for the first column (-X--) that match the cross character in the list of suggested words
+    // for *all* intersecting rows (A---, BX--, C-Y- and D---) are annotated with the class name "highly-recommended".
+    //
+    // Only consider words that are neither completely empty nor completely full.
+    //
+    // If showOnlyRecommendations is true, then show only highly-recommended matches. Unless there aren't any, then show all.
 
     let acrossMatchList = document.getElementById("across-matches");
     let downMatchList = document.getElementById("down-matches");
@@ -333,7 +329,7 @@ function updateMatchesUI() {
 }
 
 function setUndoButton( state, tooltip ) {
-// Set Undo button's state to STATE
+    // Set Undo button's state to STATE
     console.log( "setUndoButton: setting state = " + state + ", tooltip=\"" + tooltip + "\"" );
     let undoButton = document.getElementById("undo");
 
@@ -347,7 +343,8 @@ function setUndoButton( state, tooltip ) {
 }
 
 function undo() {
-// Undo the latest action
+    // Undo the latest action
+
     if( undoStack.length > 0 ) {
 	console.log("undo: undoing puzzle to before last grid change...");
 	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -376,7 +373,7 @@ function undo() {
 }
 
 function saveStateForUndo( label ) {
-// Take a snapshot of the current state and push it onto the (global) undoStack
+    // Take a snapshot of the current state and push it onto the (global) undoStack
     let undoContext = {};
     undoContext.xw = cloneObject( xw );
     undoContext.current = cloneObject( current );
