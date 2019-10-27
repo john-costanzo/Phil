@@ -291,8 +291,8 @@ kbd {
 
 #sidebar ul.matches li:hover {
   background: var(--lt-grey); /* For browsers that do not support gradients */
-  color: var(--black);
-  font-weight: 500;
+  /* color: var(--black); */
+  /* font-weight: 500; */
 }
 
 #toolbar {
