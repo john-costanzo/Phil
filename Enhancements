@@ -1,13 +1,14 @@
 -*- mode: org -*-
 
-1. [X] Mark suggested words with the "recommended" class when the word forms a valid word both across and down for words that intersect at the current square.
-2. [X] Mark suggested words with the "highly-recommended" class when the word forms a valid word both across and down for *all* words that intersect the word.
-3. [X] Implement an "undo" function that sets the state of the puzzle back to before the last pick of a suggested word.
-4. [X] Show where the symmetric square is in the puzzle. Perhaps bind this to "," which, when pressed, highlights the symmetric square to aid users before they actually black out a square.
-5. [X] Allow black/unblack square operations to be undone. (Also clear tiles?)
-6. [X] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
-     a. [X] But if we are showing all, ensure that the recommended are styled
-7. [X] Experiment: include suggests even if there are no letters filled in (void). Is it a performance thing? Yes; I tried it and there are *way* too many matches; the UI takes forever to update.
-8. [X] Autosave after each set number of changes
-9. [ ] Show a dictionary lookup of a clue on hover.
-10. [ ] Support regular expressions in the puzzle. Suggestion: allow digits 0-9 in the puzzle, which refer to one of ten regular expressions. For instance, regex 1 might be any vowel (i.e., /[aeiou]/) and regex 3 might refer to whatever matched in regex 1 (i.e., /\1/). So we could specify something like "B 1 3 K" which would match "book" but not "beak".
++ [X] Mark suggested words with the "recommended" class when the word forms a valid word both across and down for words that intersect at the current square.
++ [X] Mark suggested words with the "highly-recommended" class when the word forms a valid word both across and down for *all* words that intersect the word.
++ [ ] Modify the algorithm to mark "highly-recommended" words to this: mark suggested words with the "highly-recommended" class when the word forms a valid word both across and down for *all* /highly-recommended/ words that intersect the word. Words that are harmonious, but not harmonious with a highly-recommended word should be marked as "moderately-recommended" instead of "highly-recommended".
++ [X] Implement an "undo" function that sets the state of the puzzle back to before the last pick of a suggested word.
++ [X] Show where the symmetric square is in the puzzle. Perhaps bind this to "," which, when pressed, highlights the symmetric square to aid users before they actually black out a square.
++ [X] Allow black/unblack square operations to be undone. (Also clear tiles?)
++ [X] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
+    a. [X] But if we are showing all, ensure that the recommended are styled
++ [X] Experiment: include suggests even if there are no letters filled in (void). Is it a performance thing? Yes; I tried it and there are *way* too many matches; the UI takes forever to update.
++ [X] Autosave after each set number of changes
++ [ ] Show a dictionary lookup of a clue on hover.
++ [ ] Support regular expressions in the puzzle. Suggestion: allow digits 0-9 in the puzzle, which refer to one of ten regular expressions. For instance, regex 1 might be any vowel (i.e., /[aeiou]/) and regex 3 might refer to whatever matched in regex 1 (i.e., /\1/). So we could specify something like "B 1 3 K" which would match "book" but not "beak".
