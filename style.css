@@ -458,6 +458,11 @@ li.recommended {
   color: black;
 }
 
+li.moderately-recommended {
+  font-weight: bold;
+  font-size: larger;
+  color: lightblue;
+}
 
 li.highly-recommended {
   font-weight: bold;
