@@ -13,7 +13,7 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
-var traceWordListSuggestions = true;
+var traceWordListSuggestions = false;
 
 let wordlist = [
     [], [], [], [], [],
@@ -245,6 +245,37 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
     }
 }
 
+function extractLetters( arr, pos ) {
+    // From an array of elements, ARR, return the set of letters that appear at position POS.
+    let set = new Set();
+    for( const elt of arr ) {
+	let text = elt.textContent;
+	set.add( text[ pos ] );
+    }
+    let setContents = "";
+    let sep = "";
+    for( s of set.values() ) { setContents +=  sep + s; sep = ", ";  }
+    if( traceWordListSuggestions ) console.log( "extractLetters returning [" + setContents + "]" );
+    return( set );
+}
+
+function promoteSuggestions( candidates, class1, pos, set, class2 ) {
+    // For each element in an array of CANDIDATES that is in the class CLASS1,
+    // determine the letter at position POS. If that letter appears in SET, add the class CLASS2.
+    if( traceWordListSuggestions ) console.log( "promoteSuggestions: candidates=" + candidates + ", class1=" + class1 + ", pos=" + pos + ", class2=" + class2 );
+    let descendents = candidates.getElementsByTagName( 'li' );
+    for (let i = 0; i < descendents.length; ++i ) {
+	let li = descendents[ i ];
+	let letter = li.textContent[ pos ];
+	let hasClass1 = li.classList.contains( class1 );
+	let letterInSet = set.has( letter );
+	if( hasClass1 && set.has( letter ) ) {
+	    if( traceWordListSuggestions ) console.log( "promoteSuggestions: promoting \"" + li.textContent + "\"" );
+	    li.setAttribute("class", class2);
+	}
+    }
+}
+
 function updateMatchesUI() {
     // 1. Mark suggested words with the "recommended" class when the word forms a valid word
     //    both across and down for words that intersect at the current square.
@@ -287,12 +318,12 @@ function updateMatchesUI() {
     let downMatchList = document.getElementById("down-matches");
     acrossMatchList.innerHTML = "";
     downMatchList.innerHTML = "";
-    console.log( "showOnlyRecommendations=" + showOnlyRecommendations );
+    if( traceWordListSuggestions ) console.log( "showOnlyRecommendations=" + showOnlyRecommendations );
     let downWords = [];
     let acrossWords = [];
 
-    console.log( "updateMatchesUI: working on ACROSS direction" );
-    console.log( "updateMatchesUI: current.acrossStartIndex=" + current.acrossStartIndex + " current.acrossEndIndex=" + current.acrossEndIndex );
+    if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on ACROSS direction" );
+    if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.acrossStartIndex=" + current.acrossStartIndex + " current.acrossEndIndex=" + current.acrossEndIndex );
     for( let i = current.acrossStartIndex; i< current.acrossEndIndex; i++ ) {
 	let wordInfo = getWordAndIndicesAt(current.row, i, DOWN, false);
 	if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
@@ -300,8 +331,8 @@ function updateMatchesUI() {
 	if( traceWordListSuggestions ) console.log( "updateMatchesUI: pushing \"" + wordInfo[0] + "\"" );
     }
 
-    console.log( "updateMatchesUI: working on DOWN direction" );
-    console.log( "updateMatchesUI: current.downStartIndex=" + current.downStartIndex + " current.downEndIndex=" + current.downEndIndex );
+    if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on DOWN direction" );
+    if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.downStartIndex=" + current.downStartIndex + " current.downEndIndex=" + current.downEndIndex );
     for( let i = current.downStartIndex; i< current.downEndIndex; i++ ) {
 	let wordInfo = getWordAndIndicesAt(i, current.col, ACROSS, false);
 	if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
@@ -338,17 +369,26 @@ function updateMatchesUI() {
     let hpos = current.col - current.acrossStartIndex;
     let vpos = current.row - current.downStartIndex;
 
-    console.log("Checking acrossMatches...");
-    checkHarmoniousness( document, matchFromWordlist( current.acrossWord ) , downMatches, hpos, current.col, acrossMatchList );
-    console.log("Checking downMatches...");
-    checkHarmoniousness( document, matchFromWordlist( current.downWord ) , acrossMatches, vpos, current.row, downMatchList );
+    if( traceWordListSuggestions ) console.log("Checking acrossMatches...");
+    checkHarmoniousness( document, matchFromWordlist( current.acrossWord ) , downMatches, hpos, current.row, acrossMatchList );
+    if( traceWordListSuggestions ) console.log("Checking downMatches...");
+    checkHarmoniousness( document, matchFromWordlist( current.downWord ) , acrossMatches, vpos, current.col, downMatchList );
 
     // At this point, acrossMatchList and downMatchList contain HTML of suggestions. They are annotated with one of:
     //    "moderately-recommended" class (if all letters of the word are harmonious with orthogonal words)
-    //    "recommended" class (if the single letter at the orthogonal intersection matches)
+    //    "recommended" class (if the single letter at the orthogonal intersection matches, but not all words)
     //    no class (otherwise)
-    // But some of these "moderately-recommended" entries may be harmonious 
-    // Now examine all "moderately-recommended" entries and mark them "highly-recommended" if they are harmonious 
+    // But some of these "moderately-recommended" entries may actually be harmonious with all "moderately-recommended" words.
+    // Examine all "moderately-recommended" entries and mark them "highly-recommended" if they are harmonious
+    if( traceWordListSuggestions ) console.log( "look at acrossMatchList and downMatchList..." );
+    let am = document.getElementById("across-matches").querySelectorAll(".moderately-recommended");
+    let dm = document.getElementById("down-matches").querySelectorAll(".moderately-recommended");
+    if( traceWordListSuggestions ) console.log( "across-matches=" + am );
+    if( traceWordListSuggestions ) console.log( "down-matches=" + dm );
+    let acrossModeratelyRecommendedLetters = extractLetters( am, hpos );
+    let downModeratelyRecommendedLetters = extractLetters( dm, vpos );
+    promoteSuggestions( document.getElementById("across-matches"), "moderately-recommended", hpos, downModeratelyRecommendedLetters, "highly-recommended" );
+    promoteSuggestions( document.getElementById("down-matches"), "moderately-recommended", vpos, acrossModeratelyRecommendedLetters, "highly-recommended" );
 }
 
 function setUndoButton( state, tooltip ) {

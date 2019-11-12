@@ -285,6 +285,11 @@ kbd {
   overflow-y: scroll;
 }
 
+.suggestion {
+  color: var(--med-grey);
+  background-color: white;
+}
+
 #sidebar ul.matches li {
   margin: 2px 0;
 }
@@ -454,20 +459,21 @@ kbd {
 }
 
 li.recommended {
-  font-weight: bold;
   color: black;
+  background-color: white;
 }
 
 li.moderately-recommended {
   font-weight: bold;
-  font-size: larger;
-  color: lightblue;
+  color: #55b8fe;
+  background-color: white;
 }
 
 li.highly-recommended {
   font-weight: bold;
   font-size: larger;
   color: blue;
+  background-color: white;
 }
 
 #grid:focus td.lowlight-symmetric {
@@ -492,6 +498,10 @@ li.highly-recommended {
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+.light {
+  background-color: white;
 }
 
 /* Tooltip text */
