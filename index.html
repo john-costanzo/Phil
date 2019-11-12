@@ -56,7 +56,7 @@
 	<i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
       </button>
 
-      <button id="toggle-recommend" type="button" data-tooltip="Show only recommendations that satisfy both across and down" data-state="off" class="button-off" onclick="toggleRecommend()">
+      <button id="toggle-recommend" type="button" data-tooltip="Show only moderately- and highly-recommended suggestions" data-state="off" class="button-off" onclick="toggleRecommend()">
 	<i class="fa fa-arrows" aria-hidden="true"></i>
       </button>
 
@@ -81,13 +81,13 @@
 
     <div id="main"></div>
 
-    <p>
+    <div id="auto-save-count">
       &nbsp;Auto Save Count:
       <span class="tooltip">
 	<input id="autoSaveCount" class="auto-save-count" type="text" size="3" maxlength="3" value="0">
 	<span class="tooltiptext">Number of changes between autosave. (Manual saves reset the count.)</span>
       </span>
-    </p>
+    </div>
 
     <div id="sidebar">
       <div class="half-sidebar">
@@ -121,10 +121,39 @@
 	<tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
 	<tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
 	<tr> <td>Indicate where symmetric square is</td> <td><kbd>,</kbd></td> </tr>
+	<tr> <td>Display these help panels</td> <td><kbd>?</kbd></td> </tr>
       </table>
     </div>
+
+    <div id="suggestion-styling" class="hidden">
+      <h3>Suggestion styling</h3>
+      <ul>
+	<div class="tooltip">
+	  <li class="suggestion">suggestion</li>
+	  <span class="tooltiptext">Words that match the puzzle pattern.</span>
+	</div>
+	<br/>
+	<div class="tooltip">
+	  <li class="recommended">recommended</li>
+	  <span class="tooltiptext">Words that also match a suggestion in the opposite direction.</span>
+	</div>
+	<br/>
+	<div class="tooltip">
+	  <li class="moderately-recommended">moderately recommended</li>
+	  <span class="tooltiptext">Words that match all suggestions in the opposite direction.</span>
+	</div>
+	<br/>
+	<div class="tooltip">
+	  <li class="highly-recommended">
+	    highly-recommended
+	  </li>
+	  <span class="tooltiptext">Words that match all letters from moderately-recommended suggestions in the opposite direction.</span>
+	</div>
+      </ul>
+    </div>
+
     <div id="credits">
-      Phil version 3.5 &nbsp;&nbsp;&nbsp;
+      Phil version 3.6 &nbsp;&nbsp;&nbsp;
       <a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
       <a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
       <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a></div>

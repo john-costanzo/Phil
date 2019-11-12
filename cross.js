@@ -20,6 +20,7 @@ const keyboard = {
     "z":      90,
     "black":  190, ".": 190,
     "showSymmetricBlack":  188, ",": 188,
+    "help": 191, "?": 191,
     "delete": 8,
     "enter":  13,
     "space":  32,
@@ -209,22 +210,30 @@ class Toolbar {
 }
 
 class Notification {
-    constructor(message, lifetime = undefined) {
+    constructor(message, lifetime = undefined, kind = undefined ) {
 	this.message = message;
 	this.id = String(randomNumber(1,10000));
+	this.kind = (kind == undefined) ? "notification" : kind;
+	this.isDisplayed = false;
+	this.lifetime = lifetime;
 	this.post();
-	if (lifetime) {
-	    this.dismiss(lifetime);
-	}
     }
 
     post() {
-	let div = document.createElement("DIV");
-	div.setAttribute("id", this.id);
-	div.setAttribute("class", "notification");
-	div.innerHTML = this.message;
-	div.addEventListener('click', this.dismiss);
-	document.getElementById("footer").appendChild(div);
+	if( !this.isDisplayed ) {
+	    let div = document.createElement("DIV");
+	    div.setAttribute("id", this.id);
+	    div.setAttribute("class", this.kind);
+	    div.innerHTML = this.message;
+	    div.addEventListener('click', this.dismiss);
+	    document.getElementById("footer").appendChild(div);
+	    this.isDisplayed = true;
+	    if( this.lifetime ) {
+		this.dismiss( this.lifetime );
+	    }
+	} else {
+	    console.log( "not reposting since this.isDisplayed=" + this.isDisplayed );
+	}
     }
 
     update(message) {
@@ -233,8 +242,15 @@ class Notification {
 
     dismiss(seconds = 0) {
 	let div = document.getElementById(this.id);
+
+	// We need to pass the instance into the function so it can have access to members
+	// See https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+	let instance = this;
 	// seconds = (seconds === true) ? 10 : seconds;
-	setTimeout(function() { div.remove(); }, seconds * 1000);
+	setTimeout(function() {
+	    div.remove();
+	    instance.isDisplayed = false;
+	}, seconds * 1000);
     }
 }
 
@@ -274,7 +290,8 @@ class Interface {
     }
 }
 
-new Notification(document.getElementById("shortcuts").innerHTML, 300);
+let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
+let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "light");
 // new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
 // new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
 
@@ -349,7 +366,7 @@ function mouseHandler(e) {
     }
     current.row = Number(activeCell.parentNode.dataset.row);
     current.col = Number(activeCell.dataset.col);
-    console.log("[" + current.row + "," + current.col + "]");
+    console.log("mouseHandler: [" + current.row + "," + current.col + "]");
     activeCell.classList.add("active");
 
     isMutated = false;
@@ -473,7 +490,20 @@ function keyboardHandler(e) {
     let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
     const symRow = xw.rows - 1 - current.row;
     const symCol = xw.cols - 1 - current.col;
-
+    if ( e.which == keyboard.help ) {
+	if( shortcutsNotification.isDisplayed ) {
+	    shortcutsNotification.dismiss();
+	} else {
+	    shortcutsNotification.post();
+	}
+	if( suggestionStylingNotification.isDisplayed ) {
+	    suggestionStylingNotification.dismiss();
+	} else {
+	    suggestionStylingNotification.post();
+	}
+	return;
+    }
+    
     if ( (e.ctrlKey || e.metaKey) && e.which === keyboard.z ) {
 	undo();
 	return;
@@ -579,7 +609,7 @@ function keyboardHandler(e) {
             current.direction = DOWN;
             break;
 	}
-	console.log("[" + current.row + "," + current.col + "]");
+	console.log("keyboardHandler: [" + current.row + "," + current.col + "]");
 	activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 	activeCell.classList.add("active");
     }
@@ -783,10 +813,37 @@ function getWordIndices(text, position) {
     return [start, end];
 }
 
+function getWordAndIndicesAt(row, col, direction, setCurrentWordIndices) {
+    // Given a ROW, COL, DIRECTION, return an array containing
+    // the word at that position, along with its start and end.
+    // If SETCURRENTWORDINDICES, then update current with the start/end indices.
+    let text = "";
+    let [start, end] = [0, 0];
+    if (direction == ACROSS) {
+	text = xw.fill[row];
+    } else {
+	for (let i = 0; i < xw.rows; i++) {
+	    text += xw.fill[i][col];
+	}
+    }
+    text = text.split(BLANK).join(DASH);
+    [start, end] = getWordIndices(text, (direction == ACROSS) ? col : row);
+    // Set global word indices if needed
+    if (setCurrentWordIndices) {
+	if (direction == ACROSS) {
+	    [current.acrossStartIndex, current.acrossEndIndex] = [start, end];
+	} else {
+	    [current.downStartIndex, current.downEndIndex] = [start, end];
+	}
+    }
+    return( [ text.slice(start, end), start, end ] );
+}
+
 function updateGridHighlights() {
     // Clear the grid of any highlights
-    console.log( "About to updateGridHighlights()" );
-    console.log( "updateGridHighlights: (row,col)=" + current.row + "," + current.col + " (aSI, aEI)=" + current.acrossStartIndex + "," + current.acrossEndIndex + " (dSI, dEI)=" + current.downStartIndex + "," + current.downEndIndex );
+    console.log( "updateGridHighlights: [" + current.row + "," + current.col + "] (aSI, aEI)=" +
+		 current.acrossStartIndex + "," + current.acrossEndIndex + " (dSI, dEI)=" +
+		 current.downStartIndex + "," + current.downEndIndex );
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
 	    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -891,9 +948,9 @@ function toggleRecommend() {
     console.log("buttonState=" + buttonState)
     recButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
     if( buttonState == "off" ) {
-	recButton.setAttribute("data-tooltip", "Show suggestions that satisfy across (or down)");
+	recButton.setAttribute("data-tooltip", "Show all suggestions");
     } else {
-	recButton.setAttribute("data-tooltip", "Show only recommendations that satisfy both across and down");
+	recButton.setAttribute("data-tooltip", "Show only moderately- and highly-recommended suggestions");
     }
     updateUI();
 }
