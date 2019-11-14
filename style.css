@@ -300,6 +300,23 @@ kbd {
   /* font-weight: 500; */
 }
 
+#container > * {
+  position: absolute;
+}
+
+
+.regex-pattern-table {
+  width: 360px;
+  float: left;
+  margin-left: 8px;
+  position: relative;
+  color: var(--med-grey);
+}
+
+.regex-pattern {
+  background-color: pink;
+}
+
 #toolbar {
   clear: both;
   width: 32px;

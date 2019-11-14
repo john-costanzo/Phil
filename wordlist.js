@@ -114,9 +114,31 @@ function removeWordlistDuplicates() {
     }
 }
 
+
+function regexReplacer( match, p1, offset, string ) {
+    // MATCH is the matched substring
+    // P1 is the nth string found by a parenthesized capture group
+    // OFFSET is the offset of the matched substring within the whole string being examined.
+    //     (For example, if the whole string was 'abcd', and the matched substring was 'bc', then this argument will be 1.)
+    // STRING: The whole string being examined.
+    let r = document.getElementById("regex"+match).value;
+    if( r == "" ) r = "-";
+    return r;
+}
+
+function replaceRegex( word ) {
+    // Replace digits in WORD with the corresponding regular expression pattern.
+    // Return the ammended word.
+
+    let newWord = word.replace( /\d/g, regexReplacer ).toUpperCase();
+    // console.log( "newWord='" + newWord + "'" );
+    return( newWord );
+}
+
 function matchFromWordlist(word) {
     const l = word.length;
     const actualLettersInWord = word.replace(/-/g, "").length;
+    word = replaceRegex( word );
     if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
 	word = word.split(DASH).join("\\w");
 	const pattern = new RegExp(word);

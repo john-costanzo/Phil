@@ -14,6 +14,7 @@
 // ------------------------------------------------------------------------
 
 const keyboard = {
+    "d1":     49, "d2": 50, "d3": 51, "d4": 52, "d5": 53, "d6": 54, "d7": 55, "d8": 56, "d9": 57,
     "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
     "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
     "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
@@ -509,7 +510,7 @@ function keyboardHandler(e) {
 	return;
     }
 
-    if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
+    if ((e.which >= keyboard.a && e.which <= keyboard.z) || (e.which >= keyboard.d1 && e.which <= keyboard.d9) || e.which == keyboard.space) {
 	let oldContent = xw.fill[current.row][current.col];
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
@@ -841,9 +842,10 @@ function getWordAndIndicesAt(row, col, direction, setCurrentWordIndices) {
 
 function updateGridHighlights() {
     // Clear the grid of any highlights
-    console.log( "updateGridHighlights: [" + current.row + "," + current.col + "] (aSI, aEI)=" +
-		 current.acrossStartIndex + "," + current.acrossEndIndex + " (dSI, dEI)=" +
-		 current.downStartIndex + "," + current.downEndIndex );
+
+    // console.log( "updateGridHighlights: [" + current.row + "," + current.col + "] (aSI, aEI)=" +
+    // 		 current.acrossStartIndex + "," + current.acrossEndIndex + " (dSI, dEI)=" +
+    // 		 current.downStartIndex + "," + current.downEndIndex );
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
 	    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
