@@ -111,7 +111,7 @@ h1 {
   -moz-box-shadow: 0 0 12px 0px var(--dk-blue);
   -webkit-box-shadow: 0 0 12px 0px var(--dk-blue);
   border-style: double;
-  border: 1px solid var(--dk-blue);
+  border: 1px solid red;
 }
 
 #grid td.pencil .fill {
@@ -130,7 +130,7 @@ h1 {
 
 #grid:focus td.highlight {
   border-style: double;
-  border: 1px solid var(--med-blue);
+  border: 1px solid red;
   background-color: var(--lt-blue);
 }
 
