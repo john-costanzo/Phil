@@ -122,7 +122,11 @@ function regexReplacer( match, p1, offset, string ) {
     //     (For example, if the whole string was 'abcd', and the matched substring was 'bc', then this argument will be 1.)
     // STRING: The whole string being examined.
     let r = document.getElementById("regex"+match).value;
-    if( r == "" ) r = "-";
+    if( r == "" ) {
+	r = "-";
+    } else {
+	r = "(" + r + ")";
+    }
     return r;
 }
 
