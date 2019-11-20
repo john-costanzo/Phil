@@ -301,13 +301,22 @@ let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 current.update();
 
+
 // Ignore undo in many of the major UI elements
-document.getElementById('autoSaveCount').addEventListener('input', (ev) => {
-    const field = document.getElementById('autoSaveCount');
-    const currentValue = field.value;
-    document.execCommand('undo');   // undo this change
-    field.value = currentValue;  // ... but immediately reset the value
-});
+
+// Identifiers of DOM elements that ought to be immune from processing undo().
+var undoImmuneIds = [ 'regex1', 'regex2',  'regex3',  'regex4',  'regex5',
+		      'regex6',  'regex7',  'regex8',  'regex9', 'autoSaveCount' ];
+undoImmuneIds.forEach(
+    function(id) {
+	document.getElementById(id).addEventListener('input', (ev) => {
+	    const field = document.getElementById(id);
+	    const currentValue = field.value;
+	    document.execCommand('undo');   // undo this change
+	    field.value = currentValue;  // ... but immediately reset the value
+	});
+    }
+);
 
 //____________________
 // F U N C T I O N S
