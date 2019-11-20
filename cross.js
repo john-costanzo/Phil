@@ -306,7 +306,7 @@ current.update();
 
 // Identifiers of DOM elements that ought to be immune from processing undo().
 var undoImmuneIds = [ 'regex1', 'regex2',  'regex3',  'regex4',  'regex5',
-		      'regex6',  'regex7',  'regex8',  'regex9', 'autoSaveCount' ];
+		      'regex6', 'regex7',  'regex8',  'regex9',  'autoSaveCount' ];
 undoImmuneIds.forEach(
     function(id) {
 	document.getElementById(id).addEventListener('input', (ev) => {
