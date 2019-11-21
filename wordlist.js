@@ -142,7 +142,7 @@ function replaceRegex( word ) {
 function matchFromWordlist(word) {
     const l = word.length;
     const actualLettersInWord = word.replace(/-/g, "").length;
-    word = replaceRegex( word );
+    if( useRegexPatterns ) word = replaceRegex( word );
     if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
 	word = word.split(DASH).join("\\w");
 	const pattern = new RegExp(word);

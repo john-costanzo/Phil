@@ -43,6 +43,7 @@ const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 
 let history = [];
 let isSymmetrical = true;
+let useRegexPatterns = false;
 let showOnlyRecommendations = false;
 let grid = undefined;
 let squares = undefined;
@@ -483,7 +484,7 @@ function checkGridLegality() {
 	for (let j = 0; j < xw.cols; j++) {
 	    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
 	    if( xw.fill[i][j] == BLACK ) {
-		    cell.classList.remove(illegalSquare);
+		cell.classList.remove(illegalSquare);
 	    } else {
 		if ( cellBlocked2( i, j ) ) {
 		    cell.classList.add(illegalSquare);
@@ -628,7 +629,7 @@ function keyboardHandler(e) {
 
 function updateUI() {
     if (isMutated) {
-	autoFill(true);  // quick fill
+	// autoFill(true);  // quick fill
 	checkGridLegality();
 
 	let ascVal = document.getElementById('autoSaveCount').value;
@@ -939,6 +940,23 @@ function generatePattern() {
     updateUI();
     console.log("Generated layout.")
 }
+
+
+function toggleUseRegexPatterns() {
+    useRegexPatterns = !useRegexPatterns;
+    // Update UI button
+    let reButton = document.getElementById("use-regex-patterns");
+    reButton.classList.toggle("button-on");
+    buttonState = reButton.getAttribute("data-state");
+    reButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
+    reButton.setAttribute("data-tooltip", "Turn " + buttonState + " regular expressions");
+    if( useRegexPatterns ) {
+	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "visible";
+    } else {
+	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "hidden";
+    }	
+}
+
 
 function toggleSymmetry() {
     isSymmetrical = !isSymmetrical;

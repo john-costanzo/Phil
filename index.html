@@ -66,6 +66,11 @@
 
       <div class="divider"></div>
 
+      <button id="use-regex-patterns" type="button" data-tooltip="Turn on regular expressions" data-state="off" onclick="toggleUseRegexPatterns()">
+	<i class="fa fa-registered" aria-hidden="true"></i>
+      </button>
+      <input id="open-wordlist-input" class="hidden" type="file" accept=".txt"/>
+
       <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
 	<i class="fa fa-book fa-fw" aria-hidden="true"></i>
       </button>
@@ -111,7 +116,7 @@
 	<ul id="down-matches" class="matches"></ul>
       </div>
 
-      <div class="regex-pattern-table">
+      <div class="regex-pattern-table" style="visibility: hidden">
 	<table>
 	  <tr>  <th></td> <td>Regular expressions:</td>  </tr>
 	  <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
