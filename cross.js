@@ -292,10 +292,8 @@ class Interface {
     }
 }
 
-let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 1200);
-let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 1200, "suggestion-styling");
-// new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
-// new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
+let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "suggestion-styling");
 
 let xw = new Crossword( ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
@@ -502,16 +500,7 @@ function keyboardHandler(e) {
     const symRow = xw.rows - 1 - current.row;
     const symCol = xw.cols - 1 - current.col;
     if ( e.which == keyboard.help ) {
-	if( shortcutsNotification.isDisplayed ) {
-	    shortcutsNotification.dismiss();
-	} else {
-	    shortcutsNotification.post();
-	}
-	if( suggestionStylingNotification.isDisplayed ) {
-	    suggestionStylingNotification.dismiss();
-	} else {
-	    suggestionStylingNotification.post();
-	}
+	toggleUsageAssistance();
 	return;
     }
     
@@ -949,7 +938,7 @@ function toggleUseRegexPatterns() {
     reButton.classList.toggle("button-on");
     buttonState = reButton.getAttribute("data-state");
     reButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
-    reButton.setAttribute("data-tooltip", "Turn " + buttonState + " regular expressions");
+    reButton.setAttribute("data-tooltip", "Turn " + buttonState + " regular expression pattern matching");
     if( useRegexPatterns ) {
 	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "visible";
     } else {
@@ -984,9 +973,18 @@ function toggleRecommend() {
     updateUI();
 }
 
-// function toggleHelp() {
-//   document.getElementById("help").style.display = "none";
-// }
+function toggleUsageAssistance() {
+    if( shortcutsNotification.isDisplayed ) {
+	shortcutsNotification.dismiss();
+    } else {
+	shortcutsNotification.post();
+    }
+    if( suggestionStylingNotification.isDisplayed ) {
+	suggestionStylingNotification.dismiss();
+    } else {
+	suggestionStylingNotification.post();
+    }
+}
 
 function clearFill() {
     saveStateForUndo( "clear the puzzle" );

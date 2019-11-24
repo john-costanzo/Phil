@@ -66,7 +66,7 @@
 
       <div class="divider"></div>
 
-      <button id="use-regex-patterns" type="button" data-tooltip="Turn on regular expressions" data-state="off" onclick="toggleUseRegexPatterns()">
+      <button id="use-regex-patterns" type="button" data-tooltip="Turn on regular expression pattern matching" data-state="off" onclick="toggleUseRegexPatterns()">
 	<i class="fa fa-registered" aria-hidden="true"></i>
       </button>
       <input id="open-wordlist-input" class="hidden" type="file" accept=".txt"/>
@@ -80,6 +80,10 @@
 
       <button id="undo" type="button" data-tooltip="No further undo information available" data-state="off" class="button-off" onclick="undo()">
 	<i class="fa fa-undo fa-fw" aria-hidden="true"></i>
+      </button>
+
+      <button id="toggle-usage-assistance" type="button" data-tooltip="Toggle usage assistance" data-state="off" class="button-off" onclick="toggleUsageAssistance()">
+	<i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
       </button>
 
     </div>
