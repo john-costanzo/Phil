@@ -14,6 +14,7 @@
 // ------------------------------------------------------------------------
 
 var traceWordListSuggestions = false;
+var traceWordListSuggestionsVerbose = false;
 
 let wordlist = [
     [], [], [], [], [],
@@ -127,6 +128,7 @@ function regexReplacer( match, p1, offset, string ) {
     } else {
 	r = "(" + r + ")";
     }
+    // console.log( "regexReplacer: working on regex" + match + " returing '" + r + "'" );
     return r;
 }
 
@@ -142,8 +144,8 @@ function replaceRegex( word ) {
 function matchFromWordlist(word) {
     const l = word.length;
     const actualLettersInWord = word.replace(/-/g, "").length;
-    if( useRegexPatterns ) word = replaceRegex( word );
     if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
+	if( useRegexPatterns ) word = replaceRegex( word );
 	word = word.split(DASH).join("\\w");
 	const pattern = new RegExp(word);
 	let matches = [];
@@ -172,7 +174,7 @@ function wordIsHarmonious( word, pos1, words, pos2, cache ) {
 	return( true );
     } else {
 	for( i = 0; i < words.length; i++ ) {
-	    if( traceWordListSuggestions ) console.log( "wordIsHarmonious: checking " + word + " vs. " + words[i] + " on letter '" + words[ i ].substring( pos2, pos2+1 ).toLowerCase() + "'" );
+	    if( traceWordListSuggestionsVerbose ) console.log( "wordIsHarmonious: checking " + word + " vs. " + words[i] + " on letter '" + words[ i ].substring( pos2, pos2+1 ).toLowerCase() + "'" );
 	    if( letter == words[ i ].substring( pos2, pos2+1 ).toLowerCase() ) {
 		cache.add( letter );
 		if( traceWordListSuggestions ) console.log( "word '" + word + "' is harmonious" );
@@ -340,6 +342,7 @@ function updateMatchesUI() {
     //
     // If showOnlyRecommendations is true, then show only highly-recommended matches. Unless there aren't any, then show all.
 
+    console.log( "updateMatchesUI: entering" );
     let acrossMatchList = document.getElementById("across-matches");
     let downMatchList = document.getElementById("down-matches");
     acrossMatchList.innerHTML = "";
@@ -415,6 +418,7 @@ function updateMatchesUI() {
     let downModeratelyRecommendedLetters = extractLetters( dm, vpos );
     promoteSuggestions( document.getElementById("across-matches"), "moderately-recommended", hpos, downModeratelyRecommendedLetters, "highly-recommended" );
     promoteSuggestions( document.getElementById("down-matches"), "moderately-recommended", vpos, acrossModeratelyRecommendedLetters, "highly-recommended" );
+    console.log( "updateMatchesUI: exiting" );
 }
 
 function setUndoButton( state, tooltip ) {
