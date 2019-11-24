@@ -292,8 +292,8 @@ class Interface {
     }
 }
 
-let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
-let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "light");
+let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 1200);
+let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 1200, "suggestion-styling");
 // new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
 // new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
 

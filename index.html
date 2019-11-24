@@ -118,7 +118,29 @@
 
       <div class="regex-pattern-table" style="visibility: hidden">
 	<table>
-	  <tr>  <th></td> <td>Regular expressions:</td>  </tr>
+	  <th>
+	    <td> Regular expressions:<i class="fa fa-info-circle tooltip">
+		<div class="tooltiptext">
+		  <p class="tooltiptext-para">
+		  Define Regular Expression patterns here and reference them in the grid by their corresponding digit. Each pattern should represent a single letter.
+		  <p class="tooltiptext-para">
+		    For instance, if the regular expression patterns are:
+		  <p class="tooltiptext-para">
+		    1: <code><b><font size=+2>[aeiou]</font></b></code><br>
+		    2: <code><b><font size=+2>\1</font></b></code><br>
+		    3: <code><b><font size=+2>\1(?=(k|t))</font></b></code>
+		  <p class="tooltiptext-para">
+		    Then a grid word may be:<br>
+		    <br>
+		    <code><b><font size=+2>B12-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels<br>
+		    <br>
+		    <code><b><font size=+2>B13-</font></b></code>   ...suggest words that start with 'B' follow by two of the same vowels that precede either 'K' or 'T'<br>
+		    <br>
+		    <code><b><font size=+2>-13L</font></b></code>   ...<b>no</b> suggestions! (since we'd need words that have two of the same vowels that precede either 'K' or 'T' <i>and</i> end with 'L')
+		</div>
+	      </i>
+	    </td>	    
+	  </th>
 	  <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
 	  <tr>  <td>2.</td>  <td><input id="regex2" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
 	  <tr>  <td>3.</td>  <td><input id="regex3" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
@@ -134,10 +156,12 @@
     </div>
 
     <div id="footer">
+
     </div>
+
     <div id="shortcuts" class="hidden">
-      <h3>Keyboard Shortcuts</h3>
       <table>
+	<tr> <td colspan="2" align="center"><h3>Keyboard Shortcuts</h3></td> </tr>
 	<tr> <td>Undo</td> <td><kbd>Ctrl</kbd>or<kbd>Meta</kbd><kbd>Z</kbd></td> </tr>
 	<tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
 	<tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
@@ -147,29 +171,39 @@
     </div>
 
     <div id="suggestion-styling" class="hidden">
-      <h3>Suggestion styling</h3>
-      <ul>
-	<div class="tooltip">
-	  <li class="suggestion">suggestion</li>
-	  <span class="tooltiptext">Words that match the puzzle pattern.</span>
-	</div>
-	<br/>
-	<div class="tooltip">
-	  <li class="recommended">recommended</li>
-	  <span class="tooltiptext">Words that also match a suggestion in the opposite direction.</span>
-	</div>
-	<br/>
-	<div class="tooltip">
-	  <li class="moderately-recommended">moderately recommended</li>
-	  <span class="tooltiptext">Words that match all suggestions in the opposite direction.</span>
-	</div>
-	<br/>
-	<div class="tooltip">
-	  <li class="highly-recommended">
-	    highly-recommended
-	  </li>
-	  <span class="tooltiptext">Words that match all letters from moderately-recommended suggestions in the opposite direction.</span>
-	</div>
+      <h3>Suggestion stylings:</h3>
+      <ul class="suggestion-list-items">
+	<li class="suggestion">suggestion
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match the puzzle pattern.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="recommended">recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that also match a suggestion in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="moderately-recommended">moderately recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match all suggestions in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="highly-recommended">highly-recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match all letters from <b>moderately-recommended</b> suggestions in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
       </ul>
     </div>
 
@@ -177,7 +211,8 @@
       Phil version 3.7 &nbsp;&nbsp;&nbsp;
       <a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
       <a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
-      <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a></div>
+      <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
