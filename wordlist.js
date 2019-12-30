@@ -126,7 +126,7 @@ function regexReplacer( match, p1, offset, string ) {
     // STRING: The whole string being examined.
     let r = document.getElementById("regex"+match).value;
     if( r == "" ) {
-	r = "-";
+	r = DASH;
     } else {
 	r = "(" + r + ")";
     }
@@ -146,7 +146,8 @@ function replaceRegex( word ) {
 function matchFromWordlist(word) {
     const l = word.length;
     const actualLettersInWord = word.replace(/-/g, "").length;
-    if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
+    const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
+    if( (actualLettersInWord >= 1 && actualLettersInWord < l) || wordContainsDigit ) { // Only search if word isn't completely blank or filled... or contains a digit
 	if( useRegexPatterns ) word = replaceRegex( word );
 	word = word.split(DASH).join("\\w");
 	const pattern = new RegExp(word);
