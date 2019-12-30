@@ -15,6 +15,8 @@
 
 var traceWordListSuggestions = false;
 var traceWordListSuggestionsVerbose = false;
+let noFurtherUndo = "No further undo information available";
+let noFurtherRedo = "No further redo information available";
 
 let wordlist = [
     [], [], [], [], [],
@@ -435,6 +437,20 @@ function setUndoButton( state, tooltip ) {
     undoButton.setAttribute( "data-tooltip", tooltip );
 }
 
+function setRedoButton( state, tooltip ) {
+    // Set Redo button's state to STATE
+    console.log( "setRedoButton: setting state = " + state + ", tooltip=\"" + tooltip + "\"" );
+    let redoButton = document.getElementById("redo");
+
+    if( redoButton.getAttribute( "data-state" ) != state ) {
+	console.log( "setRedoButton: toggling button-on" );
+	redoButton.classList.toggle("button-on");
+    }
+
+    redoButton.setAttribute( "data-state",  state );
+    redoButton.setAttribute( "data-tooltip", tooltip );
+}
+
 function undo() {
     // Undo the latest action
 
@@ -444,14 +460,46 @@ function undo() {
 	previousCell.classList.remove("active");
 
 	let undoContext = undoStack.pop();
+	saveStateForRedo( undoContext.label );
 	xw = undoContext.xw;
 	current = undoContext.current;
 
 	if( undoStack.length <= 0 ) {
-	    setUndoButton( "off", "No further undo information available" );
+	    setUndoButton( "off", noFurtherUndo );
 	} else {
 	    let undoContext = undoStack[ undoStack.length-1 ];
 	    setUndoButton( "on", "Undo latest grid change for \"" + undoContext.label + "\"");
+	}
+
+	isMutated = true;
+	// updateActiveWords();
+	// updateMatchesUI();
+	updateUI();
+	const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+	currentCell.classList.add("active");
+
+	grid.focus();
+    }
+}
+
+function redo() {
+    // Redo the latest undo action
+
+    if( redoStack.length > 0 ) {
+	console.log("redo: redoing puzzle to before last undo...");
+	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+	previousCell.classList.remove("active");
+
+	let redoContext = redoStack.pop();
+	saveStateForUndo( redoContext.label );
+	xw = redoContext.xw;
+	current = redoContext.current;
+
+	if( redoStack.length <= 0 ) {
+	    setRedoButton( "off", noFurtherRedo );
+	} else {
+	    let redoContext = redoStack[ redoStack.length-1 ];
+	    setRedoButton( "on", "Redo latest grid change for \"" + redoContext.label + "\"");
 	}
 
 	isMutated = true;
@@ -475,13 +523,30 @@ function saveStateForUndo( label ) {
     setUndoButton( "on", "Undo latest grid change for \"" + label + "\"" );
 }    
 
+function saveStateForRedo( label ) {
+    // Take a snapshot of the current state and push it onto the (global) redoStack
+    let redoContext = {};
+    redoContext.xw = cloneObject( xw );
+    redoContext.current = cloneObject( current );
+    redoContext.label = label;
+    redoStack.push( redoContext );
+    setRedoButton( "on", "Redo latest grid change for \"" + label + "\"" );
+}    
+
+function emptyRedoState(  ) {
+    // Empty the (global) redoStack and set an appropriate tooltip.
+    redoStack = [];
+    setRedoButton( "off", noFurtherRedo );
+}    
+
 function fillGridWithMatch(e) {
     const li = e.currentTarget;
     const fill = li.innerHTML.toUpperCase();
     const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
 
     saveStateForUndo( fill );
-
+    emptyRedoState();
+    
     if (dir == ACROSS) {
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.acrossStartIndex) + fill + xw.fill[current.row].slice(current.acrossEndIndex);
 	for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {

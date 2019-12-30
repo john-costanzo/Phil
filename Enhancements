@@ -14,4 +14,6 @@
     * [X] Surround regex by a pair of parentheses.
     * [X] Add a toolbar widget to turn regular expressions off/on. When off, don't display and don't interpret digits as regex.
     * [ ] Investigate why when regex patterns is on, response time is a bit poky
++ [X] Support "redo".
++ [ ] Suggest words even if all letters are provided in the case that one of the "letters" is a digit. (e.g., make suggestions even if the word is filled in with something like "BA3")
 + [ ] Show a dictionary lookup of a clue on hover.

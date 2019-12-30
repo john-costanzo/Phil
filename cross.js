@@ -298,6 +298,7 @@ let suggestionStylingNotification = new Notification(document.getElementById("su
 let xw = new Crossword( ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
+let redoStack = [];
 current.update();
 
 
