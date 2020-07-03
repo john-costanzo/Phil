@@ -228,7 +228,7 @@ class Notification {
 	    div.setAttribute("class", this.kind);
 	    div.innerHTML = this.message;
 	    div.addEventListener('click', this.dismiss);
-	    document.getElementById("footer").appendChild(div);
+	    document.getElementById("help-panel").appendChild(div);
 	    this.isDisplayed = true;
 	    if( this.lifetime ) {
 		this.dismiss( this.lifetime );
@@ -295,7 +295,7 @@ class Interface {
 let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
 let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "suggestion-styling");
 
-let xw = new Crossword( ); // model
+let xw = new Crossword( 21, 21 ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 let redoStack = [];
@@ -346,9 +346,9 @@ function createNewPuzzle(rows, cols) {
 	"acrossWord": '',
 	"downWord":   '',
 	"acrossStartIndex":0,
-	"acrossEndIndex":  DEFAULT_SIZE,
+	"acrossEndIndex":  cols,
 	"downStartIndex":  0,
-	"downEndIndex":    DEFAULT_SIZE,
+	"downEndIndex":    rows,
 	"direction":  ACROSS
     };
 
@@ -809,8 +809,9 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
 function getWordIndices(text, position) {
     let start = text.slice(0, position).lastIndexOf(BLACK);
     start = (start == -1) ? 0 : start + 1;
-    let end = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
-    end = (end == -1) ? DEFAULT_SIZE : Number(position) + end;
+    let rows = xw["rows"];
+    let end = text.slice(position, rows).indexOf(BLACK);
+    end = (end == -1) ? rows : Number(position) + end;
     return [start, end];
 }
 

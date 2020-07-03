@@ -16,8 +16,26 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
-    width: 885px;
     margin: 5px;
+}
+
+.puzzle-controls {
+    width: auto;
+    height: auto;
+    display: grid;
+    grid-template-columns: auto;
+}
+
+#help-panel {
+    width: auto;
+    height: auto;
+    display: inline-grid;
+    margin-left: 50px;
+    grid-template-columns: auto auto;
+
+    position:absolute;                  
+    bottom:0;                          
+    left:0;                          
 }
 
 h1 {
@@ -53,7 +71,9 @@ h1 {
     line-height: 11pt;
     clear: both;
 
-    position: relative;
+    position:absolute;                  
+    bottom:0;                          
+    right:0;                          
     top: 0px;
 }
 
@@ -164,7 +184,7 @@ h1 {
 kbd {
     text-align: center;
     font-family: inherit;
-    font-size: 9pt;
+    font-size: 8pt;
     font-weight: 600;
     color: var(--lt-grey);
     border: 1px solid var(--med-grey);
@@ -175,20 +195,21 @@ kbd {
 
 #main {
     width: auto;
-    height: 550px;
+    height: auto;
     float: left;
 }
 
 .notification {
-    font-size: 9.5pt;
-    line-height: 11pt;
+    display: inline-grid;
+    font-size: 9pt;
+    line-height: 9pt;
     margin-top: 3px;
     margin-right: 12px;
-    padding: 12px;
+    padding: 6px;
     border-radius: 6px;
     background-color: var(--dk-grey);
     color: var(--lt-grey);
-    float: left;
+    /*float: left;*/
 }
 
 .notification h3 {
@@ -208,33 +229,26 @@ kbd {
     padding: 0;
     margin: 0;
     color: var(--lt-grey);
-    font-size: 9.5pt;
+    font-size: 8pt;
 }
 
 .notification td {
     /*border: 1px solid red;*/
     padding: 8px 5px 8px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 8pt;
 }
 
-.notification {
-    position: absolute;
-    left: 0px;
-}
-
+/*
 .notification div {
     position: relative;
     margin: 5px;
 }
-
-.suggestion-styling {
-    position: absolute;
-    left: 400px;
-}
+*/
 
 /*.notification:after {
   content: '\f00d';
-  margin-left: 10px;
+  margin-left: 10px;;
   font-family: FontAwesome;
   font-weight: 600;
   color: var(--med-grey);
@@ -245,9 +259,9 @@ kbd {
     color: var(--lt-blue);
     content: '\f00d';
     float: right;
-    margin-left: 10px;
-    /*top: 10px;
-  right: 10px;*/
+    margin-left: 10px;;
+    /*top: 10px;;
+  right: 10px;;*/
     font-family: FontAwesome;
     font-weight: 600;
     cursor: pointer;
@@ -304,11 +318,6 @@ kbd {
     overflow-y: scroll;
 }
 
-.suggestion {
-    color: var(--med-grey);
-    background-color: white;
-}
-
 #sidebar ul.matches li {
     margin: 2px 0;
 }
@@ -326,9 +335,6 @@ kbd {
 
 .regex-pattern-table {
     width: 360px;
-    float: left;
-    margin-left: 8px;
-    position: relative;
     color: var(--med-grey);
 }
 
@@ -494,6 +500,22 @@ kbd {
     top: 0px;
 }
 
+#suggestion-styling {
+    background-color: white;
+}
+
+#suggestion-styling ul.suggestion-list-items {
+    list-style-type: none;
+    padding: 0px;
+    line-height: 80%;
+}
+
+.suggestion {
+    color: var(--med-grey);
+    background-color: white;
+    font-size: 8pt;
+}
+
 li.recommended {
     color: black;
     background-color: white;
@@ -536,17 +558,6 @@ li.highly-recommended {
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
-.suggestion-styling {
-    background-color: white;
-    width: 150px;
-    position: relative;
-}
-
-.suggestion-styling ul.suggestion-list-items {
-    list-style-type: none;
-    padding: 0px;
-}
-
 /* Tooltip text */
 .tooltip .tooltiptext {
     visibility: hidden;
@@ -562,7 +573,7 @@ li.highly-recommended {
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    margin-left: -140px;
+    margin-left: -150px;
 
     /* Fade in tooltip */
     opacity: 0;
@@ -591,9 +602,4 @@ li.highly-recommended {
     text-align:left;
     padding-left: 5px;
     padding-right: 5px;
-}
-
-.regex-pattern-table {
-    position: relative;
-    float: left;
 }
