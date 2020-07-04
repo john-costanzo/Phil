@@ -555,7 +555,7 @@ li.highly-recommended {
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    border-bottom: 1px dotted black; /* For dots under the hoverable text, indicating a link */
 }
 
 /* Tooltip text */
@@ -602,4 +602,8 @@ li.highly-recommended {
     text-align:left;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.tooltiptext-para a {
+  color: lightblue;
 }
