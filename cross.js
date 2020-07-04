@@ -696,6 +696,7 @@ function updateInfoUI() {
 }
 
 function createGrid(rows, cols) {
+    console.log( "createGrid: about to create a grid that is " + rows + "x" + cols );
     let table = document.createElement("TABLE");
     table.setAttribute("id", "grid");
     table.setAttribute("tabindex", "1");
@@ -908,28 +909,35 @@ function suppressEnterKey(e) {
     }
 }
 
-function generatePattern() {
-    let title = xw.title;
-    let author = xw.author;
-    createNewPuzzle();
-    xw.title = title;
-    xw.author = author;
-
-    const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
-    if (!isSymmetrical) { // patterns are encoded as only one half of the grid...
-	toggleSymmetry();   // so symmetry needs to be on to populate correctly
-    }
-    for (let i = 0; i < pattern.length; i++) {
-	const row = pattern[i][0];
-	const col = pattern[i][1];
-	const symRow = xw.rows - 1 - row;
-	const symCol = xw.cols - 1 - col;
-	xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
-	xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
-    }
-    isMutated = true;
-    updateUI();
-    console.log("Generated layout.")
+function generatePattern( size=15 ) {
+    if( patterns[ size ] ) { 
+	console.log("Generating a " + size + "x" + size + " layout...");
+	let title = xw.title;
+	let author = xw.author;
+	createNewPuzzle( size, size );
+	xw.title = title;
+	xw.author = author;
+	const patternsForThisSize = patterns[ size ];
+	const pattern = patternsForThisSize[randomNumber(0, patternsForThisSize.length)]; // select random pattern
+	if (!isSymmetrical) { // patterns are encoded as only one half of the grid...
+	    toggleSymmetry();   // so symmetry needs to be on to populate correctly
+	}
+	for (let i = 0; i < pattern.length; i++) {
+	    const row = pattern[i][0];
+	    const col = pattern[i][1];
+	    const symRow = xw.rows - 1 - row;
+	    const symCol = xw.cols - 1 - col;
+	    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
+	    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+	}
+	isMutated = true;
+	updateUI();
+	console.log("Generated layout.")
+    } else {
+	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
+	console.log( errorMessage );
+	let error = new Notification( errorMessage, 10 );
+    }	
 }
 
 

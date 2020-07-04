@@ -20,6 +20,7 @@
 	<i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
       </button>
       <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
+
       <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
 	<h4>Export as:</h4>
 	<button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onmouseup="setDefault(event)" onclick="writeFile('xw')">
@@ -42,9 +43,25 @@
 
       <div class="divider"></div>
 
-      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
+      <!--      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
+		<i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
+      </button>
+      -->
+
+      <div id="quick-layout-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+	<h4>Quick Layout:</h4>
+	<button id="layout15x15" class="default" type="button" data-tooltip="Layout a 15x15 grid" onmouseup="setDefault(event)" onclick="generatePattern(15)">
+          <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+	</button>
+	<button id="layout21x11" class="default" type="button" data-tooltip="Layout a 21x21 grid" onmouseup="setDefault(event)" onclick="generatePattern(21)">
+          <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+	</button>
+      </div>
+      <button id="quick-layout" type="button" data-tooltip="Quick Layout" onmouseenter="showMenu(event)" onclick="doDefault(event)">
 	<i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
       </button>
+      <a id="quick-layout-link" class="hidden">Quick Layout</a>
+
       <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
 	<i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
       </button>
@@ -126,111 +143,111 @@
 	  <ul id="down-matches" class="matches"></ul>
 	</div>
 
-      <span class="regex-pattern-table" style="visibility: hidden">
-	<table>
-	  <th>
-	    <td> Regular expressions:<i class="fa fa-info-circle tooltip">
-		<div class="tooltiptext">
-		  <p class="tooltiptext-para">
-		    Define
-		    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Cheatsheet" target=”_blank”>Regular Expression</a>
-		    patterns here and reference them in the grid by their corresponding digit.
-		    Each pattern should represent a single letter.
-		  <p class="tooltiptext-para">
-		    For instance, if the regular expression patterns are:
-		  <p class="tooltiptext-para">
-		    1: <code><b><font size=+2>[aeiou]</font></b></code><br>
-		    2: <code><b><font size=+2>\1</font></b></code><br>
-		    3: <code><b><font size=+2>\1(?=(k|t))</font></b></code></br>
-		    4: <code><b><font size=+2>[^sn]</font></b></code>
-		  <p class="tooltiptext-para">
-		    Then a grid word may be:<br>
-		    <br>
+	<span class="regex-pattern-table" style="visibility: hidden">
+	  <table>
+	    <th>
+	      <td> Regular expressions:<i class="fa fa-info-circle tooltip">
+		  <div class="tooltiptext">
+		    <p class="tooltiptext-para">
+		      Define
+		      <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Cheatsheet" target=”_blank”>Regular Expression</a>
+		      patterns here and reference them in the grid by their corresponding digit.
+		      Each pattern should represent a single letter.
+		    <p class="tooltiptext-para">
+		      For instance, if the regular expression patterns are:
+		    <p class="tooltiptext-para">
+		      1: <code><b><font size=+2>[aeiou]</font></b></code><br>
+		      2: <code><b><font size=+2>\1</font></b></code><br>
+		      3: <code><b><font size=+2>\1(?=(k|t))</font></b></code></br>
+		      4: <code><b><font size=+2>[^sn]</font></b></code>
+		    <p class="tooltiptext-para">
+		      Then a grid word may be:<br>
+		      <br>
 
-		    <code><b><font size=+2>B12-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels.<br>
-		    <br>
+		      <code><b><font size=+2>B12-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels.<br>
+		      <br>
 
-		    <code><b><font size=+2>B13-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels that precede either 'K' or 'T'.<br>
-		    <br>
+		      <code><b><font size=+2>B13-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels that precede either 'K' or 'T'.<br>
+		      <br>
 
-		    <code><b><font size=+2>-13L</font></b></code>   ...<b><i>no</i></b> suggestions! (since we'd need words which have two of the same vowels that precede either 'K' or 'T' <i>and</i> end with 'L').<br>
-		    <br>
+		      <code><b><font size=+2>-13L</font></b></code>   ...<b><i>no</i></b> suggestions! (since we'd need words which have two of the same vowels that precede either 'K' or 'T' <i>and</i> end with 'L').<br>
+		      <br>
 
-		    <code><b><font size=+2>---4</font></b></code>   ...suggest words that <i>don't</i> end in either 'S' or 'N'.
-		</div>
-	      </i>
-	    </td>	    
-	  </th>
-	  <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>2.</td>  <td><input id="regex2" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>3.</td>  <td><input id="regex3" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>4.</td>  <td><input id="regex4" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>5.</td>  <td><input id="regex5" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>6.</td>  <td><input id="regex6" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>7.</td>  <td><input id="regex7" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>8.</td>  <td><input id="regex8" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>9.</td>  <td><input id="regex9" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	</table>
-      </span>
+		      <code><b><font size=+2>---4</font></b></code>   ...suggest words that <i>don't</i> end in either 'S' or 'N'.
+		  </div>
+		</i>
+	      </td>
+	    </th>
+	    <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>2.</td>  <td><input id="regex2" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>3.</td>  <td><input id="regex3" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>4.</td>  <td><input id="regex4" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>5.</td>  <td><input id="regex5" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>6.</td>  <td><input id="regex6" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>7.</td>  <td><input id="regex7" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>8.</td>  <td><input id="regex8" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	    <tr>  <td>9.</td>  <td><input id="regex9" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  </table>
+	</span>
 
       </div>
 
 
     </div>
 
-      <span id="suggestion-styling" class="hidden">
-	<h3>Suggestion stylings:</h3>
-	<ul class="suggestion-list-items">
-	  <li class="suggestion">suggested
-	    <div class="tooltip">
-	      <i class="fa fa-info-circle tooltip">
-		<span class="tooltiptext">Words that match the puzzle pattern.</span>
-	      </i>
-	    </div>
-	  </li>
-	  <p/>
-	  <li class="recommended">recommended
-	    <div class="tooltip">
-	      <i class="fa fa-info-circle tooltip">
-		<span class="tooltiptext">Words that also match a suggestion in the opposite direction.</span>
-	      </i>
-	    </div>
-	  </li>
-	  <p/>
-	  <li class="moderately-recommended">moderately recommended
-	    <div class="tooltip">
-	      <i class="fa fa-info-circle tooltip">
-		<span class="tooltiptext">Words that match <i>all</i> suggestions in the opposite direction.</span>
-	      </i>
-	    </div>
-	  </li>
-	  <p/>
-	  <li class="highly-recommended">highly-recommended
-	    <div class="tooltip">
-	      <i class="fa fa-info-circle tooltip">
-		<span class="tooltiptext">Words that match all letters from <b>moderately-recommended</b> suggestions in the opposite direction.</span>
-	      </i>
-	    </div>
-	  </li>
-	</ul>
-      </span>
-      
-      <span id="shortcuts" class="hidden">
-	<table>
-	  <tr> <td colspan="2" align="center">
-	      <h3>Keyboard Shortcuts</h3></td>
-	  </tr>
-	  <tr> <td>Undo</td> <td><kbd>Ctrl</kbd>or<kbd>Meta</kbd><kbd>Z</kbd></td> </tr>
-	  <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
-	  <tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
-	  <tr> <td>Indicate where symmetric square is</td> <td><kbd>,</kbd></td> </tr>
-	  <tr> <td>Toggle these help panels</td> <td><kbd>?</kbd></td> </tr>
-	</table>
-      </span>
+    <span id="suggestion-styling" class="hidden">
+      <h3>Suggestion stylings:</h3>
+      <ul class="suggestion-list-items">
+	<li class="suggestion">suggested
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match the puzzle pattern.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="recommended">recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that also match a suggestion in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="moderately-recommended">moderately recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match <i>all</i> suggestions in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
+	<p/>
+	<li class="highly-recommended">highly-recommended
+	  <div class="tooltip">
+	    <i class="fa fa-info-circle tooltip">
+	      <span class="tooltiptext">Words that match all letters from <b>moderately-recommended</b> suggestions in the opposite direction.</span>
+	    </i>
+	  </div>
+	</li>
+      </ul>
+    </span>
+
+    <span id="shortcuts" class="hidden">
+      <table>
+	<tr> <td colspan="2" align="center">
+	    <h3>Keyboard Shortcuts</h3></td>
+	</tr>
+	<tr> <td>Undo</td> <td><kbd>Ctrl</kbd>or<kbd>Meta</kbd><kbd>Z</kbd></td> </tr>
+	<tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
+	<tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
+	<tr> <td>Indicate where symmetric square is</td> <td><kbd>,</kbd></td> </tr>
+	<tr> <td>Toggle these help panels</td> <td><kbd>?</kbd></td> </tr>
+      </table>
+    </span>
 
     <div id="footer">
       <div id="credits">
-	Phil version 3.7 &nbsp;&nbsp;&nbsp;
+	Phil version 3.8 &nbsp;&nbsp;&nbsp;
 	<a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
 	<a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
 	<a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a>
