@@ -104,47 +104,6 @@
 	</span>
       </span>
 
-      <span class="regex-pattern-table" style="visibility: hidden">
-	<table>
-	  <th>
-	    <td> Regular expressions:<i class="fa fa-info-circle tooltip">
-		<div class="tooltiptext">
-		  <p class="tooltiptext-para">
-		    Define Regular Expression patterns here and reference them in the grid by their corresponding digit.
-		    Each pattern should represent a single letter.
-		  <p class="tooltiptext-para">
-		    For instance, if the regular expression patterns are:
-		  <p class="tooltiptext-para">
-		    1: <code><b><font size=+2>[aeiou]</font></b></code><br>
-		    2: <code><b><font size=+2>\1</font></b></code><br>
-		    3: <code><b><font size=+2>\1(?=(k|t))</font></b></code>
-		    4: <code><b><font size=+2>[^sn]</font></b></code>
-		  <p class="tooltiptext-para">
-		    Then a grid word may be:<br>
-		    <br>
-		    <code><b><font size=+2>B12-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels<br>
-		    <br>
-		    <code><b><font size=+2>B13-</font></b></code>   ...suggest words that start with 'B' follow by two of the same vowels that precede either 'K' or 'T'<br>
-		    <br>
-		    <code><b><font size=+2>-13L</font></b></code>   ...<b>no</b> suggestions! (since we'd need words that have two of the same vowels that precede either 'K' or 'T' <i>and</i> end with 'L')
-		    <br>
-		    <code><b><font size=+2>---4</font></b></code>   ...suggest words that don't end in either 'S' or 'N'<br>
-		</div>
-	      </i>
-	    </td>	    
-	  </th>
-	  <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>2.</td>  <td><input id="regex2" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>3.</td>  <td><input id="regex3" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>4.</td>  <td><input id="regex4" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>5.</td>  <td><input id="regex5" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>6.</td>  <td><input id="regex6" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>7.</td>  <td><input id="regex7" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>8.</td>  <td><input id="regex8" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	  <tr>  <td>9.</td>  <td><input id="regex9" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
-	</table>
-      </span>
-
       <div id="sidebar">
 	<div class="half-sidebar">
 	  <div id="across-heading" class="direction-heading">
@@ -167,6 +126,50 @@
 	  <ul id="down-matches" class="matches"></ul>
 	</div>
 
+      <span class="regex-pattern-table" style="visibility: hidden">
+	<table>
+	  <th>
+	    <td> Regular expressions:<i class="fa fa-info-circle tooltip">
+		<div class="tooltiptext">
+		  <p class="tooltiptext-para">
+		    Define <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Cheatsheet">Regular Expression</a> patterns here and reference them in the grid by their corresponding digit.
+		    Each pattern should represent a single letter.
+		  <p class="tooltiptext-para">
+		    For instance, if the regular expression patterns are:
+		  <p class="tooltiptext-para">
+		    1: <code><b><font size=+2>[aeiou]</font></b></code><br>
+		    2: <code><b><font size=+2>\1</font></b></code><br>
+		    3: <code><b><font size=+2>\1(?=(k|t))</font></b></code></br>
+		    4: <code><b><font size=+2>[^sn]</font></b></code>
+		  <p class="tooltiptext-para">
+		    Then a grid word may be:<br>
+		    <br>
+
+		    <code><b><font size=+2>B12-</font></b></code>   ...suggest words that start with 'B' followed by two of the same vowels.<br>
+		    <br>
+
+		    <code><b><font size=+2>B13-</font></b></code>   ...suggest words that start with 'B' follow by two of the same vowels that precede either 'K' or 'T'.<br>
+		    <br>
+
+		    <code><b><font size=+2>-13L</font></b></code>   ...<b>no</b> suggestions! (since we'd need words that have two of the same vowels that precede either 'K' or 'T' <i>and</i> end with 'L').<br>
+		    <br>
+
+		    <code><b><font size=+2>---4</font></b></code>   ...suggest words that don't end in either 'S' or 'N'.
+		</div>
+	      </i>
+	    </td>	    
+	  </th>
+	  <tr>  <td>1.</td>  <td><input id="regex1" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>2.</td>  <td><input id="regex2" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>3.</td>  <td><input id="regex3" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>4.</td>  <td><input id="regex4" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>5.</td>  <td><input id="regex5" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>6.</td>  <td><input id="regex6" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>7.</td>  <td><input id="regex7" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>8.</td>  <td><input id="regex8" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	  <tr>  <td>9.</td>  <td><input id="regex9" class="regex-pattern" size="25" maxlength="60" type="text"></td>  </tr>
+	</table>
+      </span>
 
       </div>
 
