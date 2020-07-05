@@ -33,9 +33,9 @@ body {
     margin-left: 50px;
     grid-template-columns: auto auto;
 
-    position:absolute;                  
-    bottom:0;                          
-    left:0;                          
+    position:absolute;
+    bottom:0;
+    left:0;
 }
 
 h1 {
@@ -71,9 +71,9 @@ h1 {
     line-height: 11pt;
     clear: both;
 
-    position:absolute;                  
-    bottom:0;                          
-    right:0;                          
+    position:absolute;
+    bottom:0;
+    right:0;
     top: 0px;
 }
 
@@ -550,6 +550,9 @@ li.highly-recommended {
     background-color: pink;
 }
 
+.phil-version {
+    margin-right: 10px;
+}
 
 /* Tooltip container */
 .tooltip {
