@@ -901,8 +901,8 @@ function setClues() {
     let downClue = document.getElementById("down-clue-text").innerHTML;
     xw.clues[[current.row, current.acrossStartIndex, ACROSS]] = acrossClue;
     xw.clues[[current.downStartIndex, current.col, DOWN]] = downClue;
-    console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
-    console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
+    //console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
+    //console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
     isMutated = true;
     updateUI();
 }
