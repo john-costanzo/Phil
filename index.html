@@ -29,7 +29,7 @@
 	<button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onmouseup="setDefault(event)" onclick="writeFile('puz')">
           <i class="fa fa-download fa-fw" aria-hidden="true"></i>
 	</button>
-	<button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF()">
+	<button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('default')">
           <i class="fa fa-print fa-fw" aria-hidden="true"></i>
 	</button>
 	<button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('nyt')">
@@ -219,7 +219,7 @@
 	<li class="moderately-recommended">moderately recommended
 	  <div class="tooltip">
 	    <i class="fa fa-info-circle tooltip">
-	      <span class="tooltiptext">Words that match <i>all</i> suggestions in the opposite direction.</span>
+	      <span class="tooltiptext">Words that match suggestions in the opposite direction for all letters in the word.</span>
 	    </i>
 	  </div>
 	</li>

@@ -417,18 +417,19 @@ function printPDF(style) {
     }
     switch (style) {
     case "NYT":
-	layoutPDFGrid(doc, 117, 210, true); // filled
+	layoutPDFGrid(doc, 50, 210, true); // filled
 	doc.addPage();
-	layoutPDFGrid(doc, 117, 210); // unfilled
+	layoutPDFGrid(doc, 50, 210); // unfilled
 	doc.addPage();
 	layoutPDFClues(doc, style);
 	if (!layoutPDFInfo(doc, style)) {
             return;
 	}
 	break;
+    case "default":
     default:
 	layoutPDFGrid(doc, 50, 80);
-	layoutPDFClues(doc);
+	layoutPDFClues(doc, style, (xw.rows > 15 || xw.cols > 15));
 	layoutPDFInfo(doc);
 	break;
     }
@@ -551,7 +552,7 @@ function layoutPDFInfo(doc, style) {
     return 1;
 }
 
-function layoutPDFClues(doc, style) {
+function layoutPDFClues(doc, style, isLargeGrid) {
     const [acrossClues, downClues] = generatePDFClues();
 
     switch (style) {
@@ -580,6 +581,7 @@ function layoutPDFClues(doc, style) {
 			{ title: "", dataKey: "answer"}
                       ], downClues, clueFormat);
 	break;
+    case "default":
     default:
 	const format = {
             "font": "helvetica",
@@ -592,6 +594,14 @@ function layoutPDFClues(doc, style) {
             "marginLeft": 50,
             "marginRight": 0
 	};
+
+	// Adjustments if a large grid
+	if(isLargeGrid) {
+	    doc.addPage();
+            format.marginTop = [85, 85, 85, 85];
+	    format.labelWidth = 19;
+	}
+
 	doc.setFont(format.font);
 	doc.setFontSize(format.fontSize);
 	let currentColumn = 0;
@@ -600,6 +610,7 @@ function layoutPDFClues(doc, style) {
 	const acrossTitle = [{ "label": "ACROSS", "clue": " " }];
 	const downTitle = [{ "label": " ", "clue": " "}, {"label": "DOWN", "clue": " " }];
 	let allClues = acrossTitle.concat(acrossClues).concat(downTitle).concat(downClues);
+
 	for (let i = 0; i < allClues.length; i++) { // Position clue on page
             const clueText = doc.splitTextToSize(allClues[i].clue, format.clueWidth);
             let adjustY = clueText.length * (format.fontSize + 2);
