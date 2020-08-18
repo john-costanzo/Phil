@@ -476,7 +476,7 @@ function cellBlocked2( i, j ) {
 //
 // Another way a square is illegal is if it is part of a two-square run (that is blocked on either end).
 //
-// In this context, "blocked" means either a black square or off the grid.
+// In this context, "blocked" means either by a black square or off the grid.
 function checkGridLegality() {
     let illegalSquare = "illegal-square";
     for (let i = 0; i < xw.rows; i++) {
@@ -897,10 +897,14 @@ function updateSidebarHighlights() {
 }
 
 function setClues() {
-    xw.clues[[current.row, current.acrossStartIndex, ACROSS]] = document.getElementById("across-clue-text").innerHTML;
-    xw.clues[[current.downStartIndex, current.col, DOWN]] = document.getElementById("down-clue-text").innerHTML;
-    // console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
-    // console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
+    let acrossClue = document.getElementById("across-clue-text").innerHTML;
+    let downClue = document.getElementById("down-clue-text").innerHTML;
+    xw.clues[[current.row, current.acrossStartIndex, ACROSS]] = acrossClue;
+    xw.clues[[current.downStartIndex, current.col, DOWN]] = downClue;
+    console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
+    console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
+    isMutated = true;
+    updateUI();
 }
 
 function setTitle() {
