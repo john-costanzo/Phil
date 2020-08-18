@@ -531,15 +531,24 @@ function keyboardHandler(e) {
 	//alert( "currently at [" + current.row + ", " + current.col + "]  sym at [" + symRow + ", " + symCol + "]" );
 	const symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
-	const maxTime = 3000;
-	const stepTime = 1000;
+	const maxTime = 2500;
+	const stepTime = 500;
 	const highlightSym = "highlight-symmetric";
 	const lowlightSym = "lowlight-symmetric";
 	
+	// Make the symmetric cell "blink"
 	for( var i = 0; i < maxTime; i+=stepTime ) {
 	    setTimeout(function() { symCell.classList.remove(lowlightSym); symCell.classList.add(highlightSym); }, i );
 	    setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.add(lowlightSym); }, i+(stepTime/2) );
 	}
+
+	// Make the symmetric cell active
+	activeCell.classList.remove("active");
+	current.row = symRow;
+	current.col = symCol;
+	symCell.classList.add("active");
+
+	// Clear the symmetric cell
 	setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.remove(lowlightSym); }, maxTime );
 	isMutated = false;
     }
