@@ -399,7 +399,7 @@ function cellBlocked1( i, j ) {
     } else {
 	blocked.south = ( xw.fill[i+1][j] == BLACK );
     }
-    
+
     if( j-1 < 0 ) {
 	blocked.west = true;
     } else {
@@ -443,7 +443,7 @@ function cellBlocked2( i, j ) {
     } else {
 	blocked2.south = ( xw.fill[i+2][j] == BLACK );
     }
-    
+
     if( j-2 < 0 ) {
 	blocked2.west = true;
     } else {
@@ -457,7 +457,7 @@ function cellBlocked2( i, j ) {
 
     // console.log( "cellBlocked2: square[" + i + ", " + j + "] = " + blocked2.north + blocked2.south + blocked2.east + blocked2.west );
 
-    if( 
+    if(
 	((blocked1.north && blocked2.south) ||
 	 (blocked2.north && blocked1.south) ||
 	 (blocked1.east && blocked2.west ) ||
@@ -505,7 +505,7 @@ function keyboardHandler(e) {
 	toggleUsageAssistance();
 	return;
     }
-    
+
     if ( (e.ctrlKey || e.metaKey) && e.which === keyboard.z ) {
 	undo();
 	return;
@@ -538,7 +538,7 @@ function keyboardHandler(e) {
 	const stepTime = 500;
 	const highlightSym = "highlight-symmetric";
 	const lowlightSym = "lowlight-symmetric";
-	
+
 	// Make the symmetric cell "blink"
 	for( var i = 0; i < maxTime; i+=stepTime ) {
 	    setTimeout(function() { symCell.classList.remove(lowlightSym); symCell.classList.add(highlightSym); }, i );
@@ -928,7 +928,7 @@ function suppressEnterKey(e) {
 
 function generatePattern( size=15 ) {
     saveStateForUndo( "generate a " + size + "x" + size + " layout" );
-    if( patterns[ size ] ) { 
+    if( patterns[ size ] ) {
 	console.log("Generating a " + size + "x" + size + " layout...");
 	let title = xw.title;
 	let author = xw.author;
@@ -955,7 +955,7 @@ function generatePattern( size=15 ) {
 	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
 	console.log( errorMessage );
 	let error = new Notification( errorMessage, 10 );
-    }	
+    }
 }
 
 
@@ -971,7 +971,7 @@ function toggleUseRegexPatterns() {
 	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "visible";
     } else {
 	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "hidden";
-    }	
+    }
 }
 
 
