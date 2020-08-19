@@ -317,6 +317,7 @@ undoImmuneIds.forEach(
 	});
     }
 );
+// Ok. This is a hack. But it seems to work.
 
 //____________________
 // F U N C T I O N S
@@ -511,8 +512,10 @@ function keyboardHandler(e) {
     }
 
     if ((e.which >= keyboard.a && e.which <= keyboard.z) || (e.which >= keyboard.d1 && e.which <= keyboard.d9) || e.which == keyboard.space) {
+	let key = String.fromCharCode(e.which);
+	saveStateForUndo( "typing a  " + key );
 	let oldContent = xw.fill[current.row][current.col];
-	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
+	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + key + xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
 	    if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
@@ -899,6 +902,7 @@ function updateSidebarHighlights() {
 function setClues() {
     let acrossClue = document.getElementById("across-clue-text").innerHTML;
     let downClue = document.getElementById("down-clue-text").innerHTML;
+    saveStateForUndo( "set clue to " + acrossClue + "/" + downClue );
     xw.clues[[current.row, current.acrossStartIndex, ACROSS]] = acrossClue;
     xw.clues[[current.downStartIndex, current.col, DOWN]] = downClue;
     //console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
@@ -923,6 +927,7 @@ function suppressEnterKey(e) {
 }
 
 function generatePattern( size=15 ) {
+    saveStateForUndo( "generate a " + size + "x" + size + " layout" );
     if( patterns[ size ] ) { 
 	console.log("Generating a " + size + "x" + size + " layout...");
 	let title = xw.title;

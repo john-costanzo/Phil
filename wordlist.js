@@ -463,6 +463,9 @@ function undo() {
 
 	let undoContext = undoStack.pop();
 	saveStateForRedo( undoContext.label );
+	if( xw.rows != undoContext.xw.rows || xw.cols != undoContext.xw.cols ) { // puzzle has changed size; reconstruct it
+	    createNewPuzzle( undoContext.xw.rows, undoContext.xw.cols );
+	}
 	xw = undoContext.xw;
 	current = undoContext.current;
 
