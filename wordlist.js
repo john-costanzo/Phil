@@ -17,12 +17,7 @@ var traceWordListSuggestions = false;
 var traceWordListSuggestionsVerbose = false;
 let noFurtherUndo = "No further undo information available";
 let noFurtherRedo = "No further redo information available";
-
-let wordlist = [
-    [], [], [], [], [],
-    [], [], [], [], [],
-    [], [], [], [], [], []
-];
+let maxGridSize = 21;
 
 openDefaultWordlist("WL-MirriamWebster9thCollegiate-SP.txt")
 //openDefaultWordlist("https://raw.githubusercontent.com/keiranking/Phil/master/WL-SP.txt");
@@ -70,13 +65,16 @@ function openWordlist() {
     document.getElementById("open-wordlist-input").click();
 }
 
-function openWordlistFile(e) {
-    wordlist = [
-	[], [], [], [], [],
-	[], [], [], [], [],
-	[], [], [], [], [], []
-    ];
+function intializeWordlist( n ) {
+    // Initial the wordlist structure to contain N+1 arrays
+    wordlist = []
+    for( i=0; i<=n; i++ ) {
+	wordlist.push( [] );
+    }
+}
 
+function openWordlistFile(e) {
+    intializeWordlist( maxGridSize );
     const file = e.target.files[0];
     if (!file) {
 	return;
@@ -93,6 +91,7 @@ function openWordlistFile(e) {
 }
 
 function openDefaultWordlist(url) {
+    intializeWordlist( maxGridSize );
     let textFile = new XMLHttpRequest();
     textFile.open("GET", url, true);
     textFile.onreadystatechange = function() {
@@ -100,7 +99,7 @@ function openDefaultWordlist(url) {
 	    const words = textFile.responseText.split(/\s/g);
 	    addToWordlist(words);
 	    sortWordlist();
-	    console.log("Loaded " + wordlist.length + " words from the default wordlist.")
+	    console.log("Loaded words up to length " + wordlist.length + " from the default wordlist.")
 	}
     }
     textFile.send(null);
@@ -199,7 +198,7 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
     // For the given DOCUMENT, add clues for PRIMARYMATCHES considering their relation to SECONDARYMATCHES
     // given that we are looking at character position PRIMARYPOS of the primary word and CURRENT-start for the secondary word.
     // Add the clues to MATCHLIST.
-    
+
     // Annotate those clues as "recommended" if they are harmonious with at least one otherWayMatch.
     // Annotate those clues as "moderately-recommended" if they are harmonious with *all* secondaryMatches.
 
@@ -526,7 +525,7 @@ function saveStateForUndo( label ) {
     undoContext.label = label;
     undoStack.push( undoContext );
     setUndoButton( "on", "Undo latest grid change for \"" + label + "\"" );
-}    
+}
 
 function saveStateForRedo( label ) {
     // Take a snapshot of the current state and push it onto the (global) redoStack
@@ -536,13 +535,13 @@ function saveStateForRedo( label ) {
     redoContext.label = label;
     redoStack.push( redoContext );
     setRedoButton( "on", "Redo latest grid change for \"" + label + "\"" );
-}    
+}
 
 function emptyRedoState(  ) {
     // Empty the (global) redoStack and set an appropriate tooltip.
     redoStack = [];
     setRedoButton( "off", noFurtherRedo );
-}    
+}
 
 function fillGridWithMatch(e) {
     const li = e.currentTarget;
@@ -551,7 +550,7 @@ function fillGridWithMatch(e) {
 
     saveStateForUndo( fill );
     emptyRedoState();
-    
+
     if (dir == ACROSS) {
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.acrossStartIndex) + fill + xw.fill[current.row].slice(current.acrossEndIndex);
 	for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
