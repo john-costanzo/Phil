@@ -576,6 +576,7 @@ function keyboardHandler(e) {
     if (e.which == keyboard.delete) {
 	e.preventDefault();
 	let oldContent = xw.fill[current.row][current.col];
+	saveStateForUndo( "deleting a  " + oldContent );
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
             if (isSymmetrical) {

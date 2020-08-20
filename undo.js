@@ -75,6 +75,7 @@ function undo() {
 
 	grid.focus();
     }
+    logUndoStatus();
 }
 
 function redo() {
@@ -108,6 +109,10 @@ function redo() {
     }
 }
 
+function logUndoStatus() {
+    console.log( "saveStateForUndo: undoStack has " + undoStack.length + " entr" + (undoStack.length==1 ? "y" : "ies") + "; redoStack has " + redoStack.length + " entr" + (redoStack.length==1 ? "y" : "ies") + "." );
+}
+
 function saveStateForUndo( label ) {
     // Take a snapshot of the current state and push it onto the (global) undoStack
     let undoContext = {};
@@ -116,6 +121,7 @@ function saveStateForUndo( label ) {
     undoContext.label = label;
     undoStack.push( undoContext );
     setUndoButton( "on", "Undo latest grid change for \"" + label + "\"" );
+    logUndoStatus();
 }
 
 function saveStateForRedo( label ) {
