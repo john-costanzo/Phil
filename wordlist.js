@@ -145,6 +145,11 @@ function matchFromWordlist(word) {
     const l = word.length;
     const actualLettersInWord = word.replace(/-/g, "").length;
     const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
+    let soe = document.getElementById( "suggest-on-empty" ).checked;
+    if( soe && actualLettersInWord == 0 ) {
+	return( wordlist[ l ] );
+    }
+
     if( (actualLettersInWord >= 1 && actualLettersInWord < l) || wordContainsDigit ) { // Only search if word isn't completely blank or filled... or contains a digit
 	if( useRegexPatterns ) word = replaceRegex( word );
 	word = word.split(DASH).join("\\w");
@@ -166,23 +171,23 @@ function wordIsHarmonious( word, pos1, words, pos2, cache ) {
     // at least one word in WORDS at letter position POS2.
     // CACHE is a set of previously determined harmonious letters for the letter at POS1 in WORD.
 
-    if( traceWordListSuggestions ) console.log( "wordIsHarmonious(word=" + word + ", pos1=" + pos1 + ", words="+words + ", pos2=" + pos2 + ")");
+    //if( traceWordListSuggestions ) console.log( "wordIsHarmonious(word=" + word + ", pos1=" + pos1 + ", words="+words + ", pos2=" + pos2 + ")");
     if( words === undefined ) return( false );
-    letter = word.substring( pos1, pos1+1 ).toLowerCase();
-    if( traceWordListSuggestions ) console.log( "letter = '" + letter + "'" );
+    letter = word.substring( pos1, pos1+1 ).toUpperCase();
+    //if( traceWordListSuggestions ) console.log( "letter = '" + letter + "'" );
     if( cache.has(letter) ) {
-	if( traceWordListSuggestions ) console.log( "word '" + word + "' is harmonious (cached)" );
+	//if( traceWordListSuggestions ) console.log( "word '" + word + "' is harmonious (cached)" );
 	return( true );
     } else {
 	for( i = 0; i < words.length; i++ ) {
-	    if( traceWordListSuggestionsVerbose ) console.log( "wordIsHarmonious: checking " + word + " vs. " + words[i] + " on letter '" + words[ i ].substring( pos2, pos2+1 ).toLowerCase() + "'" );
-	    if( letter == words[ i ].substring( pos2, pos2+1 ).toLowerCase() ) {
+	    //if( traceWordListSuggestionsVerbose ) console.log( "wordIsHarmonious: checking " + word + " vs. " + words[i] + " on letter '" + words[ i ].substring( pos2, pos2+1 ).toLowerCase() + "'" );
+	    if( letter == words[ i ].substring( pos2, pos2+1 ) ) {
 		cache.add( letter );
-		if( traceWordListSuggestions ) console.log( "word '" + word + "' is harmonious" );
+		//if( traceWordListSuggestions ) console.log( "word '" + word + "' is harmonious" );
 		return( true );
 	    }
 	}
-	if( traceWordListSuggestions ) console.log( "word '" + word + "' is NOT harmonious" );
+	//if( traceWordListSuggestions ) console.log( "word '" + word + "' is NOT harmonious" );
 	return( false );
     }
 }
@@ -203,15 +208,15 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
     // If showOnlyRecommendations, then only add moderately-recommended clues. Unless there aren't any,
     // in which case add them all.
 
-    if( traceWordListSuggestions ) console.log( "primaryMatches=" + primaryMatches);
-    if( traceWordListSuggestions ) console.log( "secondaryMatches=" + secondaryMatches);
-    if( traceWordListSuggestions ) console.log( "primaryPos=" + primaryPos + ", current=" + current );
+    //if( traceWordListSuggestions ) console.log( "primaryMatches=" + primaryMatches);
+    //if( traceWordListSuggestions ) console.log( "secondaryMatches=" + secondaryMatches);
+    //if( traceWordListSuggestions ) console.log( "primaryPos=" + primaryPos + ", current=" + current );
 
     let matchesDisplayed = 0;
     let runnersUp = [];  // The list of suggestions we'll make if we are asked to showOnlyRecommendations and there are none
 
     for( let p in primaryMatches ) {
-	if( traceWordListSuggestions ) console.log( "\t\t[" + p + "]=" + primaryMatches[p] );
+	//if( traceWordListSuggestions ) console.log( "\t\t[" + p + "]=" + primaryMatches[p] );
 	let primary = primaryMatches[p];
 	if( primary !== undefined ) {
 	    let li = document.createElement("LI");
@@ -236,19 +241,19 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
 		    let secondaryWord = secondaryMatches[index][0];
 		    let secondaryStart = secondaryMatches[index][1];
 		    let secondaryEnd = secondaryMatches[index][2];
-		    if( traceWordListSuggestions ) console.log( "checking secondaryMatches='"+ secondaryWord +"' [" + secondaryStart + "," + secondaryEnd + "]; index=" + index );
+		    //if( traceWordListSuggestions ) console.log( "checking secondaryMatches='"+ secondaryWord +"' [" + secondaryStart + "," + secondaryEnd + "]; index=" + index );
 		    if( !wordIsHarmonious( primary, index, secondaryWord, current-secondaryStart, cache ) ) {
-			if( traceWordListSuggestions ) console.log( "failed HARMONIOUSNESS_CHECK")
+			//if( traceWordListSuggestions ) console.log( "failed HARMONIOUSNESS_CHECK")
 		    } else {
 			nHarmonious++;
 			if( index == primaryPos ) {
-			    if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
+			    //if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
 			    harmoniousAtIntersection = true;
 			}
 		    }
 		}
 	    }
-	    if( traceWordListSuggestions ) console.log( "nHarmonious=" + nHarmonious + "; secondaryMatches.length=" + secondaryMatches.length );
+	    //if( traceWordListSuggestions ) console.log( "nHarmonious=" + nHarmonious + "; secondaryMatches.length=" + secondaryMatches.length );
 	    if( nHarmonious == secondaryMatches.length ) {
 		li.setAttribute("class", "moderately-recommended");
 	    } else {
@@ -284,14 +289,14 @@ function extractLetters( arr, pos ) {
     let setContents = "";
     let sep = "";
     for( s of set.values() ) { setContents +=  sep + s; sep = ", ";  }
-    if( traceWordListSuggestions ) console.log( "extractLetters returning [" + setContents + "]" );
+    //if( traceWordListSuggestions ) console.log( "extractLetters returning [" + setContents + "]" );
     return( set );
 }
 
 function promoteSuggestions( candidates, class1, pos, set, class2 ) {
     // For each element in an array of CANDIDATES that is in the class CLASS1,
     // determine the letter at position POS. If that letter appears in SET, add the class CLASS2.
-    if( traceWordListSuggestions ) console.log( "promoteSuggestions: candidates=" + candidates + ", class1=" + class1 + ", pos=" + pos + ", class2=" + class2 );
+    //if( traceWordListSuggestions ) console.log( "promoteSuggestions: candidates=" + candidates + ", class1=" + class1 + ", pos=" + pos + ", class2=" + class2 );
     let descendents = candidates.getElementsByTagName( 'li' );
     for (let i = 0; i < descendents.length; ++i ) {
 	let li = descendents[ i ];
@@ -299,7 +304,7 @@ function promoteSuggestions( candidates, class1, pos, set, class2 ) {
 	let hasClass1 = li.classList.contains( class1 );
 	let letterInSet = set.has( letter );
 	if( hasClass1 && set.has( letter ) ) {
-	    if( traceWordListSuggestions ) console.log( "promoteSuggestions: promoting \"" + li.textContent + "\"" );
+	    //if( traceWordListSuggestions ) console.log( "promoteSuggestions: promoting \"" + li.textContent + "\"" );
 	    li.setAttribute("class", class2);
 	}
     }
@@ -348,26 +353,26 @@ function updateMatchesUI() {
     let downMatchList = document.getElementById("down-matches");
     acrossMatchList.innerHTML = "";
     downMatchList.innerHTML = "";
-    if( traceWordListSuggestions ) console.log( "showOnlyRecommendations=" + showOnlyRecommendations );
+    //if( traceWordListSuggestions ) console.log( "showOnlyRecommendations=" + showOnlyRecommendations );
     let downWords = [];
     let acrossWords = [];
 
-    if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on ACROSS direction" );
-    if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.acrossStartIndex=" + current.acrossStartIndex + " current.acrossEndIndex=" + current.acrossEndIndex );
+    //if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on ACROSS direction" );
+    //if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.acrossStartIndex=" + current.acrossStartIndex + " current.acrossEndIndex=" + current.acrossEndIndex );
     for( let i = current.acrossStartIndex; i< current.acrossEndIndex; i++ ) {
 	let wordInfo = getWordAndIndicesAt(current.row, i, DOWN, false);
-	if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
+	//if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
 	downWords.push( wordInfo );
-	if( traceWordListSuggestions ) console.log( "updateMatchesUI: pushing \"" + wordInfo[0] + "\"" );
+	//if( traceWordListSuggestions ) console.log( "updateMatchesUI: pushing \"" + wordInfo[0] + "\"" );
     }
 
-    if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on DOWN direction" );
-    if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.downStartIndex=" + current.downStartIndex + " current.downEndIndex=" + current.downEndIndex );
+    //if( traceWordListSuggestions ) console.log( "updateMatchesUI: working on DOWN direction" );
+    //if( traceWordListSuggestions ) console.log( "updateMatchesUI: current.downStartIndex=" + current.downStartIndex + " current.downEndIndex=" + current.downEndIndex );
     for( let i = current.downStartIndex; i< current.downEndIndex; i++ ) {
 	let wordInfo = getWordAndIndicesAt(i, current.col, ACROSS, false);
-	if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
+	//if( traceWordListSuggestions ) { console.log( "word = " + wordInfo[0] + " [" + wordInfo[1] + ", " + wordInfo[2] + "]" ); }
 	acrossWords.push( wordInfo );
-	if( traceWordListSuggestions ) console.log( "updateMatchesUI: pushing \"" + wordInfo[0] + "\"" );
+	//if( traceWordListSuggestions ) console.log( "updateMatchesUI: pushing \"" + wordInfo[0] + "\"" );
     }
 
     let acrossMatches = [];
@@ -376,11 +381,11 @@ function updateMatchesUI() {
     for( let w of acrossWords ) {
 	const actualLettersInWord = w[0].replace(/-/g, "").length;
 	if( actualLettersInWord == w[0].length ) {
-	    if( traceWordListSuggestions ) console.log( "pushing <undefined> onto acrossMatches" );
+	    //if( traceWordListSuggestions ) console.log( "pushing <undefined> onto acrossMatches" );
 	    acrossMatches.push( undefined );
 	} else {
 	    var words = matchFromWordlist( w[0] );
-	    if( traceWordListSuggestions ) console.log( "pushing " + words + " onto acrossMatches" );
+	    //if( traceWordListSuggestions ) console.log( "pushing " + words + " onto acrossMatches" );
 	    acrossMatches.push( [words, w[1], w[2]] );
 	}
     }
@@ -388,20 +393,20 @@ function updateMatchesUI() {
     for( let w of downWords ) {
 	const actualLettersInWord = w[0].replace(/-/g, "").length;
 	if( actualLettersInWord == w[0].length )  {
-	    if( traceWordListSuggestions ) console.log( "pushing <undefined> onto downMatches" );
+	    //if( traceWordListSuggestions ) console.log( "pushing <undefined> onto downMatches" );
 	    downMatches.push( undefined );
 	} else {
 	    var words = matchFromWordlist( w[0] );
-	    if( traceWordListSuggestions ) console.log( "pushing " + words + " onto downMatches" );
+	    //if( traceWordListSuggestions ) console.log( "pushing " + words + " onto downMatches" );
 	    downMatches.push( [words, w[1], w[2]] );
 	}
     }
     let hpos = current.col - current.acrossStartIndex;
     let vpos = current.row - current.downStartIndex;
 
-    if( traceWordListSuggestions ) console.log("Checking acrossMatches...");
+    //if( traceWordListSuggestions ) console.log("Checking acrossMatches...");
     checkHarmoniousness( document, matchFromWordlist( current.acrossWord ) , downMatches, hpos, current.row, acrossMatchList );
-    if( traceWordListSuggestions ) console.log("Checking downMatches...");
+    //if( traceWordListSuggestions ) console.log("Checking downMatches...");
     checkHarmoniousness( document, matchFromWordlist( current.downWord ) , acrossMatches, vpos, current.col, downMatchList );
 
     // At this point, acrossMatchList and downMatchList contain HTML of suggestions. They are annotated with one of:
@@ -410,11 +415,11 @@ function updateMatchesUI() {
     //    no class (otherwise)
     // But some of these "moderately-recommended" entries may actually be harmonious with all "moderately-recommended" words.
     // Examine all "moderately-recommended" entries and mark them "highly-recommended" if they are harmonious
-    if( traceWordListSuggestions ) console.log( "look at acrossMatchList and downMatchList..." );
+    //if( traceWordListSuggestions ) console.log( "look at acrossMatchList and downMatchList..." );
     let am = document.getElementById("across-matches").querySelectorAll(".moderately-recommended");
     let dm = document.getElementById("down-matches").querySelectorAll(".moderately-recommended");
-    if( traceWordListSuggestions ) console.log( "across-matches=" + am );
-    if( traceWordListSuggestions ) console.log( "down-matches=" + dm );
+    //if( traceWordListSuggestions ) console.log( "across-matches=" + am );
+    //if( traceWordListSuggestions ) console.log( "down-matches=" + dm );
     let acrossModeratelyRecommendedLetters = extractLetters( am, hpos );
     let downModeratelyRecommendedLetters = extractLetters( dm, vpos );
     promoteSuggestions( document.getElementById("across-matches"), "moderately-recommended", hpos, downModeratelyRecommendedLetters, "highly-recommended" );
