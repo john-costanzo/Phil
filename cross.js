@@ -551,7 +551,7 @@ function keyboardHandler(e) {
 	current.col = symCol;
 	symCell.classList.add("active");
 
-	// Clear the symmetric cell
+	// Then clear the symmetric cell
 	setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.remove(lowlightSym); }, maxTime );
 	isMutated = false;
     }
