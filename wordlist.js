@@ -192,6 +192,45 @@ function wordIsHarmonious( word, pos1, words, pos2, cache ) {
     }
 }
 
+function openWindowInBackground( url, target="", left, top, width=500, height=500 ) {
+    // Open a new window, pointing to URL with TARGET.
+    // Position it offset from the LEFT, TOP with WIDth and HEIGHT.
+    w = window.open( url, target, "width=" + width + ", height=" + height + ", left=" + left + ", top=" + top );
+    w.blur();
+    w.opener.focus();
+    window.focus();
+}
+
+function displayDefintion( e ) {
+    // Research the definition of the word that is currently highlighted but only if research-clues is checked.
+    if( document.getElementById( "research-clues" ).checked ) {
+	const li = e.currentTarget;
+	const candidate = li.innerHTML;
+	console.log( "displayDefintion: '" + candidate + "'..." );
+
+	var leftOffset = 400;
+	var topOffset = 0;
+	var offset = 50;
+
+	openWindowInBackground( "http://crosswordtracker.com/answer/"+ candidate + "/?search_redirect=True", "crosswordtracker", 0, 0, 500, 1000 );
+
+	if( document.getElementById( "extra-research-clues" ).checked ) {
+	    openWindowInBackground( "https://www.merriam-webster.com/dictionary/" + candidate, "merriam-webster", leftOffset, topOffset, 500 );
+
+	    leftOffset += offset;
+	    topOffset += (25+offset);
+	    openWindowInBackground( "https://translate.google.com/?source=osdd#auto|auto|" + candidate, "google-translate", leftOffset, topOffset );
+
+	    leftOffset += offset;
+	    topOffset += offset;
+	    openWindowInBackground( "https://www.google.com/search?q=define+" + candidate, "google-define", leftOffset, topOffset );
+
+	}
+	li.focus();
+	console.log( "displayDefintion: '" + candidate + "'...finished" );
+    }
+}
+
 function checkHarmoniousness( document, primaryMatches, secondaryMatches, primaryPos, current, matchList ) {
     // PRIMARYMATCHES contains an array suggestions that match the puzzle in one direction.
     // SECONDARYMATCHES contains suggestions that match the puzzle in the other direction.
@@ -223,7 +262,7 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
 	    li.innerHTML = primary.toLowerCase();
 	    li.className = "";
 	    // li.addEventListener('click', printScore);
-	    // li.addEventListener('mouseover', displayDefintion);   // perhaps one day...
+	    li.addEventListener('mouseover', displayDefintion);   // TODO: perhaps one day...
 	    li.addEventListener('dblclick', fillGridWithMatch);
 	    let nHarmonious = 0;
 	    let harmoniousAtIntersection = false;

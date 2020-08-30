@@ -301,7 +301,6 @@ let undoStack = [];
 let redoStack = [];
 current.update();
 
-
 // Ignore undo in many of the major UI elements
 
 // Identifiers of DOM elements that ought to be immune from processing undo().
@@ -415,7 +414,6 @@ function cellBlocked1( i, j ) {
 
     return( blocked );
 }
-
 
 // Determine whether the the square is immediately blocked by OR
 // if it is part of a run of 2 squares that include (I, J) that is blocked to the North, East, South or West.
@@ -959,7 +957,6 @@ function generatePattern( size=15 ) {
     }
 }
 
-
 function toggleUseRegexPatterns() {
     useRegexPatterns = !useRegexPatterns;
     // Update UI button
@@ -974,7 +971,6 @@ function toggleUseRegexPatterns() {
 	document.getElementsByClassName("regex-pattern-table")[0].style.visibility = "hidden";
     }
 }
-
 
 function toggleSymmetry() {
     isSymmetrical = !isSymmetrical;

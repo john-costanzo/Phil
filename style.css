@@ -87,7 +87,6 @@ h1 {
     color: var(--dk-grey);
 }
 
-
 #grid {
     border: 2px solid var(--black);
     border-collapse: collapse;
@@ -332,7 +331,6 @@ kbd {
     position: absolute;
 }
 
-
 .regex-pattern-table {
     width: 360px;
     color: var(--med-grey);
@@ -474,6 +472,7 @@ kbd {
     font-size: 12pt;
     font-weight: 600;
     letter-spacing: -0.03em;
+    overflow: visible;
 }
 
 .clue-number {
@@ -608,5 +607,5 @@ li.highly-recommended {
 }
 
 .tooltiptext-para a {
-  color: lightblue;
+    color: lightblue;
 }
