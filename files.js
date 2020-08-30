@@ -632,6 +632,49 @@ function layoutPDFClues(doc, style, isLargeGrid) {
     }
 }
 
+
+function saveTextAsFile( textToWrite, filename ) {
+    // Download TEXTTOWRITE to FILENAME.
+    // Inspired by https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
+
+    var textFileAsBlob = new Blob( [textToWrite], {type:'text/plain'} );
+
+    var downloadLink = document.createElement( "a" );
+    downloadLink.download = filename;
+    downloadLink.innerHTML = "Download File";
+    if (window.webkitURL != null) {
+        // Chrome allows the link to be clicked without actually adding it to the DOM.
+        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    } else {
+        // Firefox requires the link to be added to the DOM before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+    downloadLink.click();
+}
+
+function saveAnswers1( clues, filename ) {
+    // Save contents of CLUES array to FILENAME.
+    let text = "";
+    for( let i=0; i<clues.length; i++ ) {
+	text += clues[i].label + "\t" + clues[i].answer + "\t" + clues[i].clue + "\n";
+    }
+    saveTextAsFile( text, filename );
+}
+    
+function saveAnswers() {
+    // Print all answers to two files.
+    // Format is:
+    //     - Answers are represented one per line, clue number <tab> answer <tab> clue
+    //     - across.idx contains all across answers.
+    //     - down.idx contains all down answers.
+    const [acrossClues, downClues] = generatePDFClues();
+    saveAnswers1( acrossClues, "across.idx" );
+    saveAnswers1( downClues, "down.idx" );
+}
+
 let openPuzzleInput = document.getElementById('open-puzzle-input');
 let openWordlistInput = document.getElementById('open-wordlist-input');
 openPuzzleInput.addEventListener('change', openFile, false);
