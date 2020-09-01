@@ -410,26 +410,41 @@ function convertPuzzleToJSON() {
     return puz;
 }
 
+function solicitAuthorDetails() {
+    // Ask for email and mailing address.
+    // Return null if none, else a two-element array with email and address.
+    let email = prompt("NYT submissions require an email address. \nLeave blank to omit.");
+    if (email == null) {
+        return null;
+    }
+    let address = prompt("NYT submissions also require a mailing address. \nLeave blank to omit.");
+    if (address == null) {
+        return null;
+    }
+    return( [ email, address ] );
+}
+
 function printPDF(style) {
     let doc = new jsPDF('p', 'pt');
     if (style) {
 	style = style.toUpperCase();
     }
+    let isLargeGrid = (xw.rows > 15 || xw.cols > 15);
     switch (style) {
     case "NYT":
+	let details = solicitAuthorDetails();
+	if( !details ) return;
 	layoutPDFGrid(doc, 50, 210, true); // filled
 	doc.addPage();
 	layoutPDFGrid(doc, 50, 210); // unfilled
 	doc.addPage();
-	layoutPDFClues(doc, style);
-	if (!layoutPDFInfo(doc, style)) {
-            return;
-	}
+	layoutPDFClues(doc, style, isLargeGrid);
+	layoutPDFInfo(doc, style, details[0], details[1] );
 	break;
     case "default":
     default:
 	layoutPDFGrid(doc, 50, 80);
-	layoutPDFClues(doc, style, (xw.rows > 15 || xw.cols > 15));
+	layoutPDFClues(doc, style, isLargeGrid);
 	layoutPDFInfo(doc);
 	break;
     }
@@ -518,18 +533,10 @@ function layoutPDFGrid(doc, x, y, isFilled) {
     }
 }
 
-function layoutPDFInfo(doc, style) {
+function layoutPDFInfo(doc, style, email, address) {
     doc.setFont("helvetica");
     switch (style) {
     case "NYT":
-	let email = prompt("NYT submissions require an email address. \nLeave blank to omit.");
-	if (email == null) {
-            return null;
-	}
-	let address = prompt("NYT submissions also require a mailing address. \nLeave blank to omit.");
-	if (address == null) {
-            return null;
-	}
 	doc.setFontSize(9);
 	for (let i = 1; i <= 5; i++) {
             doc.setPage(i);
@@ -597,6 +604,7 @@ function layoutPDFClues(doc, style, isLargeGrid) {
 
 	// Adjustments if a large grid
 	if(isLargeGrid) {
+	    layoutPDFInfo(doc);
 	    doc.addPage();
             format.marginTop = [85, 85, 85, 85];
 	    format.labelWidth = 19;
