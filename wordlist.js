@@ -195,10 +195,11 @@ function wordIsHarmonious( word, pos1, words, pos2, cache ) {
 function openWindowInBackground( url, target="", left, top, width=500, height=500 ) {
     // Open a new window, pointing to URL with TARGET.
     // Position it offset from the LEFT, TOP with WIDth and HEIGHT.
-    w = window.open( url, target, "width=" + width + ", height=" + height + ", left=" + left + ", top=" + top );
-    w.blur();
-    w.opener.focus();
-    window.focus();
+    makePopunder( url, target, width, height, left, top );
+    // w = window.open( url, target, "width=" + width + ", height=" + height + ", left=" + left + ", top=" + top );
+    // w.blur();
+    // w.opener.focus();
+    // window.focus();
 }
 
 function displayDefintion( e ) {
@@ -210,21 +211,21 @@ function displayDefintion( e ) {
 
 	var leftOffset = 400;
 	var topOffset = 0;
-	var offset = 50;
+	var hincr = 50;
+	var vincr = 250;
 
-	openWindowInBackground( "http://crosswordtracker.com/answer/"+ candidate + "/?search_redirect=True", "crosswordtracker", 0, 0, 500, 1000 );
+	openWindowInBackground( "http://crosswordtracker.com/answer/"+ candidate + "/?search_redirect=True", "crossword-tracker", 1, 1, 500, 1000 );
 
 	if( document.getElementById( "extra-research-clues" ).checked ) {
 	    openWindowInBackground( "https://www.merriam-webster.com/dictionary/" + candidate, "merriam-webster", leftOffset, topOffset, 500 );
 
-	    leftOffset += offset;
-	    topOffset += (25+offset);
+	    leftOffset += hincr;
+	    topOffset += vincr;
 	    openWindowInBackground( "https://translate.google.com/?source=osdd#auto|auto|" + candidate, "google-translate", leftOffset, topOffset );
 
-	    leftOffset += offset;
-	    topOffset += offset;
+	    leftOffset += hincr;
+	    topOffset += vincr;
 	    openWindowInBackground( "https://www.google.com/search?q=define+" + candidate, "google-define", leftOffset, topOffset );
-
 	}
 	li.focus();
 	console.log( "displayDefintion: '" + candidate + "'...finished" );
