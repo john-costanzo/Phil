@@ -107,12 +107,20 @@ function redo() {
 	const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 	currentCell.classList.add("active");
 
+	// Scroll to where the clue boxes had been
+	let am = document.getElementById( "across-matches" );
+	let dm = document.getElementById( "down-matches" );
+	am.scrollTop = redoContext.acrossMatchesScrollTop;
+	dm.scrollTop = redoContext.downMatchesScrollTop;
+
 	grid.focus();
     }
+    logUndoStatus();
 }
 
 function logUndoStatus() {
-    console.log( "saveStateForUndo: undoStack has " + undoStack.length + " entr" + (undoStack.length==1 ? "y" : "ies") + "; redoStack has " + redoStack.length + " entr" + (redoStack.length==1 ? "y" : "ies") + "." );
+    console.log( "saveStateForUndo: undoStack has " + undoStack.length + " entr" + (undoStack.length==1 ? "y" : "ies") +
+		 "; redoStack has " + redoStack.length + " entr" + (redoStack.length==1 ? "y" : "ies") + "." );
 }
 
 function saveStateForUndo( label ) {
@@ -121,6 +129,14 @@ function saveStateForUndo( label ) {
     undoContext.xw = cloneObject( xw );
     undoContext.current = cloneObject( current );
     undoContext.label = label;
+
+    // Save scroll position of clue boxes
+    let am = document.getElementById( "across-matches" );
+    let dm = document.getElementById( "down-matches" );
+
+    undoContext.acrossMatchesScrollTop = am.scrollTop;
+    undoContext.downMatchesScrollTop = dm.scrollTop;
+
     undoStack.push( undoContext );
     setUndoButton( "on", "Undo latest grid change for \"" + label + "\"" );
     logUndoStatus();
@@ -132,6 +148,13 @@ function saveStateForRedo( label ) {
     redoContext.xw = cloneObject( xw );
     redoContext.current = cloneObject( current );
     redoContext.label = label;
+
+    // Save scroll position of clue boxes
+    let am = document.getElementById( "across-matches" );
+    let dm = document.getElementById( "down-matches" );
+    redoContext.acrossMatchesScrollTop = am.scrollTop;
+    redoContext.downMatchesScrollTop = dm.scrollTop;
+
     redoStack.push( redoContext );
     setRedoButton( "on", "Redo latest grid change for \"" + label + "\"" );
 }
