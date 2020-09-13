@@ -17,11 +17,9 @@ let noFurtherRedo = "No further redo information available";
 
 function setUndoButton( state, tooltip ) {
     // Set Undo button's state to STATE
-    console.log( "setUndoButton: setting state = " + state + ", tooltip=\"" + tooltip + "\"" );
     let undoButton = document.getElementById("undo");
 
     if( undoButton.getAttribute( "data-state" ) != state ) {
-	console.log( "setUndoButton: toggling button-on" );
 	undoButton.classList.toggle("button-on");
     }
 
@@ -31,11 +29,9 @@ function setUndoButton( state, tooltip ) {
 
 function setRedoButton( state, tooltip ) {
     // Set Redo button's state to STATE
-    console.log( "setRedoButton: setting state = " + state + ", tooltip=\"" + tooltip + "\"" );
     let redoButton = document.getElementById("redo");
 
     if( redoButton.getAttribute( "data-state" ) != state ) {
-	console.log( "setRedoButton: toggling button-on" );
 	redoButton.classList.toggle("button-on");
     }
 
@@ -72,6 +68,12 @@ function undo() {
 	updateUI();
 	const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 	currentCell.classList.add("active");
+
+	// Scroll to where the clue boxes had been
+	let am = document.getElementById( "across-matches" );
+	let dm = document.getElementById( "down-matches" );
+	am.scrollTop = undoContext.acrossMatchesScrollTop;
+	dm.scrollTop = undoContext.downMatchesScrollTop;
 
 	grid.focus();
     }
