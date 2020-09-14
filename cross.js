@@ -56,6 +56,8 @@ let solveTimeout = null;
 let solveWordlist = null;
 let solvePending = [];
 let updatesSinceLastSave = 0;
+let bsProgressCounterId = "bs-progress";
+let bsMessage = " Black Squares";
 
 //____________________
 // C L A S S E S
@@ -494,6 +496,33 @@ function checkGridLegality() {
     }
 }
 
+function adjustProgress( progressBarName, n, msg ) {
+    // Adjust PROGRESSBARNAME to N%, updating with a prefix of MSG
+    var e = document.getElementById( progressBarName );
+    e.value = n;
+
+    var elabel = document.getElementById( progressBarName + "-label" );
+    elabel.innerHTML = msg;
+}
+
+function updateBlackSpaceProgress() {
+    let stats = countBlackSquares();
+    let pct = Math.round( stats[ 1 ] * 100 );
+    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
+    adjustProgress( bsProgressCounterId, pct, msg );
+}
+
+function countBlackSquares() {
+    // Return an array with the number of black squares in the grid and the percentage of total squares that are black
+    let blackSquares = 0;
+    for (let i = 0; i < xw.rows; i++) {
+	for (let j = 0; j < xw.cols; j++) {
+	    if (xw.fill[i][j] == BLACK) blackSquares++;
+	}
+    }
+    return( [ blackSquares, blackSquares / (xw.rows*xw.cols) ] );
+}
+
 function keyboardHandler(e) {
     isMutated = false;
     let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -566,6 +595,7 @@ function keyboardHandler(e) {
             }
 	}
 	isMutated = true;
+	updateBlackSpaceProgress();
     }
 
     if (e.which == keyboard.enter) {
@@ -580,6 +610,7 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
+	    updateBlackSpaceProgress();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {
@@ -947,6 +978,7 @@ function generatePattern( size=15 ) {
 	    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
 	    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
 	}
+	updateBlackSpaceProgress();
 	isMutated = true;
 	updateUI();
 	console.log("Generated layout.")
@@ -1163,3 +1195,6 @@ function randomLetter() {
     let alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
     return alphabet[randomNumber(0, alphabet.length)];
 }
+
+// initialize the progress meter
+adjustProgress( bsProgressCounterId, 0, bsMessage );
