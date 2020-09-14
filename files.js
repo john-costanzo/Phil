@@ -349,7 +349,8 @@ function convertJSONToPuzzle(puz) {
 	}
     }
     updateUI();
-    updateBlackSpaceProgress();
+    updateBlankSpaceProgress();
+    adjustClueProgress();
 }
 
 function writeFile(format) {

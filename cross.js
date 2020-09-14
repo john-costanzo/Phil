@@ -56,8 +56,9 @@ let solveTimeout = null;
 let solveWordlist = null;
 let solvePending = [];
 let updatesSinceLastSave = 0;
+let clueProgressCounterId = "clue-progress";
 let bsProgressCounterId = "bs-progress";
-let bsMessage = " Black Squares";
+let bsMessage = " Blank Squares";
 
 //____________________
 // C L A S S E S
@@ -505,11 +506,27 @@ function adjustProgress( progressBarName, n, msg ) {
     elabel.innerHTML = msg;
 }
 
-function updateBlackSpaceProgress() {
+function adjustClueProgress() {
+    let completedClues = 0;
+    let totalClues = Object.keys(xw.clues).length;
+
+    for( const [key, value] of Object.entries( xw.clues ) ) {
+	if( value != DEFAULT_CLUE ) completedClues++;
+    }
+
+    let pct = completedClues / totalClues;
+    let msg = completedClues + " of " + totalClues + " completed clues";
+
+    adjustProgress( clueProgressCounterId, pct*100, msg );
+}
+
+function updateBlankSpaceProgress() {
     let stats = countBlackSquares();
     let pct = Math.round( stats[ 1 ] * 100 );
-    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%); " + ( Object.keys(xw.clues).length ) + " words";
-    adjustProgress( bsProgressCounterId, pct, msg );
+    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
+
+    var elabel = document.getElementById( bsProgressCounterId + "-label" );
+    elabel.innerHTML = msg;
 }
 
 function countBlackSquares() {
@@ -595,7 +612,7 @@ function keyboardHandler(e) {
             }
 	}
 	isMutated = true;
-	updateBlackSpaceProgress();
+	updateBlankSpaceProgress();
     }
 
     if (e.which == keyboard.enter) {
@@ -610,7 +627,7 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
-	    updateBlackSpaceProgress();
+	    updateBlankSpaceProgress();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {
@@ -939,6 +956,7 @@ function setClues() {
     //console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
     isMutated = true;
     updateUI();
+    adjustClueProgress();
 }
 
 function setTitle() {
@@ -980,7 +998,7 @@ function generatePattern( size=15 ) {
 	}
 	isMutated = true;
 	updateUI();
-	updateBlackSpaceProgress();
+	updateBlankSpaceProgress();
 	console.log("Generated layout.")
     } else {
 	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
@@ -1197,4 +1215,5 @@ function randomLetter() {
 }
 
 // initialize the progress meter
-adjustProgress( bsProgressCounterId, 0, bsMessage );
+updateBlankSpaceProgress();
+
