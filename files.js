@@ -349,6 +349,7 @@ function convertJSONToPuzzle(puz) {
 	}
     }
     updateUI();
+    updateBlackSpaceProgress();
 }
 
 function writeFile(format) {

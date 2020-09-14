@@ -508,7 +508,7 @@ function adjustProgress( progressBarName, n, msg ) {
 function updateBlackSpaceProgress() {
     let stats = countBlackSquares();
     let pct = Math.round( stats[ 1 ] * 100 );
-    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
+    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%); " + ( Object.keys(xw.clues).length ) + " words";
     adjustProgress( bsProgressCounterId, pct, msg );
 }
 
@@ -978,9 +978,9 @@ function generatePattern( size=15 ) {
 	    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
 	    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
 	}
-	updateBlackSpaceProgress();
 	isMutated = true;
 	updateUI();
+	updateBlackSpaceProgress();
 	console.log("Generated layout.")
     } else {
 	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
