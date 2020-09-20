@@ -601,18 +601,22 @@ function keyboardHandler(e) {
     }
 
     if (e.which == keyboard.black) {
-	saveStateForUndo( "toggling black/nonblack" );
-	if (xw.fill[current.row][current.col] == BLACK) { // if already black...
-            e = new Event('keydown');
-            e.which = keyboard.delete; // make it a white square
-	} else {
-            xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
-            if (isSymmetrical) {
-		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
-            }
+	let freezeButton = document.getElementById("toggle-freeze-layout");
+	let freezeButtonState = freezeButton.getAttribute("data-state");
+	if( freezeButtonState == "off" ) {
+	    saveStateForUndo( "toggling black/nonblack" );
+	    if (xw.fill[current.row][current.col] == BLACK) { // if already black...
+		e = new Event('keydown');
+		e.which = keyboard.delete; // make it a white square
+	    } else {
+		xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
+		if (isSymmetrical) {
+		    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+		}
+	    }
+	    isMutated = true;
+	    updateBlackSquareProgress();
 	}
-	isMutated = true;
-	updateBlankSpaceProgress();
     }
 
     if (e.which == keyboard.enter) {
@@ -1022,14 +1026,24 @@ function toggleUseRegexPatterns() {
     }
 }
 
+
+function toggleFreezeLayout() {
+    // Update UI button
+    let freezeButton = document.getElementById("toggle-freeze-layout");
+    freezeButton.classList.toggle("button-on");
+    let freezeButtonState = freezeButton.getAttribute("data-state");
+    freezeButton.setAttribute("data-state", (freezeButtonState == "on") ? "off" : "on");
+    freezeButton.setAttribute("data-tooltip", "Turn " + freezeButtonState + " freeze layout");
+}
+
 function toggleSymmetry() {
     isSymmetrical = !isSymmetrical;
     // Update UI button
     let symButton = document.getElementById("toggle-symmetry");
     symButton.classList.toggle("button-on");
-    buttonState = symButton.getAttribute("data-state");
-    symButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
-    symButton.setAttribute("data-tooltip", "Turn " + buttonState + " symmetry");
+    let symButtonState = symButton.getAttribute("data-state");
+    symButton.setAttribute("data-state", (symButtonState == "on") ? "off" : "on");
+    symButton.setAttribute("data-tooltip", "Turn " + symButtonState + " symmetry");
 }
 
 function toggleRecommend() {
@@ -1053,6 +1067,7 @@ function toggleUsageAssistance() {
 	shortcutsNotification.dismiss();
     } else {
 	shortcutsNotification.post();
+	window.open( "doc/build/html/index.html", "HelpPage", "location=no,menubar=no,status=no" );
     }
     if( suggestionStylingNotification.isDisplayed ) {
 	suggestionStylingNotification.dismiss();
