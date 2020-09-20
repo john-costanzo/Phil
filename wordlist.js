@@ -126,7 +126,7 @@ function regexReplacer(  match, p1, offset, string  ) {
     if(  r == ""  ) {
 	r = DASH;
     } else {
-	r = "( " + r + " )";
+	r = "(" + r + ")";
     }
     // console.log(  "regexReplacer: working on regex" + match + " returing '" + r + "'"  );
     return r;
