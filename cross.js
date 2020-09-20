@@ -209,7 +209,7 @@ class Toolbar {
 	    "toggleRecommendation": new Button("toggle-recommend"),
 	    "undo": new Button("undo"),
 	    "openWordlist": new Button("open-wordlist"),
-	    "autoFill": new Button("auto-fill")
+	    // "autoFill": new Button("auto-fill")
 	}
     }
 }
