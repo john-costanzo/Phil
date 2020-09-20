@@ -349,7 +349,7 @@ function convertJSONToPuzzle(puz) {
 	}
     }
     updateUI();
-    updateBlankSpaceProgress();
+    updateBlackSquareProgress();
     adjustClueProgress();
 }
 

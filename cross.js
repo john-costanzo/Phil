@@ -58,7 +58,7 @@ let solvePending = [];
 let updatesSinceLastSave = 0;
 let clueProgressCounterId = "clue-progress";
 let bsProgressCounterId = "bs-progress";
-let bsMessage = " Blank Squares";
+let bsMessage = " Black Squares";
 
 //____________________
 // C L A S S E S
@@ -520,7 +520,7 @@ function adjustClueProgress() {
     adjustProgress( clueProgressCounterId, pct*100, msg );
 }
 
-function updateBlankSpaceProgress() {
+function updateBlackSquareProgress() {
     let stats = countBlackSquares();
     let pct = Math.round( stats[ 1 ] * 100 );
     let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
@@ -627,7 +627,7 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
-	    updateBlankSpaceProgress();
+	    updateBlackSquareProgress();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {
@@ -998,7 +998,7 @@ function generatePattern( size=15 ) {
 	}
 	isMutated = true;
 	updateUI();
-	updateBlankSpaceProgress();
+	updateBlackSquareProgress();
 	console.log("Generated layout.")
     } else {
 	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
@@ -1215,5 +1215,5 @@ function randomLetter() {
 }
 
 // initialize the progress meter
-updateBlankSpaceProgress();
+updateBlackSquareProgress();
 
