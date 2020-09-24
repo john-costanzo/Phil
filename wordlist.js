@@ -235,7 +235,7 @@ var displayDefintionDeferredTimer;  // This will hold the single timer
 function displayDefintion(  e  ) {
     // Research the definition of the word that is currently highlighted at some time in the future.
 
-    let deferalTime = 1500;  // Time in future, measured in milliseconds
+    let deferalTime = 1000;  // Time in future, measured in milliseconds
     clearTimeout(  displayDefintionDeferredTimer  );
     const li = e.currentTarget;
     displayDefintionDeferredTimer = setTimeout(  displayDefintionDeferred, deferalTime, li  );
