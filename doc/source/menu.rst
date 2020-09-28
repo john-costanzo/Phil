@@ -14,6 +14,7 @@ Menu items are found on the left-hand side of the page.
 .. |toggle-recommended-answers| image:: images/Toggle-Recommended-Answers.png
 .. ### |auto-fill-puzzle| image:: images/Auto-Fill-Puzzle.png
 .. |regular-expression-matching| image:: images/RegulAr-Expression-Matching.png
+.. |check-duplicates| image:: images/Check-Duplicates.png
 .. |change-dictionary| image:: images/Change-Dictionary.png
 .. |undo| image:: images/Undo.png
 .. |redo| image:: images/Redo.png
@@ -64,13 +65,15 @@ Menu items are found on the left-hand side of the page.
 	are. See `Recommended Answers
 	<recommendations.html#recommended-answers>`_  for more details.
 
-..   ### |auto-fill-puzzle|
-..   ###     Complete the puzzle. *(non functioning)*
-
     |regular-expression-matching|
         Constrain suggested answers to those meeting regular express
 	patterns. See `Regular Expressions
 	<regex.html#regular-expressions-in-phil>`_ for details.
+
+    |check-duplicates|
+        Check for duplicate answers. This reports on answers which are
+	either exact duplicates or where an answer is found as a
+	substring of another answer.
 
     |change-dictionary|
         Use another dictionary for suggesting answers.

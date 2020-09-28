@@ -642,7 +642,6 @@ function layoutPDFClues(doc, style, isLargeGrid) {
     }
 }
 
-
 function saveTextAsFile( textToWrite, filename ) {
     // Download TEXTTOWRITE to FILENAME.
     // Inspired by https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
@@ -665,24 +664,58 @@ function saveTextAsFile( textToWrite, filename ) {
     downloadLink.click();
 }
 
-function saveAnswers1( clues, filename ) {
-    // Save contents of CLUES array to FILENAME.
-    let text = "";
-    for( let i=0; i<clues.length; i++ ) {
-	text += clues[i].label + "\t" + clues[i].answer + "\t" + clues[i].clue + "\n";
+function collectAnswers( clues, dict, direction ) {
+    // Collect all answers from CLUES into DICT, noting its DIRECTION.
+    // As a value, establish a list of all matching labels.
+
+    for( let i=0; i < clues.length; i++ ) {
+	let ans = clues[i].answer;
+	ans = ans.replace( /-/g, "" );  // We are only interested in non-blanks
+	if( ans.length > 0 ) {
+	    let lab = clues[i].label + direction;
+	    if( ans in dict ) {
+		let arr = dict[ ans ];
+		arr.push( lab );
+	    } else
+		dict[ ans ] = [ lab ];
+	}
     }
-    saveTextAsFile( text, filename );
 }
-    
-function saveAnswers() {
-    // Print all answers to two files.
-    // Format is:
-    //     - Answers are represented one per line, clue number <tab> answer <tab> clue
-    //     - across.idx contains all across answers.
-    //     - down.idx contains all down answers.
+
+function reportOnDuplicateAnswers() {
+    // Report on duplicates: either exact dups or substrings.
     const [acrossClues, downClues] = generatePDFClues();
-    saveAnswers1( acrossClues, "across.idx" );
-    saveAnswers1( downClues, "down.idx" );
+    let dict = {};
+    let msg = "";
+
+    collectAnswers( acrossClues, dict, 'a' );
+    collectAnswers( downClues, dict, 'd' );
+
+    // At this point, if dict has an entry consisting of an array
+    // which has a length greater than  1, it is a duplicate answer.
+    // Report it.
+    for( const [k,v] of Object.entries( dict ) ) {
+	if( v.length > 1 ) {
+	    let m = "duplicate answer '" +  k + "' at " + v;
+	    console.log( m );
+	    msg = msg + m + "\n";
+	}
+    }
+
+    for( let key in dict ) {
+	const value = dict[ key ];
+	for( let key2 in dict ) {
+    	    const pattern = new RegExp( key2 );
+	    if( key2 != key && pattern.test( key ) ) {
+		let m = key2 + " at " + dict[ key2 ] + " is found within " + key + " at " + dict[ key ];
+		console.log( m );
+		msg = msg + m + "\n"
+	    }
+	}
+    }
+    if( msg != "" ) {
+	alert( msg );
+    }
 }
 
 let openPuzzleInput = document.getElementById('open-puzzle-input');

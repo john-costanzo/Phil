@@ -151,7 +151,7 @@ function matchFromWordlist( word ) {
     }
 
     if(  ( actualLettersInWord >= 1 && actualLettersInWord < l ) || wordContainsDigit  ) { // Only search if word isn't completely blank or filled... or contains a digit
-	if(  useRegexPatterns  ) word = replaceRegex(  word  );
+	if( useRegexPatterns ) word = replaceRegex( word );
 	word = word.split( DASH ).join( "\\w" );
 	const pattern = new RegExp( word );
 	let matches = [];
