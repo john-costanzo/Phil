@@ -515,7 +515,7 @@ function adjustClueProgress() {
     }
 
     let pct = completedClues / totalClues;
-    let msg = completedClues + " of " + totalClues + " completed clues";
+    let msg = completedClues + " of " + totalClues + " clues completed";
 
     adjustProgress( clueProgressCounterId, pct*100, msg );
 }
