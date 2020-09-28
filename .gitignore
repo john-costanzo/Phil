@@ -1,4 +1,4 @@
-doc/build
+doc/build/
 .DS_Store
 *.swift
 *.xcplayground
