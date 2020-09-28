@@ -515,6 +515,10 @@ kbd {
     font-size: 8pt;
 }
 
+.disabled-label {
+    color: #999;
+}
+
 li.recommended {
     color: black;
     background-color: white;

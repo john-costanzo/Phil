@@ -232,13 +232,31 @@ function displayDefintionDeferred(  li  ) {
 
 var displayDefintionDeferredTimer;  // This will hold the single timer
 
-function displayDefintion(  e  ) {
+function displayDefintion( e ) {
     // Research the definition of the word that is currently highlighted at some time in the future.
 
     let deferalTime = 1000;  // Time in future, measured in milliseconds
     clearTimeout(  displayDefintionDeferredTimer  );
     const li = e.currentTarget;
     displayDefintionDeferredTimer = setTimeout(  displayDefintionDeferred, deferalTime, li  );
+}
+
+function researchCluesChecked( ) {
+    // Called when the research-clues checkbox has been clicked.
+    // If this was done to enable research, make the extra-research-clues checkbox active.
+    // If not, make it inactive.
+    let rc = document.getElementById( "research-clues" );
+    let ex = document.getElementById( "extra-research-clues" );
+    let exLabel = document.getElementById( "extra-research-clues-label" );
+
+    if( rc.checked ) {
+	ex.disabled = false;
+	exLabel.classList.remove( "disabled-label" );
+    } else {
+	ex.disabled = true;
+	ex.checked = false;
+	exLabel.classList.add( "disabled-label" );
+    }
 }
 
 function checkHarmoniousness(  document, primaryMatches, secondaryMatches, primaryPos, current, matchList  ) {
