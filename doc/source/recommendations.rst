@@ -41,5 +41,5 @@ If
 is selected, answers will be suggested even if the grid pattern for
 the answer has no letters filled in.
 
-.. note:: This could cause the application to run quite slowly,
-	  especially for longer words.
+.. note:: Clicking "Suggest on Empty" could cause the application to
+	  run quite slowly, especially for longer words.

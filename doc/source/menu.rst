@@ -64,8 +64,8 @@ Menu items are found on the left-hand side of the page.
 	are. See `Recommended Answers
 	<recommendations.html#recommended-answers>`_  for more details.
 
-..    |auto-fill-puzzle|
-..        Complete the puzzle. *(non functioning)*
+..   ### |auto-fill-puzzle|
+..   ###     Complete the puzzle. *(non functioning)*
 
     |regular-expression-matching|
         Constrain suggested answers to those meeting regular express

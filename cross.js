@@ -1067,7 +1067,7 @@ function toggleUsageAssistance() {
 	shortcutsNotification.dismiss();
     } else {
 	shortcutsNotification.post();
-	window.open( "doc/build/html/index.html", "HelpPage", "location=no,menubar=no,status=no" );
+	window.open( "doc/build/html/index.html", "HelpPage", "location=no,menubar=no,status=no,width=600,height=800,left=0,top=0" );
     }
     if( suggestionStylingNotification.isDisplayed ) {
 	suggestionStylingNotification.dismiss();

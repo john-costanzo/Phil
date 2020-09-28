@@ -25,3 +25,13 @@ squares, Phil will color these blocked squares. For instance, the
 black square just to the left of 13 blocks six other squares.
 
 .. image:: images/Blocked.png
+
+Auto Save Count
+---------------
+Setting Auto Save Count to a non-zero value will automatically save
+the puzzle in Phil's "native" format every that many changes (e.g.,
+filling in an answer's letter, adding a clue, adding or removing a
+black square, etc.). Here's an example where it will automatically
+save after every 50th change:
+
+.. image:: images/Auto-Save-Count.png
