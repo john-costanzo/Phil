@@ -1,0 +1,24 @@
+* DONE Automated cluing
+CLOSED: [2020-09-28 Mon 13:40]
+** Implementation 1
+1. Provide an option to create an answer index.
+     - two files: across.idx and down.idx
+     - each has the form: clue-number <tab> answer
+2. Create a program that, given an idx file, calls out to various sites, collects their output and stores it in a file named for the answer (e.g., across/23_aloe)
+     - http://crosswordtracker.com/answer/aloe/?search_redirect=True
+     - https://www.merriam-webster.com/dictionary/aloe
+     - https://www.google.com/search?q=define+aloe
+     - https://translate.google.com/?source=osdd#auto|auto|aloe
+3. Create MacOS automation routines to copy the selected text and insert it into Phil (???)
+** Implementation 2
+- pop up windows with this info
+* DONE Highlight similar words
+CLOSED: [2020-09-28 Mon 13:40]
+- iterate through all answers. If share the same root, assign them the same class (e.g., { common_root_{1},  common_root_{2}_{}, ...  common_root_{10} } )
+- rationale: this will point out where the same (or substantially similar) words are used, e.g.,
+    + "car" and "car" or 
+    + "car" and "cars" or 
+    + "car" and "cartoon" or
+    + "art" and "cartoon"
+- This will be helpful to point out where the same word was used or a trivially different form.
+- This may be intentional or unintentional but it's good to inform the user. 
