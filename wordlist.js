@@ -210,21 +210,21 @@ function displayDefinitionDeferred( li ) {
 	var hincr = 50;
 	var vincr = 250;
 
-	const word = li.innerHTML;
+	const word = li.innerHTML.toLowerCase();
 	console.log( "displayDefinitionDeferred: '" + word + "'..." );
 	openWindowInBackground( "http://crosswordtracker.com/answer/"+ word + "/?search_redirect=True", "crossword-tracker", 1, 1, 500, 1000 );
 
-	if( document.getElementById( "extra-research-clues" ).checked ) {
-	    openWindowInBackground( "https://www.merriam-webster.com/dictionary/" + word, "merriam-webster", leftOffset, topOffset, 500 );
+	// if( document.getElementById( "extra-research-clues" ).checked ) {
+	//     openWindowInBackground( "https://www.merriam-webster.com/dictionary/" + word, "merriam-webster", leftOffset, topOffset, 500 );
 
-	    leftOffset += hincr;
-	    topOffset += vincr;
-	    openWindowInBackground( "https://translate.google.com/?source=osdd#auto|auto|" + word, "google-translate", leftOffset, topOffset );
+	//     leftOffset += hincr;
+	//     topOffset += vincr;
+	//     openWindowInBackground( "https://translate.google.com/?source=osdd#auto|auto|" + word, "google-translate", leftOffset, topOffset );
 
-	    leftOffset += hincr;
-	    topOffset += vincr;
-	    openWindowInBackground( "https://www.google.com/search?q=define+" + word, "google-define", leftOffset, topOffset );
-	}
+	//     leftOffset += hincr;
+	//     topOffset += vincr;
+	//     openWindowInBackground( "https://www.google.com/search?q=define+" + word, "google-define", leftOffset, topOffset );
+	// }
 	li.focus();
 	console.log( "displayDefinitionDeferred: '" + word + "'...finished" );
     }
@@ -232,10 +232,11 @@ function displayDefinitionDeferred( li ) {
 
 var displayDefinitionDeferredTimer;  // This will hold the single timer
 
-function displayDefintion( e ) {
+function displayDefinition( e ) {
     // Research the definition of the word that is currently highlighted at some time in the future.
 
-    let deferalTime = 1000;  // Time in future, measured in milliseconds
+    console.log("displayDefinition!" + e );
+    let deferalTime = 500;  // Time in future, measured in milliseconds
     clearTimeout( displayDefinitionDeferredTimer );
     const li = e.currentTarget;
     displayDefinitionDeferredTimer = setTimeout( displayDefinitionDeferred, deferalTime, li );
@@ -245,18 +246,18 @@ function researchCluesChecked( ) {
     // Called when the research-clues checkbox has been clicked.
     // If this was done to enable research, make the extra-research-clues checkbox active.
     // If not, make it inactive.
-    let rc = document.getElementById( "research-clues" );
-    let ex = document.getElementById( "extra-research-clues" );
-    let exLabel = document.getElementById( "extra-research-clues-label" );
+    // let rc = document.getElementById( "research-clues" );
+    // let ex = document.getElementById( "extra-research-clues" );
+    // let exLabel = document.getElementById( "extra-research-clues-label" );
 
-    if( rc.checked ) {
-	ex.disabled = false;
-	exLabel.classList.remove( "disabled-label" );
-    } else {
-	ex.disabled = true;
-	ex.checked = false;
-	exLabel.classList.add( "disabled-label" );
-    }
+    // if( rc.checked ) {
+    // 	ex.disabled = false;
+    // 	exLabel.classList.remove( "disabled-label" );
+    // } else {
+    // 	ex.disabled = true;
+    // 	ex.checked = false;
+    // 	exLabel.classList.add( "disabled-label" );
+    // }
 }
 
 function checkHarmoniousness( document, primaryMatches, secondaryMatches, primaryPos, current, matchList ) {
@@ -289,8 +290,7 @@ function checkHarmoniousness( document, primaryMatches, secondaryMatches, primar
 	    let li = document.createElement( "LI" );
 	    li.innerHTML = primary.toLowerCase();
 	    li.className = "";
-	    // li.addEventListener( 'click', printScore );
-	    li.addEventListener( 'mouseover', displayDefintion );
+	    li.addEventListener( 'click', displayDefinition );
 	    li.addEventListener( 'dblclick', fillGridWithMatch );
 	    let nHarmonious = 0;
 	    let harmoniousAtIntersection = false;
