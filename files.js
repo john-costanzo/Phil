@@ -555,7 +555,7 @@ function layoutPDFInfo(doc, style, email, address) {
 	doc.text(50, 50 + 8, xw.title);
 	doc.setFontSize(9);
 	doc.setFontType("bold");
-	doc.text(50, 50 + 20, xw.author.toUpperCase());
+	doc.text(50, 50 + 20, "By " + xw.author.toUpperCase());
 	break;
     }
     return 1;
