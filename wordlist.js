@@ -202,6 +202,8 @@ function openWindowInBackground( url, target="", left, top, width=500, height=50
     // window.focus();
 }
 
+var displayDefinitionDeferredTimer;  // This will hold a single timer for the deferred display of a definition.
+
 function displayDefinitionDeferred( li ) {
     // Research the definition of LI element if research-clues is checked.
     if( document.getElementById( "research-clues" ).checked ) {
@@ -229,8 +231,6 @@ function displayDefinitionDeferred( li ) {
 	console.log( "displayDefinitionDeferred: '" + word + "'...finished" );
     }
 }
-
-var displayDefinitionDeferredTimer;  // This will hold the single timer
 
 function displayDefinition( e ) {
     // Research the definition of the word that is currently highlighted at some time in the future.
@@ -499,6 +499,7 @@ function fillGridWithMatch( e ) {
     const fill = li.innerHTML.toUpperCase();
     const dir = ( li.parentNode.id == "across-matches" ) ? ACROSS : DOWN;
 
+    clearTimeout( displayDefinitionDeferredTimer );
     saveStateForUndo( fill );
     emptyRedoState();
 
