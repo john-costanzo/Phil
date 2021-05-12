@@ -77,6 +77,8 @@ function undo() {
 
 	grid.focus();
     }
+    adjustClueProgress();
+    updateBlackSquareProgress();
     logUndoStatus();
 }
 
@@ -115,6 +117,8 @@ function redo() {
 
 	grid.focus();
     }
+    adjustClueProgress();
+    updateBlackSquareProgress();
     logUndoStatus();
 }
 

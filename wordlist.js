@@ -369,7 +369,7 @@ function promoteSuggestions( candidates, class1, pos, set, class2 ) {
 	let li = descendents[ i ];
 	let letter = li.textContent[ pos ];
 	let hasClass1 = li.classList.contains( class1 );
-	let letterInSet = set.has( letter );
+
 	if( hasClass1 && set.has( letter ) ) {
 	    //if( traceWordListSuggestions ) console.log( "promoteSuggestions: promoting \"" + li.textContent + "\"" );
 	    li.setAttribute( "class", class2 );

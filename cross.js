@@ -58,7 +58,8 @@ let solvePending = [];
 let updatesSinceLastSave = 0;
 let clueProgressCounterId = "clue-progress";
 let bsProgressCounterId = "bs-progress";
-let bsMessage = " Black Squares";
+let bsMessage = " cells are Black Squares";
+
 
 //____________________
 // C L A S S E S
@@ -367,7 +368,7 @@ function createNewPuzzle(rows, cols) {
 	square.addEventListener('click', mouseHandler);
     }
     grid.addEventListener('keydown', keyboardHandler);
-    console.log("New puzzle created.")
+    console.log("New puzzle created.");
 }
 
 function mouseHandler(e) {
@@ -497,6 +498,61 @@ function checkGridLegality() {
     }
 }
 
+function clueCountColor( ) {
+    // Return a color to render the message to display
+    // the number of clues.
+
+    // From https://crosswordhobbyist.com/how-to-make-a-crossword-puzzle:
+
+    // Word Length:
+    //     - All words should be at least three letters.  
+    //     - All letters must be “keyed”, meaning they are in an across word and a down word.
+
+    // Word Count: 
+    //     - The New York Times requires all their weekday 15x15 puzzles to have no more than 78 words, 
+    //       or 72 if the puzzle has no theme.  
+
+    // From https://www.nytimes.com/puzzles/submissions/crossword:
+    //     - 78 words for a 15×15 (72 for a themeless); 
+    //     - 140 for a 21×21. 
+    //     - Maximums may be exceeded slightly at the editor’s discretion, if the theme warrants.
+
+    let size = xw.rows;
+    let totalClues = Object.keys(xw.clues).length;
+    let clueColor = "black";  // color to display the number of clues
+
+    if( size == 15 ) {
+	if( totalClues > 74 ) clueColor = "orange";
+	if( totalClues > 78 ) clueColor = "red";
+    } else if( size == 21 ) {
+	if( totalClues > 134 ) clueColor = "orange";
+	if( totalClues > 140 ) clueColor = "red";
+    }
+
+    return( clueColor );
+}
+
+function blackSquareCoverageColor( pct ) {
+    // Return a color to render the message to display, based on
+    // the percent of black squares, given as PCT.
+
+    // From https://crosswordhobbyist.com/how-to-make-a-crossword-puzzle:
+
+    // Black Square Frequency: 
+    //     - Historically, crossword creators were encouraged to limit black squares to no more than 
+    //       one sixth of the grid, or about 17%.  
+    //     - While limiting black squares is encouraged, there is no longer a formal limit on 
+    //       how many your grid can have.  
+    //     - However, large clumps of black squares are strongly discouraged.
+
+    let fillColor = "black";
+    if( pct > 16 ) fillColor = "orange";
+    if( pct > 17 ) fillColor = "red";
+
+    return( fillColor );
+}
+
+
 function adjustProgress( progressBarName, n, msg ) {
     // Adjust PROGRESSBARNAME to N%, updating with a prefix of MSG
     var e = document.getElementById( progressBarName );
@@ -504,6 +560,9 @@ function adjustProgress( progressBarName, n, msg ) {
 
     var elabel = document.getElementById( progressBarName + "-label" );
     elabel.innerHTML = msg;
+
+    let clueColor = clueCountColor( );
+    elabel.setAttribute( "style", "color: " + clueColor );
 }
 
 function adjustClueProgress() {
@@ -520,15 +579,6 @@ function adjustClueProgress() {
     adjustProgress( clueProgressCounterId, pct*100, msg );
 }
 
-function updateBlackSquareProgress() {
-    let stats = countBlackSquares();
-    let pct = Math.round( stats[ 1 ] * 100 );
-    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
-
-    var elabel = document.getElementById( bsProgressCounterId + "-label" );
-    elabel.innerHTML = msg;
-}
-
 function countBlackSquares() {
     // Return an array with the number of black squares in the grid and the percentage of total squares that are black
     let blackSquares = 0;
@@ -538,6 +588,18 @@ function countBlackSquares() {
 	}
     }
     return( [ blackSquares, blackSquares / (xw.rows*xw.cols) ] );
+}
+
+function updateBlackSquareProgress() {
+    let stats = countBlackSquares();
+    let pct = Math.round( stats[ 1 ] * 100 );
+    let msg = stats[ 0 ] + bsMessage + " (" + pct + "%)";
+
+    var elabel = document.getElementById( bsProgressCounterId + "-label" );
+
+    let fillColor = blackSquareCoverageColor( pct );
+    elabel.setAttribute( "style", "color: " + fillColor );
+    elabel.innerHTML = msg;
 }
 
 function keyboardHandler(e) {
@@ -555,7 +617,9 @@ function keyboardHandler(e) {
 	return;
     }
 
-    if ((e.which >= keyboard.a && e.which <= keyboard.z) || (e.which >= keyboard.d1 && e.which <= keyboard.d9) || e.which == keyboard.space) {
+    if ((e.which >= keyboard.a && e.which <= keyboard.z) ||
+	(e.which >= keyboard.d1 && e.which <= keyboard.d9) ||
+	(e.which == keyboard.space) ) {
 	let key = String.fromCharCode(e.which);
 	saveStateForUndo( "typing a  " + key );
 	let oldContent = xw.fill[current.row][current.col];
@@ -604,18 +668,18 @@ function keyboardHandler(e) {
 	let freezeButton = document.getElementById("toggle-freeze-layout");
 	let freezeButtonState = freezeButton.getAttribute("data-state");
 	if( freezeButtonState == "off" ) {
-	    saveStateForUndo( "toggling black/nonblack" );
 	    if (xw.fill[current.row][current.col] == BLACK) { // if already black...
 		e = new Event('keydown');
+		e.label = "toggling black cell"
 		e.which = keyboard.delete; // make it a white square
 	    } else {
+		saveStateForUndo( "toggling nonblack cell" );
 		xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
 		if (isSymmetrical) {
 		    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
 		}
 	    }
 	    isMutated = true;
-	    updateBlackSquareProgress();
 	}
     }
 
@@ -625,13 +689,15 @@ function keyboardHandler(e) {
     if (e.which == keyboard.delete) {
 	e.preventDefault();
 	let oldContent = xw.fill[current.row][current.col];
-	saveStateForUndo( "deleting a  " + oldContent );
+	let label = e.label;
+	if( e.label === undefined )
+	    label = "deleting a  " + oldContent;
+	saveStateForUndo( label );
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
-	    updateBlackSquareProgress();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {
@@ -706,6 +772,8 @@ function updateUI() {
     updateMatchesUI();
     updateCluesUI();
     updateInfoUI();
+    adjustClueProgress();
+    updateBlackSquareProgress();
 }
 
 function updateGridUI() {
@@ -960,7 +1028,6 @@ function setClues() {
     //console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
     isMutated = true;
     updateUI();
-    adjustClueProgress();
 }
 
 function setTitle() {
@@ -1002,7 +1069,6 @@ function generatePattern( size=15 ) {
 	}
 	isMutated = true;
 	updateUI();
-	updateBlackSquareProgress();
 	console.log("Generated layout.")
     } else {
 	const errorMessage = "No patterns for a " + size + "x" + size + " layout...";
@@ -1104,7 +1170,7 @@ function runSolvePending() {
     if (solveWorkerState != 'ready' || solvePending.length == 0) return;
     let isQuick = solvePending[0];
     solvePending = [];
-    solveTimeout = window.setTimeout(cancelSolveWorker, 30000);
+    solveTimeout = window.setTimeout(cancelSolveWorker, 3000000);
     if (solveWordlist == null) {
 	console.log('Rebuilding wordlist...');
 	solveWordlist = '';
