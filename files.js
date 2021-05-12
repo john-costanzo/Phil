@@ -241,6 +241,7 @@ class PuzWriter {
 
 function openPuzzle() {
     document.getElementById("open-puzzle-input").click();
+    adjustClueProgress();
 }
 
 function isPuz(bytes) {
@@ -696,7 +697,7 @@ function reportOnDuplicateAnswers() {
     // Report it.
     for( const [k,v] of Object.entries( dict ) ) {
 	if( v.length > 1 ) {
-	    let m = "duplicate answer '" +  k + "' at " + v;
+	    let m = "► duplicate answer '" +  k + "' at " + v;
 	    console.log( m );
 	    msg = msg + m + "\n";
 	}
@@ -707,7 +708,7 @@ function reportOnDuplicateAnswers() {
 	for( let key2 in dict ) {
     	    const pattern = new RegExp( key2 );
 	    if( key2 != key && pattern.test( key ) ) {
-		let m = key2 + " at " + dict[ key2 ] + " is found within " + key + " at " + dict[ key ];
+		let m = "► " + key2 + " at " + dict[ key2 ] + " is found within " + key + " at " + dict[ key ];
 		console.log( m );
 		msg = msg + m + "\n"
 	    }
