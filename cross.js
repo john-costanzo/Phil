@@ -871,8 +871,12 @@ function updateLabelsAndClues() {
 	    let isAcross = false;
 	    let isDown = false;
 	    if (xw.fill[i][j] != BLACK) {
-		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) || ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
-		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) || ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
+		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) ||
+		    ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK) &&
+		      (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
+		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) ||
+		    ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) &&
+		      (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
 	    }
 	    const grid = document.getElementById("grid");
 	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -941,7 +945,7 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
 
 function getWordIndices(text, position) {
     let start = text.slice(0, position).lastIndexOf(BLACK);
-    start = (start == -1) ? 0 : start + 1;
+    start = (start == -1) ? 0 : start + 1; 
     let rows = xw["rows"];
     let end = text.slice(position, rows).indexOf(BLACK);
     end = (end == -1) ? rows : Number(position) + end;
