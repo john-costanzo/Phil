@@ -141,12 +141,15 @@ function replaceRegex( word ) {
     return( newWord );
 }
 
-function matchFromWordlist( word ) {
+function matchFromWordlist( word, searchOnEmpty=false ) {
+    // Return words from the wordlist that match WORD,
+    // which may contain "wildcards" which are denoted as '-' characters.
+    // If SEARCHONEMPTY is true, return a list of words even if all characters are wild.
     const l = word.length;
     const actualLettersInWord = word.replace( /-/g, "" ).length;
     const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
     let soe = document.getElementById( "suggest-on-empty" ).checked;
-    if( soe && actualLettersInWord == 0 ) {
+    if( ( searchOnEmpty || soe ) && actualLettersInWord == 0 ) {
 	return( wordlist[ l ] );
     }
 
