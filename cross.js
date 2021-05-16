@@ -299,7 +299,7 @@ class Interface {
 let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
 let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "suggestion-styling");
 
-let xw = new Crossword( 21, 21 ); // model
+let xw = new Crossword( 15, 15 ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 let redoStack = [];
@@ -344,6 +344,7 @@ function createNewPuzzle(rows, cols) {
 
     isSymmetrical = true;
     showOnlyRecommendations = false;
+    autoFilling = false;
     current = {
 	"row":        0,
 	"col":        0,
