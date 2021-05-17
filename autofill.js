@@ -62,14 +62,37 @@ function startOfHorizontalWord( row, col ) {
 
 }
 
-function collectEntries() {
-    // Return a dictionary of entries currently in the puzzle.
+function addEntry(i, j, dir, list) {
+    // Add values of the entry to the LIST, a list consisting of:
+    //    the word's address (i.e., clue number) as a number
+    //    the word (containing zero or more wildcards)
+    //    row grid coordinate for the start of the word
+    //    column grid coordinate for the start of the word
+    //    start position within the row (for across) or column (down)
+    //    end position within the row (for across) or column (down)
+
+    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+    const wordInfo = getWordAndIndicesAt( i, j, dir, false );
+    const word = wordInfo[ 0 ];
+    const start = wordInfo[ 1 ];
+    const end = wordInfo[ 2 ];
+    const clueLabel = currentCell.firstChild.innerHTML;
+    if( currentCell.firstChild.innerHTML != '' ) {
+	console.log( "addEntry: xw[" + i + ", " + j + "]='" +
+		     clueLabel + " " + dir + "' ==> " + word + " (" +
+		     start + "," + end + ") " );
+    }
+    list[ parseInt(clueLabel) ] = [ word, i, j, start, end ];
+}
+
+function collectEntries( acrossList, downList ) {
+    // Update two lists: each has entries currently in the puzzle.
+    // The first list is for across entries; the second for down entries.
     //
-    // Each entry is keyed by its address (e.g., "1a", "34d", etc.).
+    // Each entry appears in its respective array at its address (i.e., its numbered square).
     //
-    // The value of each entry consists of a list:
+    // The value of each entry consists of a list whose elements are:
     //   the word (containing zero or more wildcards)
-    //   whether the word is across or down
     //   row grid coordinate for the start of the word
     //   column grid coordinate for the start of the word
     //   start position within the row (for across) or column (down)
@@ -78,19 +101,31 @@ function collectEntries() {
     //
     // So, for example, if we have the grid:
     //
-    // 	+-------------------+
-    //  | 1T | 2H | 3E |  - |
-    // 	+-------------------+
-    //  | 4- |  - |  - |  - |
-    // 	+-------------------+
-    //  | 5- |  - |  - |  - |
-    // 	+-------------------+
+    // 	+---------------------------------------+
+    //  | 1T | 2H | 3E | 4- |XXXX| 5A | 6- | 7- |
+    // 	+---------------------------------------+
+    //  | 8- |  - |  - |  - |  - |  R |  - |  - |
+    // 	+---------------------------------------+
+    //  | 9- |  - |  - |  - |  - |  - |  - |  - |
+    // 	+---------------------------------------+
     //
-    // the function would return a dictionary with these entries:
-    //    "1a": [ "THE-", "across", 0, 0, 0, 4, [ "1d", "2d", "3d" ] ]
-    //    "1d": [ "T--",  "down",   0, 0, 0, 3, [ "4a", "5a" ] ]
-    //    "2d": [ "H--",  "down",   0, 1, 0, 3, [ ] ]
-    //    "3d": [ "E--",  "down",   0, 2, 0, 3, [ ] ]
+    // (where XXXX repsents a black square)
+    //
+    //
+    // The function would return two lists.
+    // The across list would have these entries:
+    //     acrossList[1] = [ "THE-",      0, 0, 0, 4, [ 1, 2, 3 ] ]
+    //     acrossList[5] = [ "A--",       0, 5, 5, 7, [ 8, 9 ] ]
+    //     acrossList[8] = [ "-----R--",  1, 0, 0, 7, [ 1, 2, 3, 4, 5, 6, 7 ] ]
+    //     acrossList[9] = [ "--------",  2, 0, 0, 7, [ 1, 2, 3, 4, 5, 6, 7 ] ]
+    //
+    //     downList[1]   = [ "T--",       0, 0, 0, 3, [ 1, 8, 9 ] ]
+    //     downList[2]   = [ "H--",       0, 1, 0, 3, [ 1, 8, 9 ] ]
+    //     downList[3]   = [ "E--",       0, 2, 0, 3, [ 1, 8, 9 ] ]
+    //     downList[4]   = [ "---",       0, 3, 0, 3, [ 1, 8, 9 ] ]
+    //     downList[5]   = [ "AR-",       0, 5, 0, 3, [ 5, 8, 9 ] ]
+    //     downList[6]   = [ "---",       0, 6, 0, 3, [ 5, 8, 9 ] ]
+    //     downList[7]   = [ "---",       0, 7, 0, 3, [ 5, 8, 9 ] ]
     //
 
     console.log("collectEntries: xw.rows=" + xw.rows + "  xw.cols=" + xw.cols);
@@ -101,26 +136,20 @@ function collectEntries() {
 	    let isAcross = false;
 	    let isDown = false;
 	    if (xw.fill[i][j] != BLACK) {
-		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) || ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
-		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) || ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
-	    }
-	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-	    const dir = isAcross ? ACROSS : DOWN;
-	    const wordInfo = getWordAndIndicesAt( i, j, dir, false );
-	    const word = wordInfo[ 0 ];
-	    const start = wordInfo[ 1 ];
-	    const end = wordInfo[ 2 ];
-	    const clueLabel = currentCell.firstChild.innerHTML;
-	    if( currentCell.firstChild.innerHTML != '' ) {
-		console.log( "collectEntries: xw[" + i + ", " + j + "]='" +
-			     clueLabel  + dir + "' ==> " + word + " (" +
-			     start + "," + end + ") " );
+		isDown = isStartOfDownWord(i,j);
+		isAcross = isStartOfAcrossWord(i,j);
+		if( isDown ) addEntry( i, j, DOWN, downList );
+		if( isAcross ) addEntry( i, j, ACROSS, acrossList );
 	    }
 	}
     }
     console.log("exiting collectEntries()");
 }
 
+function addCrossWords( list1, list2 ) {
+    // Update LIST1: for each defined entry in LIST1,
+    // append a list of all words that cross this entry with info from LIST2.
+}
 
 function toggleAutoFill() {
     // Start autofilling the puzzle of requested to toggle on;
@@ -171,6 +200,22 @@ function logWithLevel( tag, level, message ) {
     console.log(tag + ": " + " ".repeat(level) + message );
 }
 
+function printEntries( list, dir ) {
+    // Print entries in LIST, preceded by their direction, DIR.
+    console.log( "printEntries: " + dir + "List:" );
+    for( let e in list ) {
+	let entry = list[ e ];
+	if( entry !== undefined ) {
+	    let word = entry[0];
+	    let row = entry[1];
+	    let col = entry[2];
+	    let start = entry[3];
+	    let end = entry[4]; 
+	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end );
+	}
+    }
+}
+
 function autofillJS( entries, clue, level ) {
     // Autofill the puzzle starting at clue CLUE.
     // Print messages with LEVEL leading spaces.
@@ -189,9 +234,14 @@ function autofillJS( entries, clue, level ) {
     //            and continue to step 5a.
     //        5d) If *all* cross-wise entries return true, return true.
     logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clue );
-    collectEntries();
+    let acrossList = [];
+    let downList = [];
+    collectEntries( acrossList, downList );
+    printEntries( acrossList, ACROSS );
+    printEntries( downList, DOWN );
+    addCrossWords( acrossList, downList );
+    addCrossWords( downList, acrossList );
 
-    const word = acrossDict[ clue ];
     const candidates = matchFromWordlist( word[0], true );
     let rankedCandidatesDict = {}
     for (const candidate of candidates) {
