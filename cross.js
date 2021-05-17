@@ -863,6 +863,24 @@ function createGrid(rows, cols) {
     updateLabelsAndClues();
 }
 
+function isStartOfDownWord(i,j) {
+    // Determine whether the cell at grid location (I,J)
+    // is the start of a down word.
+    return( 
+	(i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) ||
+	    ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK) &&
+	      (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) ) );
+}
+
+function isStartOfAcrossWord(i,j) {
+    // Determine whether the cell at grid location (I,J)
+    // is the start of an across word.
+    return( 
+	(j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) ||
+	    ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) &&
+	      (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) ) );
+}
+
 function updateLabelsAndClues() {
     console.log("updateLabelsAndClues: xw.rows=" + xw.rows + "  xw.cols=" + xw.cols);
     let count = 1;
@@ -871,12 +889,8 @@ function updateLabelsAndClues() {
 	    let isAcross = false;
 	    let isDown = false;
 	    if (xw.fill[i][j] != BLACK) {
-		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) ||
-		    ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK) &&
-		      (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
-		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) ||
-		    ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) &&
-		      (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
+		isDown = isStartOfDownWord(i,j);
+		isAcross = isStartOfAcrossWord(i,j);
 	    }
 	    const grid = document.getElementById("grid");
 	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
