@@ -62,7 +62,7 @@ function startOfHorizontalWord( row, col ) {
 
 }
 
-function addEntry(i, j, dir, list) {
+function addEntry( row, col, direction, list ) {
     // Add values of the entry to the LIST, a list consisting of:
     //    the word's address (i.e., clue number) as a number
     //    the word (containing zero or more wildcards)
@@ -71,18 +71,21 @@ function addEntry(i, j, dir, list) {
     //    start position within the row (for across) or column (down)
     //    end position within the row (for across) or column (down)
 
-    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-    const wordInfo = getWordAndIndicesAt( i, j, dir, false );
+    let otherDirection = direction == ACROSS ? DOWN : ACROSS;
+    let currentCell = grid.querySelector('[data-row="' + row + '"]').querySelector('[data-col="' + col + '"]');
+    const wordInfo = getWordAndIndicesAt( row, col, direction, false );
     const word = wordInfo[ 0 ];
     const start = wordInfo[ 1 ];
     const end = wordInfo[ 2 ];
     const clueLabel = currentCell.firstChild.innerHTML;
-    if( currentCell.firstChild.innerHTML != '' ) {
-	console.log( "addEntry: xw[" + i + ", " + j + "]='" +
-		     clueLabel + " " + dir + "' ==> " + word + " (" +
+    if( clueLabel != '' ) {
+	console.log( "addEntry: xw[" + row + ", " + col + "]='" +
+		     clueLabel + " " + direction + "' ==> " + word + " (" +
 		     start + "," + end + ") " );
     }
-    list[ parseInt(clueLabel) ] = [ word, i, j, start, end ];
+
+    console.log("addEntry: start=" + start + ", end=" + end );
+    list[ parseInt(clueLabel) ] = [ word, row, col, start, end ];
 }
 
 function collectEntries( acrossList, downList ) {
@@ -129,7 +132,6 @@ function collectEntries( acrossList, downList ) {
     //
 
     console.log("collectEntries: xw.rows=" + xw.rows + "  xw.cols=" + xw.cols);
-    const grid = document.getElementById("grid");
 
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
@@ -146,16 +148,66 @@ function collectEntries( acrossList, downList ) {
     console.log("exiting collectEntries()");
 }
 
-function addCrossWords( list1, list2 ) {
-    // Update LIST1: for each defined entry in LIST1,
-    // append a list of all words that cross this entry with info from LIST2.
+function addCrossWords( list, direction ) {
+    // For each defined entry in LIST, append to the entry a list of all words
+    // that cross this entry assuming the entries run in DIRECTION.
+    let result = [];
+
+    for( entry of list ) {
+	if( entry !== undefined ) {
+	    let word = entry[0];
+	    let row = entry[1];
+	    let col = entry[2];
+	    let start = entry[3];
+	    let end = entry[4];
+	    let crossWordClues = [ ];
+	    console.log( "addCrossWords: " + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end );
+
+	    if( direction == ACROSS ) {
+		for( let j = start; j < end; j++ ) {
+		    for( let i = row; i >= 0; i-- ) {
+			if( i == 0 || xw.fill[i][j] == BLACK ) {
+			    if( xw.fill[i][j] == BLACK ) i++; // adjust for the black cell
+			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+			    let clue = cell.firstChild.innerHTML;
+			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + i + "; clue=" + clue);
+			    crossWordClues.push( parseInt( clue ) );
+			    break;
+			}
+
+		    }
+		}
+	    }
+	    else {
+		for( let i = start; i < end; i++ ) {
+		    for( let j = col; j >= 0; j-- ) {
+			if( j == 0 || xw.fill[i][j] == BLACK ) {
+			    if( xw.fill[i][j] == BLACK ) j++; // adjust for the black cell
+			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+			    let clue = cell.firstChild.innerHTML;
+			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + j + "; clue=" + clue);
+			    crossWordClues.push( parseInt( clue ) );
+			    break;
+			}
+		    }
+		}
+	    }
+	    result.push( [ word, row, col, start, end, crossWordClues ] );
+	}
+    }
+    return( result );
 }
 
-function toggleAutoFill() {
+function toggleAutoFill( force ) {
     // Start autofilling the puzzle of requested to toggle on;
     // else stop autofilling.
+    // If FORCE (a boolean) is given, then use that value instead of toggling.
 
-    autoFilling = !autoFilling;
+    if( force === undefined ) {
+	autoFilling = !autoFilling;
+    } else {
+	autoFilling = force;
+    }
 
     // Update UI button
     let autoFillButton = document.getElementById("toggle-auto-fill");
@@ -210,8 +262,9 @@ function printEntries( list, dir ) {
 	    let row = entry[1];
 	    let col = entry[2];
 	    let start = entry[3];
-	    let end = entry[4]; 
-	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end );
+	    let end = entry[4];
+	    let crosswordClues = (entry[ 5 ] === undefined ? "" : " [" + entry[ 5 ].join(",") + "]" );
+	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + crosswordClues );
 	}
     }
 }
@@ -237,10 +290,15 @@ function autofillJS( entries, clue, level ) {
     let acrossList = [];
     let downList = [];
     collectEntries( acrossList, downList );
+    console.log( "autofillJS: Before..." );
     printEntries( acrossList, ACROSS );
     printEntries( downList, DOWN );
-    addCrossWords( acrossList, downList );
-    addCrossWords( downList, acrossList );
+
+    acrossList = addCrossWords( acrossList, ACROSS );
+    downList = addCrossWords( downList, DOWN );
+    console.log( "autofillJS: After..." );
+    printEntries( acrossList, ACROSS );
+    printEntries( downList, DOWN );
 
     const candidates = matchFromWordlist( word[0], true );
     let rankedCandidatesDict = {}
@@ -267,5 +325,7 @@ function autofillJS( entries, clue, level ) {
     for( const candidate of rankedCandidatesList ) {
 	logWithLevel("autofillJS", level, "evaluating candidate = " + candidate );
     }
-    toggleAutoFill(); // TODO: shouldn't this be a bit smarter to forcefully toggle it off?
+    toggleAutoFill( false );
 }
+
+let autoFilling = false;
