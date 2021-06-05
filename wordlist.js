@@ -149,10 +149,12 @@ function matchFromWordlist( word, searchOnEmpty=false ) {
     const actualLettersInWord = word.replace( /-/g, "" ).length;
     const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
     let soe = document.getElementById( "suggest-on-empty" ).checked;
+    // TODO: Replace following line with call to wordIsEmpty()
     if( ( searchOnEmpty || soe ) && actualLettersInWord == 0 ) {
 	return( wordlist[ l ] );
     }
 
+    // TODO: Replace following line with call to !wordIsComplete() ???
     if( ( actualLettersInWord >= 1 && actualLettersInWord < l ) || wordContainsDigit ) { // Only search if word isn't completely blank or filled... or contains a digit
 	if( useRegexPatterns ) word = replaceRegex( word );
 	word = word.split( DASH ).join( "\\w" );
@@ -380,6 +382,19 @@ function promoteSuggestions( candidates, class1, pos, set, class2 ) {
     }
 }
 
+function wordIsEmpty( word ) {
+    // Return whether the word is empty.
+    const actualLettersInWord = word.replace( /-/g, "" ).length;
+    return( actualLettersInWord == 0 );
+}
+
+function wordIsComplete( word ) {
+    // Return whether the word is completely filled.
+    const actualLettersInWord = word.replace( /-/g, "" ).length;
+    return( actualLettersInWord == word.length );
+}
+
+
 function updateMatchesUI() {
     // 1. Mark suggested words with the "recommended" class when the word forms a valid word
     //    both across and down for words that intersect at the current square.
@@ -449,6 +464,7 @@ function updateMatchesUI() {
     let downMatches = [];
 
     for( let w of acrossWords ) {
+	// TODO: Replace following two lines with call to wordIsComplete()
 	const actualLettersInWord = w[0].replace( /-/g, "" ).length;
 	if( actualLettersInWord == w[0].length ) {
 	    //if( traceWordListSuggestions ) console.log( "pushing <undefined> onto acrossMatches" );
@@ -461,6 +477,7 @@ function updateMatchesUI() {
     }
 
     for( let w of downWords ) {
+	// TODO: Replace following two lines with call to wordIsComplete()
 	const actualLettersInWord = w[0].replace( /-/g, "" ).length;
 	if( actualLettersInWord == w[0].length )  {
 	    //if( traceWordListSuggestions ) console.log( "pushing <undefined> onto downMatches" );
