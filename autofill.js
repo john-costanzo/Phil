@@ -75,17 +75,23 @@ function addEntry( row, col, direction, list ) {
     let currentCell = grid.querySelector('[data-row="' + row + '"]').querySelector('[data-col="' + col + '"]');
     const wordInfo = getWordAndIndicesAt( row, col, direction, false );
     const word = wordInfo[ 0 ];
-    const start = wordInfo[ 1 ];
-    const end = wordInfo[ 2 ];
-    const clueLabel = currentCell.firstChild.innerHTML;
-    if( clueLabel != '' ) {
-	console.log( "addEntry: xw[" + row + ", " + col + "]='" +
-		     clueLabel + " " + direction + "' ==> " + word + " (" +
-		     start + "," + end + ") " );
-    }
+    if( !wordIsComplete(word) ) {
+	const start = wordInfo[ 1 ];
+	const end = wordInfo[ 2 ];
+	const clueLabel = currentCell.firstChild.innerHTML;
+	const nmatches = matchFromWordlist(word, true).length;
+	if( clueLabel != '' ) {
+	    console.log( "addEntry: xw[" + row + ", " + col + "]='" +
+			 clueLabel + " " + direction + "' ==> " + word + " (" +
+			 start + "," + end + ") " );
+	}
 
-    console.log("addEntry: start=" + start + ", end=" + end );
-    list[ parseInt(clueLabel) ] = [ word, row, col, start, end ];
+	console.log("addEntry: start=" + start + ", end=" + end + "; nmatches=" + nmatches );
+	list[ parseInt(clueLabel) ] = [ word, row, col, start, end, nmatches ];
+    }
+    //TODO: remove following two lines
+    else
+	console.log( "addEntry: '" + word + "' is " + (wordIsComplete(word)? "" : "NOT") + " complete; not adding" );
 }
 
 function collectEntries( acrossList, downList ) {
@@ -155,13 +161,14 @@ function addCrossWords( list, direction ) {
 
     for( entry of list ) {
 	if( entry !== undefined ) {
-	    let word = entry[0];
-	    let row = entry[1];
-	    let col = entry[2];
-	    let start = entry[3];
-	    let end = entry[4];
+	    const word = entry[0];
+	    const row = entry[1];
+	    const col = entry[2];
+	    const start = entry[3];
+	    const end = entry[4];
+	    const nmatches = entry[5];
 	    let crossWordClues = [ ];
-	    console.log( "addCrossWords: " + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end );
+	    console.log( "addCrossWords: " + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + "; nmatches=" + nmatches );
 
 	    if( direction == ACROSS ) {
 		for( let j = start; j < end; j++ ) {
@@ -192,7 +199,7 @@ function addCrossWords( list, direction ) {
 		    }
 		}
 	    }
-	    result.push( [ word, row, col, start, end, crossWordClues ] );
+	    result.push( [ word, row, col, start, end, nmatches, crossWordClues ] );
 	}
     }
     return( result );
@@ -258,13 +265,14 @@ function printEntries( list, dir ) {
     for( let e in list ) {
 	let entry = list[ e ];
 	if( entry !== undefined ) {
-	    let word = entry[0];
-	    let row = entry[1];
-	    let col = entry[2];
-	    let start = entry[3];
-	    let end = entry[4];
-	    let crosswordClues = (entry[ 5 ] === undefined ? "" : " [" + entry[ 5 ].join(",") + "]" );
-	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + crosswordClues );
+	    const word = entry[0];
+	    const row = entry[1];
+	    const col = entry[2];
+	    const start = entry[3];
+	    const end = entry[4];
+	    const nmatches = entry[5];
+	    const crosswordClues = (entry[ 6 ] === undefined ? "<none>" : " [" + entry[ 6 ].join(",") + "]" );
+	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + "; nmatches=" + nmatches + " crosswordClues=" + crosswordClues );
 	}
     }
 }
@@ -290,13 +298,13 @@ function autofillJS( entries, clue, level ) {
     let acrossList = [];
     let downList = [];
     collectEntries( acrossList, downList );
-    console.log( "autofillJS: Before..." );
+    console.log( "autofillJS: After collectEntries()..." );
     printEntries( acrossList, ACROSS );
     printEntries( downList, DOWN );
 
     acrossList = addCrossWords( acrossList, ACROSS );
     downList = addCrossWords( downList, DOWN );
-    console.log( "autofillJS: After..." );
+    console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
     printEntries( acrossList, ACROSS );
     printEntries( downList, DOWN );
 
