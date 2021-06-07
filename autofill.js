@@ -88,6 +88,8 @@ function addEntry( row, col, direction, list ) {
 
 	console.log("addEntry: start=" + start + ", end=" + end + "; nmatches=" + nmatches );
 	list[ parseInt(clueLabel) ] = { "word" : word,
+					"clueNumber" : clueLabel,
+					"direction" : direction,
 					"row" : row,
 					"col" : col,
 					"start" : start,
@@ -202,7 +204,8 @@ function addCrossWords( list, direction ) {
 		}
 	    }
 	    result[ element ] = { "word" : entry.word,
-				  "clue-number" : element,
+				  "clueNumber" : element,
+				  "direction" : direction,
 				  "row" : entry.row,
 				  "col" : entry.col,
 				  "start" : entry.start,
@@ -246,18 +249,6 @@ function toggleAutoFill( force ) {
 	collectAll( acrossClues, acrossDict, 'a' );
 	collectAll( downClues, downDict, 'd' );
 
-	// console.log( "toggleAutoFill: acrossDict:" );
-	// for( const [k,v] of Object.entries( acrossDict ) ) {
-	//     let m = "answer '" +  k + "' == " + v;
-	//     console.log( m );
-	// }
-
-	// console.log( "toggleAutoFill: downDict:" );
-	// for( const [k,v] of Object.entries( downDict ) ) {
-	//     let m = "answer '" +  k + "' == " + v;
-	//     console.log( m );
-	// }
-
 	autofillJS( acrossDict, downDict, '1a', 1 );
     }
     updateUI();
@@ -276,7 +267,9 @@ function printEntries( list, dir ) {
 	let entry = list[ e ];
 	if( entry !== undefined ) {
 	    const crosswordClues = (entry.crossWordClues === undefined ? "<none>" : " [" + entry.crossWordClues.join(",") + "]" );
-	    console.log( "\t" + e + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
+	    const cluenum = entry.clueNumber === undefined ? "" : (entry.clueNumber + " " + entry.direction);
+	    console.log( "\t" + e + ":  " + cluenum + " '" + entry.word +
+			 "' (" + entry.row + "," + entry.col + ")  " +
 			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
 			 " crosswordClues=" + crosswordClues );
 	}
@@ -303,6 +296,39 @@ function autofillJS( entries, clue, level ) {
 
     function compareNmatches( a, b ) { return( a.nmatches < b.nmatches ? -1 : a.nmatches > b.nmatches ? +1 : 0 ); }
 
+    function optimizeSortOrder( a, b ) {
+	// Optimize the sort order of candidates. This will be the order we attempt to fill in the puzzle.
+	// Sort by number of matches, ascending.
+	// Within that, sort by the length of the answer, descending.
+
+	function isLongerThan( a, b ) {
+	    // Returns -1, 0, 1, depending on whether a.word is longer, same as or shorter than b.word.
+	    const alen = a.word.length;
+	    const blen = b.word.length;
+
+	    let ret = 0
+	    if( alen > blen ) {
+		ret = -1;
+	    } else {
+		if( alen < blen ) {
+		    ret = +1;
+		}
+	    }
+	    return( ret );
+	}
+
+	let ret = 0;
+
+	if( a.nmatches < b.nmatches ) {
+	    ret = -1
+	} else 	if( a.nmatches > b.nmatches ) {
+	    ret = +1
+	} else {
+	    ret = isLongerThan( a, b );
+	}
+	return( ret );
+    }
+
     logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clue );
     let acrossList = [];
     let downList = [];
@@ -314,8 +340,9 @@ function autofillJS( entries, clue, level ) {
     acrossList = addCrossWords( acrossList, ACROSS );
     downList = addCrossWords( downList, DOWN );
     console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
-    printEntries( acrossList.sort( compareNmatches ), ACROSS  );
-    printEntries( downList.sort( compareNmatches ), DOWN  );
+    printEntries( acrossList.sort( optimizeSortOrder ), ACROSS  );
+    printEntries( downList.sort( optimizeSortOrder ), DOWN  );
+    printEntries( acrossList.concat( downList ).sort( optimizeSortOrder ), "*** Combined ***" );
 
     const candidates = matchFromWordlist( word[0], true );
     let rankedCandidatesDict = {}
