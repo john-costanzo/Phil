@@ -87,7 +87,13 @@ function addEntry( row, col, direction, list ) {
 	}
 
 	console.log("addEntry: start=" + start + ", end=" + end + "; nmatches=" + nmatches );
-	list[ parseInt(clueLabel) ] = [ word, row, col, start, end, nmatches ];
+	list[ parseInt(clueLabel) ] = { "word" : word,
+					"row" : row,
+					"col" : col,
+					"start" : start,
+					"end" : end,
+					"nmatches" : nmatches
+				      };
     }
     //TODO: remove following two lines
     else
@@ -159,20 +165,16 @@ function addCrossWords( list, direction ) {
     // that cross this entry assuming the entries run in DIRECTION.
     let result = [];
 
-    for( entry of list ) {
+    for( let element in list ) {
+	let entry = list[ element ];
 	if( entry !== undefined ) {
-	    const word = entry[0];
-	    const row = entry[1];
-	    const col = entry[2];
-	    const start = entry[3];
-	    const end = entry[4];
-	    const nmatches = entry[5];
 	    let crossWordClues = [ ];
-	    console.log( "addCrossWords: " + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + "; nmatches=" + nmatches );
+	    console.log( "addCrossWords: " + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
+			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches );
 
 	    if( direction == ACROSS ) {
-		for( let j = start; j < end; j++ ) {
-		    for( let i = row; i >= 0; i-- ) {
+		for( let j = entry.start; j < entry.end; j++ ) {
+		    for( let i = entry.row; i >= 0; i-- ) {
 			if( i == 0 || xw.fill[i][j] == BLACK ) {
 			    if( xw.fill[i][j] == BLACK ) i++; // adjust for the black cell
 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -186,8 +188,8 @@ function addCrossWords( list, direction ) {
 		}
 	    }
 	    else {
-		for( let i = start; i < end; i++ ) {
-		    for( let j = col; j >= 0; j-- ) {
+		for( let i = entry.start; i < entry.end; i++ ) {
+		    for( let j = entry.col; j >= 0; j-- ) {
 			if( j == 0 || xw.fill[i][j] == BLACK ) {
 			    if( xw.fill[i][j] == BLACK ) j++; // adjust for the black cell
 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -199,7 +201,15 @@ function addCrossWords( list, direction ) {
 		    }
 		}
 	    }
-	    result.push( [ word, row, col, start, end, nmatches, crossWordClues ] );
+	    result[ element ] = { "word" : entry.word,
+				  "clue-number" : element,
+				  "row" : entry.row,
+				  "col" : entry.col,
+				  "start" : entry.start,
+				  "end" : entry.end,
+				  "nmatches" : entry.nmatches,
+				  "crossWordClues" : crossWordClues
+				};
 	}
     }
     return( result );
@@ -265,14 +275,10 @@ function printEntries( list, dir ) {
     for( let e in list ) {
 	let entry = list[ e ];
 	if( entry !== undefined ) {
-	    const word = entry[0];
-	    const row = entry[1];
-	    const col = entry[2];
-	    const start = entry[3];
-	    const end = entry[4];
-	    const nmatches = entry[5];
-	    const crosswordClues = (entry[ 6 ] === undefined ? "<none>" : " [" + entry[ 6 ].join(",") + "]" );
-	    console.log( "\t" + e + " '" + word + "' (" + row + "," + col + ")  " + start + "..." + end + "; nmatches=" + nmatches + " crosswordClues=" + crosswordClues );
+	    const crosswordClues = (entry.crossWordClues === undefined ? "<none>" : " [" + entry.crossWordClues.join(",") + "]" );
+	    console.log( "\t" + e + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
+			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
+			 " crosswordClues=" + crosswordClues );
 	}
     }
 }
@@ -294,6 +300,9 @@ function autofillJS( entries, clue, level ) {
     //        5c) If the function returns false, replace the fill word with the next candidate
     //            and continue to step 5a.
     //        5d) If *all* cross-wise entries return true, return true.
+
+    function compareNmatches( a, b ) { return( a.nmatches < b.nmatches ? -1 : a.nmatches > b.nmatches ? +1 : 0 ); }
+
     logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clue );
     let acrossList = [];
     let downList = [];
@@ -305,8 +314,8 @@ function autofillJS( entries, clue, level ) {
     acrossList = addCrossWords( acrossList, ACROSS );
     downList = addCrossWords( downList, DOWN );
     console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
-    printEntries( acrossList, ACROSS );
-    printEntries( downList, DOWN );
+    printEntries( acrossList.sort( compareNmatches ), ACROSS  );
+    printEntries( downList.sort( compareNmatches ), DOWN  );
 
     const candidates = matchFromWordlist( word[0], true );
     let rankedCandidatesDict = {}
