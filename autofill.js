@@ -42,7 +42,6 @@ function scoreWord( word, freq ) {
 
 function collectAll( clues, dict, direction ) {
     // Collect all answers from CLUES into DICT, noting its DIRECTION.
-    // TODO: for each clue, need to also include the down clues.
 
     for( let i=0; i < clues.length; i++ ) {
 	let ans = clues[i].answer;
@@ -163,6 +162,8 @@ function collectEntries( acrossList, downList ) {
 }
 
 function addCrossWords( list, direction ) {
+    // TODO: delete this unneeded function
+
     // For each defined entry in LIST, append to the entry a list of all words
     // that cross this entry assuming the entries run in DIRECTION.
     let result = [];
@@ -271,7 +272,7 @@ function printEntries( list, dir ) {
 	    console.log( "\t" + e + ":  " + cluenum + " '" + entry.word +
 			 "' (" + entry.row + "," + entry.col + ")  " +
 			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
-			 " crosswordClues=" + crosswordClues );
+			 " " + crosswordClues );
 	}
     }
 }
@@ -302,7 +303,7 @@ function autofillJS( entries, clue, level ) {
 	// Within that, sort by the length of the answer, descending.
 
 	function isLongerThan( a, b ) {
-	    // Returns -1, 0, 1, depending on whether a.word is longer, same as or shorter than b.word.
+	    // Returns -1, 0, +1, depending on whether a.word is longer, same as or shorter than b.word.
 	    const alen = a.word.length;
 	    const blen = b.word.length;
 
@@ -336,13 +337,15 @@ function autofillJS( entries, clue, level ) {
     console.log( "autofillJS: After collectEntries()..." );
     printEntries( acrossList, ACROSS );
     printEntries( downList, DOWN );
+    let optimizedList = acrossList.concat( downList ).sort( optimizeSortOrder );
+    printEntries( optimizedList, "*** Combined (before addCrossWords) *** " );
 
-    acrossList = addCrossWords( acrossList, ACROSS );
-    downList = addCrossWords( downList, DOWN );
-    console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
-    printEntries( acrossList.sort( optimizeSortOrder ), ACROSS  );
-    printEntries( downList.sort( optimizeSortOrder ), DOWN  );
-    printEntries( acrossList.concat( downList ).sort( optimizeSortOrder ), "*** Combined ***" );
+    // acrossList = addCrossWords( acrossList, ACROSS );
+    // downList = addCrossWords( downList, DOWN );
+    // console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
+    // printEntries( acrossList.sort( optimizeSortOrder ), ACROSS  );
+    // printEntries( downList.sort( optimizeSortOrder ), DOWN  );
+    // printEntries( acrossList.concat( downList ).sort( optimizeSortOrder ), "*** Combined (after addCrossWords) *** " );
 
     const candidates = matchFromWordlist( word[0], true );
     let rankedCandidatesDict = {}
