@@ -41,6 +41,7 @@ function scoreWord( word, freq ) {
 
 
 function collectAll( clues, dict, direction ) {
+    // TODO: Remove dead code?
     // Collect all answers from CLUES into DICT, noting its DIRECTION.
 
     for( let i=0; i < clues.length; i++ ) {
@@ -63,7 +64,7 @@ function startOfHorizontalWord( row, col ) {
 
 function addEntry( row, col, direction, list ) {
     // Add values of the entry to the LIST, a list consisting of:
-    //    the word's address (i.e., clue number) as a number
+    //    the word's clue number (as a number)
     //    the word (containing zero or more wildcards)
     //    row grid coordinate for the start of the word
     //    column grid coordinate for the start of the word
@@ -161,139 +162,67 @@ function collectEntries( acrossList, downList ) {
     console.log("exiting collectEntries()");
 }
 
-function addCrossWords( list, direction ) {
-    // TODO: delete this unneeded function
+// function addCrossWords( list, direction ) {
+//     // TODO: delete this unneeded function
 
-    // For each defined entry in LIST, append to the entry a list of all words
-    // that cross this entry assuming the entries run in DIRECTION.
-    let result = [];
+//     // For each defined entry in LIST, append to the entry a list of all words
+//     // that cross this entry assuming the entries run in DIRECTION.
+//     let result = [];
 
-    for( let element in list ) {
-	let entry = list[ element ];
-	if( entry !== undefined ) {
-	    let crossWordClues = [ ];
-	    console.log( "addCrossWords: " + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
-			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches );
+//     for( let element in list ) {
+// 	let entry = list[ element ];
+// 	if( entry !== undefined ) {
+// 	    let crossWordClues = [ ];
+// 	    console.log( "addCrossWords: " + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
+// 			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches );
 
-	    if( direction == ACROSS ) {
-		for( let j = entry.start; j < entry.end; j++ ) {
-		    for( let i = entry.row; i >= 0; i-- ) {
-			if( i == 0 || xw.fill[i][j] == BLACK ) {
-			    if( xw.fill[i][j] == BLACK ) i++; // adjust for the black cell
-			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-			    let clue = cell.firstChild.innerHTML;
-			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + i + "; clue=" + clue);
-			    crossWordClues.push( parseInt( clue ) );
-			    break;
-			}
+// 	    if( direction == ACROSS ) {
+// 		for( let j = entry.start; j < entry.end; j++ ) {
+// 		    for( let i = entry.row; i >= 0; i-- ) {
+// 			if( i == 0 || xw.fill[i][j] == BLACK ) {
+// 			    if( xw.fill[i][j] == BLACK ) i++; // adjust for the black cell
+// 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+// 			    let clue = cell.firstChild.innerHTML;
+// 			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + i + "; clue=" + clue);
+// 			    crossWordClues.push( parseInt( clue ) );
+// 			    break;
+// 			}
 
-		    }
-		}
-	    }
-	    else {
-		for( let i = entry.start; i < entry.end; i++ ) {
-		    for( let j = entry.col; j >= 0; j-- ) {
-			if( j == 0 || xw.fill[i][j] == BLACK ) {
-			    if( xw.fill[i][j] == BLACK ) j++; // adjust for the black cell
-			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-			    let clue = cell.firstChild.innerHTML;
-			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + j + "; clue=" + clue);
-			    crossWordClues.push( parseInt( clue ) );
-			    break;
-			}
-		    }
-		}
-	    }
-	    result[ element ] = { "word" : entry.word,
-				  "clueNumber" : element,
-				  "direction" : direction,
-				  "row" : entry.row,
-				  "col" : entry.col,
-				  "start" : entry.start,
-				  "end" : entry.end,
-				  "nmatches" : entry.nmatches,
-				  "crossWordClues" : crossWordClues
-				};
-	}
-    }
-    return( result );
-}
+// 		    }
+// 		}
+// 	    }
+// 	    else {
+// 		for( let i = entry.start; i < entry.end; i++ ) {
+// 		    for( let j = entry.col; j >= 0; j-- ) {
+// 			if( j == 0 || xw.fill[i][j] == BLACK ) {
+// 			    if( xw.fill[i][j] == BLACK ) j++; // adjust for the black cell
+// 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+// 			    let clue = cell.firstChild.innerHTML;
+// 			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + j + "; clue=" + clue);
+// 			    crossWordClues.push( parseInt( clue ) );
+// 			    break;
+// 			}
+// 		    }
+// 		}
+// 	    }
+// 	    result[ element ] = { "word" : entry.word,
+// 				  "clueNumber" : element,
+// 				  "direction" : direction,
+// 				  "row" : entry.row,
+// 				  "col" : entry.col,
+// 				  "start" : entry.start,
+// 				  "end" : entry.end,
+// 				  "nmatches" : entry.nmatches,
+// 				  "crossWordClues" : crossWordClues
+// 				};
+// 	}
+//     }
+//     return( result );
+// }
 
-function toggleAutoFill( force ) {
-    // Start autofilling the puzzle of requested to toggle on;
-    // else stop autofilling.
-    // If FORCE (a boolean) is given, then use that value instead of toggling.
 
-    if( force === undefined ) {
-	autoFilling = !autoFilling;
-    } else {
-	autoFilling = force;
-    }
-
-    // Update UI button
-    let autoFillButton = document.getElementById("toggle-auto-fill");
-    autoFillButton.classList.toggle("button-on");
-    buttonState = autoFillButton.getAttribute("data-state");
-    console.log("toggleAutoFill: buttonState=" + buttonState)
-    autoFillButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
-    if( buttonState == "on" ) {
-	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill on");
-	console.log( "toggleAutoFill: toggling off..." );
-    } else {
-	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill off");
-	console.log( "toggleAutoFill: toggling on..." );
-
-	const [acrossClues, downClues] = generatePDFClues();
-	let acrossDict = {};
-	let downDict = {};
-
-	collectAll( acrossClues, acrossDict, 'a' );
-	collectAll( downClues, downDict, 'd' );
-
-	autofillJS( acrossDict, downDict, '1a', 1 );
-    }
-    updateUI();
-}
-
-function logWithLevel( tag, level, message ) {
-    // Log a message, prefixed by TAG, then a colon.
-    // Display LEVEL blanks and then the MESSAGE.
-    console.log(tag + ": " + " ".repeat(level) + message );
-}
-
-function printEntries( list, dir ) {
-    // Print entries in LIST, preceded by their direction, DIR.
-    console.log( "printEntries: " + dir + "List:" );
-    for( let e in list ) {
-	let entry = list[ e ];
-	if( entry !== undefined ) {
-	    const crosswordClues = (entry.crossWordClues === undefined ? "<none>" : " [" + entry.crossWordClues.join(",") + "]" );
-	    const cluenum = entry.clueNumber === undefined ? "" : (entry.clueNumber + " " + entry.direction);
-	    console.log( "\t" + e + ":  " + cluenum + " '" + entry.word +
-			 "' (" + entry.row + "," + entry.col + ")  " +
-			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
-			 " " + crosswordClues );
-	}
-    }
-}
-
-function autofillJS( entries, clue, level ) {
-    // Autofill the puzzle starting at clue CLUE.
-    // Print messages with LEVEL leading spaces.
-    //
-    // Algorithm:
-    //    1) From ENTRIES, retrieve the entry for CLUE.
-    //    2) If this entry's word has no wildcards, return true.
-    //    3) Obtain the entry's candidate fill words and rank them according to letter frequency.
-    //    4) If there are no candidates, return false.
-    //    5) Iterate through the entry's ranked candidate fill words:
-    //        5a) Place a candidate into the grid for this entry.
-    //        5b) Iteratively call this function (recursively) with each cross-wise address that is
-    //            greater than the current. For example if the current entry is 53d and
-    //            the cross-wise addresses are 53a, 58a and 59a, call only on the latter two.
-    //        5c) If the function returns false, replace the fill word with the next candidate
-    //            and continue to step 5a.
-    //        5d) If *all* cross-wise entries return true, return true.
+function computeOptimizedList() {
+    // Return an optimized list of answers to visit.
 
     function compareNmatches( a, b ) { return( a.nmatches < b.nmatches ? -1 : a.nmatches > b.nmatches ? +1 : 0 ); }
 
@@ -330,37 +259,213 @@ function autofillJS( entries, clue, level ) {
 	return( ret );
     }
 
-    logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clue );
     let acrossList = [];
     let downList = [];
     collectEntries( acrossList, downList );
-    console.log( "autofillJS: After collectEntries()..." );
+    console.log( "computeOptimizedList: After collectEntries()..." );
     printEntries( acrossList, ACROSS );
     printEntries( downList, DOWN );
-    let optimizedList = acrossList.concat( downList ).sort( optimizeSortOrder );
-    printEntries( optimizedList, "*** Combined (before addCrossWords) *** " );
+    let optimizedList = acrossList.concat( downList ).
+	filter(entry => entry !== undefined).
+	sort( optimizeSortOrder );
+    printEntries( optimizedList, "*** Combined and Optimized " );
+    return( optimizedList );
+}
 
-    // acrossList = addCrossWords( acrossList, ACROSS );
-    // downList = addCrossWords( downList, DOWN );
-    // console.log( "autofillJS: After collectEntries() and addCrossWords()..." );
-    // printEntries( acrossList.sort( optimizeSortOrder ), ACROSS  );
-    // printEntries( downList.sort( optimizeSortOrder ), DOWN  );
-    // printEntries( acrossList.concat( downList ).sort( optimizeSortOrder ), "*** Combined (after addCrossWords) *** " );
 
-    const candidates = matchFromWordlist( word[0], true );
+function toggleAutoFill( force ) {
+    // Start autofilling the puzzle of requested to toggle on;
+    // else stop autofilling.
+    // If FORCE (a boolean) is given, then use that value instead of toggling.
+
+    if( force === undefined ) {
+	autoFilling = !autoFilling;
+    } else {
+	autoFilling = force;
+    }
+
+    // Update UI button
+    let autoFillButton = document.getElementById("toggle-auto-fill");
+    autoFillButton.classList.toggle("button-on");
+    buttonState = autoFillButton.getAttribute("data-state");
+    console.log("toggleAutoFill: buttonState=" + buttonState)
+    autoFillButton.setAttribute("data-state", autoFilling ? "on" : "off");
+    if( !autoFilling ) {
+	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill on");
+	console.log( "toggleAutoFill: toggling off..." );
+    } else {
+	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill off");
+	console.log( "toggleAutoFill: toggling on..." );
+
+	let optimizedList = computeOptimizedList();
+	console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
+
+	autofillJS( optimizedList, 0, 0 );
+    }
+    updateUI();
+}
+
+function logWithLevel( tag, level, message ) {
+    // Log a message, prefixed by TAG, then a colon.
+    // Display LEVEL blanks and then the MESSAGE.
+    console.log(tag + ": " + " ".repeat(level) + message );
+}
+
+function printEntries( list, dir ) {
+    // Print entries in LIST, preceded by their direction, DIR.
+    console.log( "printEntries: " + dir + "List:" );
+    for( let e in list ) {
+	let entry = list[ e ];
+	if( entry !== undefined ) {
+	    const crosswordClues = (entry.crossWordClues === undefined ? "<none>" : " [" + entry.crossWordClues.join(",") + "]" );
+	    const cluenum = entry.clueNumber === undefined ? "" : (entry.clueNumber + " " + entry.direction);
+	    console.log( "\t" + e + ":  " + cluenum + " '" + entry.word +
+			 "' (" + entry.row + "," + entry.col + ")  " +
+			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
+			 " " + crosswordClues );
+	}
+    }
+}
+
+// Ideally, we'd like to use a function to fill in a piece of the
+// puzzle, then recursively call the function to fill in progressively
+// smaller pieces of the puzzle. If recursive calls were to fail to
+// fill in portions, we could try alternatives and the stack could
+// manage all this state.
+
+// The problem is that JavaScript has a single threaded
+// run-to-completion model where we are unable to process events (e.g.
+// a request to halt autofilling) while this long-running process
+// occurs.
+
+// Instead, we implement two functions: one that iteratively evaluates
+// puzzle entries and a second that evaluates candidate answers for
+// each of these entries. These functions are not called directly but
+// are schedule via the event dispatcher, which allows these calls to
+// be intermingled with other events.
+
+// We iterate through each of the entries, trying each candidate
+// answer in turn and then move on to the next entry. If we fail to
+// find any suitable candidates for an entry, we back up and
+// try a different candidate for the previous entry. All of this state
+// needs to be managed via data structures:
+
+// ENTRIES: a (sorted) list of Objects containing these fields:
+//          {word, clueNumber, direction, row, col, start, end, nmatches, crossWordClues}
+// should be:
+//          {word, clueNumber, direction, row, col, start, end, nmatches, candidates, currentCandidate}
+//
+// CANDIDATES: a (sorted) list of candidate answers for a given entry
+//
+
+function autofillJS( entries, clueNumber, level ) {
+    // Autofill the puzzle using ENTRIES as the order list of answers, starting at clue CLUENUMBER.
+    // Print messages with LEVEL leading spaces.
+    //
+    // Algorithm:
+    //    0) If CLUENUMBER exceeds the length of ENTRIES, return true. (We are done!)
+    //    1) From ENTRIES, retrieve the entry for CLUENUMBER.
+    //    2) Obtain the entry's candidate fill words and rank them in ascending order of letter frequency.
+    //    3) Iterate through the entry's ranked candidate fill words:
+    //        3a) If there are no candidates, set the 'success' field for this entry to 'false' and return.
+    //        3b) Else call tryCandidates().
+
+
+    // For example, suppose we have
+    //   entries of: [ {"word": "IDE-", ...., "candidates": [ "IDEA", "IDEE", ..., "IDES"] },
+    //                 {"word": "OW-", ....,  "candidates": [ "OWE",  "OWI",  ..., "OWS"] } ]
+    //   and we have tried "IDEA" for entries[0] but that forced entries[1] to have no matches.
+    //
+    //   We would then set entries[0].success=false and call autofillJS(entries, 0, 0) again.
+    //   The next time autofillJS() is run, we see that its success is false. We remove the 
+    //   word we added (?) and call tryCandidates() with the next candidate (e.g., "IDEE").
+    // 
+    const numEntries = entries.length-1;
+    logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
+
+    if( !autoFilling ) {
+	logWithLevel("autofillJS", level, "autoFilling is false; returning false!" );
+	console.log( "bailing out of first one" );
+	return;
+    }
+
+    if( clueNumber < 0 ) {  // We've failed
+	logWithLevel( "autofillJS", level, "Failure!!!" );
+	// TODO: Do something. Or undo something.
+	return;
+    }
+
+    if( clueNumber >= entries.length ) {  // We've filled all entries!
+	logWithLevel( "autofillJS", level, "Success!!!" );
+	toggleAutoFill( false );
+	return;
+    }
+
+    if( clueNumber < entries.length-1 ) {
+	const success = entries[ clueNumber+1 ].success;
+	// TODO: if success == false, we have already tried the next clueNumber and it failed.
+	// Try the next candidate for this entry.
+	if( success !== undefined && !success ) {
+	    const nextCandidate = entries[ clueNumber ].currentCandidate+1;
+	    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, nextCandidate, level  ), 0 );
+	    return;
+	}
+    }
+
+    let word = entries[ clueNumber ].word;
+    const col = entries[ clueNumber ].col;
+    const row = entries[ clueNumber ].row;
+    const direction = entries[ clueNumber ].direction;
+
+    const wordInfo = getWordAndIndicesAt( row, col, direction, false );
+    if( wordInfo === undefined ) {
+	console.log( "autofillJS: cannot getWordAndIndicesAt(" + row + "," + col + "," + direction + ")");
+    } else {
+	word = wordInfo[ 0 ];
+    }
+
+    const candidates = matchFromWordlist( word, true, true );
+    if( candidates.length == 0 ) {
+	logWithLevel( "autofillJS", level, "No candidates for '" + word + "'; marking this entry's success as false, undoing the parent's entry and 'returning' to parent" );
+	entries[ clueNumber ].success = false;
+	entries[ clueNumber ].candidates = [];
+
+	if( clueNumber > 0 ) {
+	    const parentClueNumber = clueNumber-1;
+	    const parentCol = entries[ parentClueNumber ].col;
+	    const parentRow = entries[ parentClueNumber ].row;
+	    const parentDirection = entries[ parentClueNumber ].direction;
+	    const parentStart = entries[ parentClueNumber ].start;
+	    const parentEnd = entries[ parentClueNumber ].end;
+
+	    const previousWord = entries[ parentClueNumber ].previousWord;
+	    logWithLevel( "autofillJS", level, "replacing previous parent word '" + previousWord + "'" );
+	    fillGridWithMatchAux( previousWord, parentDirection, parentRow, parentCol, parentStart, parentEnd );
+	} else {
+	    logWithLevel( "autofillJS", level, "ERROR! clueNumber==" + clueNumber );
+	}
+
+	// TODO: We can never simply return; we must *always* call some function until we are done!!!
+	// DON'T BREAK THE CHAIN!
+	// TODO: do we pass clueNumber or clueNumber-1?
+	// TODO: do we pass level or level-1?
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level ), 0 );
+	return;
+    }
+
     let rankedCandidatesDict = {}
-    for (const candidate of candidates) {
+    for( const candidate of candidates ) {
 	let s = scoreWord( candidate, letter_frequency );
 	rankedCandidatesDict[ candidate ] = s;
     }
 
     // Create items array that has a two-element list of the word and score.
-    var items = Object.keys(rankedCandidatesDict).map(function(key) {
+    var items = Object.keys( rankedCandidatesDict ).map( function(key) {
 	return [key, rankedCandidatesDict[key]];
-    });
+    } );
 
     // Sort the array based on the second element (i.e., score)
-    items.sort(function(first, second) {
+    items.sort( function( first, second ) {
 	return second[1] - first[1];
     });
 
@@ -369,10 +474,67 @@ function autofillJS( entries, clue, level ) {
 	return items[ key ][ 0 ];
     });
 
-    for( const candidate of rankedCandidatesList ) {
-	logWithLevel("autofillJS", level, "evaluating candidate = " + candidate );
+    entries[clueNumber].candidates = rankedCandidatesList;
+
+    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, level  ), 0 );
+
+    // if( autoFilling )
+    // 	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
+    // else {
+    // 	console.log( "bailing out of last one" );
+    // 	return( false );
+    // }
+}
+
+function tryCandidates( entries, clueNumber, candidateNumber, level ) {
+    // Consulting the list of ENTRIES, evaluate the entry at
+    // CLUENUMBER, starting at its candidate answer CANDIDATENUMBER.
+    // Report messages using LEVEL.
+    const candidates = entries[ clueNumber ].candidates;
+
+    logWithLevel( "tryCandidates", level, "clueNumber = " + clueNumber );
+    logWithLevel( "tryCandidates", level, "candidateNumber = " + candidateNumber + " of " + candidates.length );
+
+    if( candidateNumber >= candidates.length ) {
+	logWithLevel( "tryCandidates",
+		      level,
+		      "candidateNumber (" + candidateNumber +
+		      ") >= candidates.length (" + candidates.length +
+		      ") so we are returning (false)" );
+	entries[ clueNumber ].success = false;  // we ran out of candidates!
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber, level ), 0 );
+	return; 
     }
-    toggleAutoFill( false );
+
+    entries[ clueNumber ].currentCandidate = candidateNumber;
+
+    const word = entries[ clueNumber ].word;
+    const direction = entries[ clueNumber ].direction;
+    const row = entries[ clueNumber ].row;
+    const col = entries[ clueNumber ].col;
+    const start = entries[ clueNumber ].start;
+    const end = entries[ clueNumber ].end;
+    const candidate = candidates[ candidateNumber ];
+
+    if( autoFilling ) {
+	logWithLevel("tryCandidates", level, "'" + word + "' evaluating candidate = '" + candidate + "'");
+
+	// Actually fill in the grid with 'candidate'
+	const wordInfo = getWordAndIndicesAt( row, col, direction, false );
+	entries[ clueNumber ].previousWord = wordInfo[ 0 ];
+	fillGridWithMatchAux( candidate, direction, row, col, start, end );
+
+	// TODO: this is just for fun?
+	// isMutated = true;
+	// updateUI();
+
+	// Try the next clue number
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
+
+	// TODO: check (somehow!) whether the previous call failed and if so, call the following:
+	// window.setTimeout( tryCandidates.bind( null, entries, clueNumber, candidateNumber+1, level  ), 0 );
+    }
+    return;
 }
 
 let autoFilling = false;
