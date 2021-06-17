@@ -141,10 +141,11 @@ function replaceRegex( word ) {
     return( newWord );
 }
 
-function matchFromWordlist( word, searchOnEmpty=false ) {
+function matchFromWordlist( word, searchOnEmpty=false, searchOnFull=false ) {
     // Return words from the wordlist that match WORD,
     // which may contain "wildcards" which are denoted as '-' characters.
-    // If SEARCHONEMPTY is true, return a list of words even if all characters are wild.
+    // If SEARCHONEMPTY, return a list of words even if all characters are wild.
+    // If SEARCHONFULL, return a list containing the word if it is in the wordlist.
     const l = word.length;
     const actualLettersInWord = word.replace( /-/g, "" ).length;
     const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
@@ -167,7 +168,10 @@ function matchFromWordlist( word, searchOnEmpty=false ) {
 	}
 	return matches;
     } else {
-	return [];
+	if( searchOnFull )
+	    return( wordlist[l].filter( w => w === word ) );
+	else
+	    return [];
     }
 }
 
@@ -514,6 +518,42 @@ function updateMatchesUI() {
     console.log( "updateMatchesUI: exiting" );
 }
 
+function fillGridWithMatchAux( fill, direction, row, column, startIndex, endIndex ) {
+    // Given the word to FILL, its DIRECTION, its ROW, COLUMN,
+    // STARTINDEX and ENDINDEX, update the model.
+    if( fill === undefined ) {
+	console.log( "fillGridWithMatchAux: ERROR: fill is undefined!" );
+    } else {
+	console.log( "fillGridWithMatchAux: filling with '" + fill + "'" );
+	console.log( "fillGridWithMatchAux: direction=" + direction + " row=" + row + " col=" + column + " startIndex=" + startIndex + " endIndex=" + endIndex );
+	if ( direction == ACROSS ) {
+
+	    xw.fill[row] = xw.fill[row].slice( 0, startIndex ) +
+		fill +
+		xw.fill[row].slice( endIndex );
+
+	    for ( let i = startIndex; i < endIndex; i++ ) {
+		const square = grid.
+		      querySelector( '[data-row="' + row + '"]' ).
+		      querySelector( '[data-col="' + i + '"]' );
+		square.lastChild.innerHTML = fill[i - startIndex];
+	    }
+	} else {
+	    for ( let j = startIndex; j < endIndex; j++ ) {
+
+		xw.fill[j] = xw.fill[j].slice( 0, column ) +
+		    fill[j - startIndex] +
+		    xw.fill[j].slice( column + 1 );
+
+		const square = grid.
+		      querySelector( '[data-row="' + j + '"]' ).
+		      querySelector( '[data-col="' + column + '"]' );
+		square.lastChild.innerHTML = fill[j - startIndex];
+	    }
+	}
+    }
+}
+
 function fillGridWithMatch( e ) {
     const li = e.currentTarget;
     const fill = li.innerHTML.toUpperCase();
@@ -524,17 +564,11 @@ function fillGridWithMatch( e ) {
     emptyRedoState();
 
     if ( dir == ACROSS ) {
-	xw.fill[current.row] = xw.fill[current.row].slice( 0, current.acrossStartIndex ) + fill + xw.fill[current.row].slice( current.acrossEndIndex );
-	for ( let i = current.acrossStartIndex; i < current.acrossEndIndex; i++ ) {
-	    const square = grid.querySelector( '[data-row="' + current.row + '"]' ).querySelector( '[data-col="' + i + '"]' );
-	    square.lastChild.innerHTML = fill[i - current.acrossStartIndex];
-	}
+	fillGridWithMatchAux( fill, dir, current.row, current.col,
+			      current.acrossStartIndex, current.acrossEndIndex );
     } else {
-	for ( let j = current.downStartIndex; j < current.downEndIndex; j++ ) {
-	    xw.fill[j] = xw.fill[j].slice( 0, current.col ) + fill[j - current.downStartIndex] + xw.fill[j].slice( current.col + 1 );
-	    const square = grid.querySelector( '[data-row="' + j + '"]' ).querySelector( '[data-col="' + current.col + '"]' );
-	    square.lastChild.innerHTML = fill[j - current.downStartIndex];
-	}
+	fillGridWithMatchAux( fill, dir, current.row, current.col,
+			      current.downStartIndex, current.downEndIndex );
     }
     isMutated = true;
     console.log( "Filled '" + li.innerHTML + "' going " + dir );
