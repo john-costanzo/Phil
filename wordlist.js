@@ -395,7 +395,9 @@ function wordIsEmpty( word ) {
 function wordIsComplete( word ) {
     // Return whether the word is completely filled.
     const actualLettersInWord = word.replace( /-/g, "" ).length;
-    return( actualLettersInWord == word.length );
+    const wordContainsDigit = ( word.search( /\d/ ) >= 0 );
+
+    return( actualLettersInWord == word.length && !wordContainsDigit );
 }
 
 
