@@ -263,8 +263,8 @@ function computeOptimizedList() {
     let downList = [];
     collectEntries( acrossList, downList );
     console.log( "computeOptimizedList: After collectEntries()..." );
-    printEntries( acrossList, ACROSS );
-    printEntries( downList, DOWN );
+    //printEntries( acrossList, ACROSS );
+    //printEntries( downList, DOWN );
     let optimizedList = acrossList.concat( downList ).
 	filter(entry => entry !== undefined).
 	sort( optimizeSortOrder );
@@ -308,7 +308,8 @@ function toggleAutoFill( force ) {
 function logWithLevel( tag, level, message ) {
     // Log a message, prefixed by TAG, then a colon.
     // Display LEVEL blanks and then the MESSAGE.
-    console.log(tag + ": " + " ".repeat(level) + message );
+    const pad = 25 - tag.length;
+    console.log(tag + ": " + " ".repeat(Math.max(1,pad+level)) + message );
 }
 
 function printEntries( list, dir ) {
@@ -392,6 +393,7 @@ function autofillJS( entries, clueNumber, level ) {
     if( clueNumber < 0 ) {  // We've failed
 	logWithLevel( "autofillJS", level, "Failure!!!" );
 	// TODO: Do something. Or undo something.
+	toggleAutoFill( false );
 	return;
     }
 
@@ -417,6 +419,7 @@ function autofillJS( entries, clueNumber, level ) {
     const row = entries[ clueNumber ].row;
     const direction = entries[ clueNumber ].direction;
 
+    logWithLevel( "autofillJS", level, "word='" + word + "' row=" + row + " col=" + col + " " + direction );
     const wordInfo = getWordAndIndicesAt( row, col, direction, false );
     if( wordInfo === undefined ) {
 	console.log( "autofillJS: cannot getWordAndIndicesAt(" + row + "," + col + "," + direction + ")");
@@ -447,8 +450,7 @@ function autofillJS( entries, clueNumber, level ) {
 
 	// TODO: We can never simply return; we must *always* call some function until we are done!!!
 	// DON'T BREAK THE CHAIN!
-	// TODO: do we pass clueNumber or clueNumber-1?
-	// TODO: do we pass level or level-1?
+	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level ), 0 );
 	return;
     }
@@ -476,7 +478,7 @@ function autofillJS( entries, clueNumber, level ) {
 
     entries[clueNumber].candidates = rankedCandidatesList;
 
-    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, level  ), 0 );
+    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, level ), 0 );
 
     // if( autoFilling )
     // 	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
@@ -502,7 +504,8 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 		      ") >= candidates.length (" + candidates.length +
 		      ") so we are returning (false)" );
 	entries[ clueNumber ].success = false;  // we ran out of candidates!
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber, level ), 0 );
+	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
 	return; 
     }
 
@@ -529,7 +532,7 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 	// updateUI();
 
 	// Try the next clue number
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level ), 0 );
 
 	// TODO: check (somehow!) whether the previous call failed and if so, call the following:
 	// window.setTimeout( tryCandidates.bind( null, entries, clueNumber, candidateNumber+1, level  ), 0 );
