@@ -526,8 +526,8 @@ function fillGridWithMatchAux( fill, direction, row, column, startIndex, endInde
     if( fill === undefined ) {
 	console.log( "fillGridWithMatchAux: ERROR: fill is undefined!" );
     } else {
-	console.log( "fillGridWithMatchAux: filling with '" + fill + "'" );
-	console.log( "fillGridWithMatchAux: direction=" + direction + " row=" + row + " col=" + column + " startIndex=" + startIndex + " endIndex=" + endIndex );
+	// console.log( "fillGridWithMatchAux: filling with '" + fill + "'" );
+	// console.log( "fillGridWithMatchAux: direction=" + direction + " row=" + row + " col=" + column + " startIndex=" + startIndex + " endIndex=" + endIndex );
 	if ( direction == ACROSS ) {
 
 	    xw.fill[row] = xw.fill[row].slice( 0, startIndex ) +
