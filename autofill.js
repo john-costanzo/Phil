@@ -30,10 +30,12 @@ const letter_frequency = {
 }
 
 function scoreWord( word, freq ) {
-    // For each letter in the WORD, sum the relative distribution as given by FREQ.
+    // For each letter in the WORD, sum the relative distribution as
+    // given by FREQ. Add in a small bit of randomness to ensure we
+    // don't start with the same words all the time.
     let score = 0;
     for (const x of word) {
-	score += freq[ x.toLowerCase() ];
+	score += freq[ x.toLowerCase() ] + Math.floor( Math.random() * 10 );
     }
     // console.log( "scoreWord: word=" + word + "; score=" + score );
     return( score );
@@ -308,8 +310,8 @@ function toggleAutoFill( force ) {
 function logWithLevel( tag, level, message ) {
     // Log a message, prefixed by TAG, then a colon.
     // Display LEVEL blanks and then the MESSAGE.
-    const pad = 25 - tag.length;
-    console.log(tag + ": " + " ".repeat(Math.max(1,pad+level)) + message );
+    const pad = 0; // (25 - tag.length) * 2;
+    console.log(tag + ": " + " ".repeat(Math.max(1,pad+(level*2))) + message );
 }
 
 function printEntries( list, dir ) {
@@ -382,7 +384,7 @@ function autofillJS( entries, clueNumber, level ) {
     //   word we added (?) and call tryCandidates() with the next candidate (e.g., "IDEE").
     // 
     const numEntries = entries.length-1;
-    logWithLevel("autofillJS", level, "attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
+    logWithLevel("autofillJS", level, "   attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
 
     if( !autoFilling ) {
 	logWithLevel("autofillJS", level, "autoFilling is false; returning false!" );
@@ -394,12 +396,14 @@ function autofillJS( entries, clueNumber, level ) {
 	logWithLevel( "autofillJS", level, "Failure!!!" );
 	// TODO: Do something. Or undo something.
 	toggleAutoFill( false );
+	reportOnDuplicateAnswers();
 	return;
     }
 
     if( clueNumber >= entries.length ) {  // We've filled all entries!
 	logWithLevel( "autofillJS", level, "Success!!!" );
 	toggleAutoFill( false );
+	reportOnDuplicateAnswers();
 	return;
     }
 
@@ -419,7 +423,7 @@ function autofillJS( entries, clueNumber, level ) {
     const row = entries[ clueNumber ].row;
     const direction = entries[ clueNumber ].direction;
 
-    logWithLevel( "autofillJS", level, "word='" + word + "' row=" + row + " col=" + col + " " + direction );
+    logWithLevel( "autofillJS", level, "   word='" + word + "' row=" + row + " col=" + col + " " + direction );
     const wordInfo = getWordAndIndicesAt( row, col, direction, false );
     if( wordInfo === undefined ) {
 	console.log( "autofillJS: cannot getWordAndIndicesAt(" + row + "," + col + "," + direction + ")");
@@ -429,7 +433,8 @@ function autofillJS( entries, clueNumber, level ) {
 
     const candidates = matchFromWordlist( word, true, true );
     if( candidates.length == 0 ) {
-	logWithLevel( "autofillJS", level, "No candidates for '" + word + "'; marking this entry's success as false, undoing the parent's entry and 'returning' to parent" );
+	logWithLevel( "autofillJS", level, "No candidates for '" + word + "'");
+	// mark this entry's success as false, undo the parent's entry and 'return' to parent
 	entries[ clueNumber ].success = false;
 	entries[ clueNumber ].candidates = [];
 
@@ -451,7 +456,7 @@ function autofillJS( entries, clueNumber, level ) {
 	// TODO: We can never simply return; we must *always* call some function until we are done!!!
 	// DON'T BREAK THE CHAIN!
 	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level ), 0 );
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
 	return;
     }
 
@@ -502,7 +507,7 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 		      level,
 		      "candidateNumber (" + candidateNumber +
 		      ") >= candidates.length (" + candidates.length +
-		      ") so we are returning (false)" );
+		      ")" );
 	entries[ clueNumber ].success = false;  // we ran out of candidates!
 	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
@@ -532,7 +537,7 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 	// updateUI();
 
 	// Try the next clue number
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level ), 0 );
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
 
 	// TODO: check (somehow!) whether the previous call failed and if so, call the following:
 	// window.setTimeout( tryCandidates.bind( null, entries, clueNumber, candidateNumber+1, level  ), 0 );
