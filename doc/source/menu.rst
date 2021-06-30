@@ -12,8 +12,8 @@ Menu items are found on the left-hand side of the page.
 .. |clear-white-squares| image:: images/Clear-White-Squares.png
 .. |toggle-symmetry| image:: images/Toggle-Symmetry.png
 .. |toggle-recommended-answers| image:: images/Toggle-Recommended-Answers.png
-.. ### |auto-fill-puzzle| image:: images/Auto-Fill-Puzzle.png
-.. |regular-expression-matching| image:: images/RegulAr-Expression-Matching.png
+.. |auto-fill-puzzle| image:: images/Auto-Fill-Puzzle.png
+.. |regular-expression-matching| image:: images/Regular-Expression-Matching.png
 .. |check-duplicates| image:: images/Check-Duplicates.png
 .. |change-dictionary| image:: images/Change-Dictionary.png
 .. |undo| image:: images/Undo.png
@@ -34,9 +34,9 @@ Menu items are found on the left-hand side of the page.
 
 	- **Phil puzzle** (.xw) is the standard format. 
 
-          Note: If  |auto-save-count| is greater than zero, the puzzle
-	  will be saved in this format after the specified number of
-	  changes.
+          Note: If |auto-save-count| is greater than zero, the puzzle
+	  will automatically be saved in this format after the
+	  specified number of changes.
 
 	- **Across Lite** (.puz) is the format used by `Across Lite <https://www.litsoft.com/across/alite/download/>`_
 	- **Printable version** (.pdf) displays the blank grid along with clues
@@ -57,13 +57,25 @@ Menu items are found on the left-hand side of the page.
         Clears answers in the white squares.
 
     |toggle-symmetry|
-        Toggles whether the puzzle pattern must be symmetric.
+        Toggles whether the grid puzzle pattern must be symmetric.
 
     |toggle-recommended-answers|
         Toggles whether *all* answers matching a the puzzle pattern
 	are displayed or only moderately- and highly-recommended ones
 	are. See `Recommended Answers
 	<recommendations.html#recommended-answers>`_  for more details.
+
+    |auto-fill-puzzle|
+        Fill in empty grid cells with letters from words drawn from
+        the current dictionary. This function seeks to use words that
+        work in both horizontal and vertical directions, but this may
+        take a *very* long time to run and may, in the end, not even
+        be possible.
+
+	When the grid has been successfully filled or all possible
+        words have been attempted, "check-duplicates" is run.
+
+	Click this icon a second time to suspend the operation.
 
     |regular-expression-matching|
         Constrain suggested answers to those meeting regular express
@@ -76,7 +88,8 @@ Menu items are found on the left-hand side of the page.
 	substring of another answer.
 
     |change-dictionary|
-        Use another dictionary for suggesting answers.
+        Change the dictionary used for suggesting answers. A
+        dictionary file is simply a text file with one word per line.
 
     |undo|
         Undo changes you've made. See

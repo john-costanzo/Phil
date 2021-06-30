@@ -5,11 +5,11 @@ Keystrokes
 
 .. glossary ::
 
-    ``a`` ... ``z``
-        Fill in the grid.
+    ``a`` ... ``z`` or ``1`` ... ``9``
+        Fill in the grid with the corresponding letter or number.
 
     ``.``
-        Toggle a grid square to blank and back again.
+        Toggle a grid square to blank or back to black.
 
     ``,``
 	Temporarily flash the symmetric square and move to it.
@@ -23,7 +23,7 @@ Keystrokes
     ``Ctrl-Z`` or ``Meta-Z``
 	Undo the tlast action. See `Undoing and Redoing Changes <undo.html#undoing-and-redoing-changesrecommended>`_
 
-    ``<delete>``
+    ``Backspace``
         Delete the character in the grid and continue along the
 	direction of travel.
 
