@@ -698,7 +698,7 @@ function reportOnDuplicateAnswers() {
     for( const [k,v] of Object.entries( dict ) ) {
 	if( v.length > 1 ) {
 	    let m = "► duplicate answer '" +  k + "' at " + v;
-	    console.log( m );
+	    //console.log( m );
 	    msg = msg + m + "\n";
 	}
     }
@@ -709,7 +709,7 @@ function reportOnDuplicateAnswers() {
     	    const pattern = new RegExp( key2 );
 	    if( key2 != key && pattern.test( key ) ) {
 		let m = "► " + key2 + " at " + dict[ key2 ] + " is found within " + key + " at " + dict[ key ];
-		console.log( m );
+		// console.log( m );
 		msg = msg + m + "\n"
 	    }
 	}
