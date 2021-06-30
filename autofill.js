@@ -83,12 +83,12 @@ function addEntry( row, col, direction, list ) {
 	const clueLabel = currentCell.firstChild.innerHTML;
 	const nmatches = matchFromWordlist(word, true).length;
 	if( clueLabel != '' ) {
-	    console.log( "addEntry: xw[" + row + ", " + col + "]='" +
-			 clueLabel + " " + direction + "' ==> " + word + " (" +
-			 start + "," + end + ") " );
+	    // console.log( "addEntry: xw[" + row + ", " + col + "]='" +
+	    // 		 clueLabel + " " + direction + "' ==> " + word + " (" +
+	    // 		 start + "," + end + ") " );
 	}
 
-	console.log("addEntry: start=" + start + ", end=" + end + "; nmatches=" + nmatches );
+	//console.log("addEntry: start=" + start + ", end=" + end + "; nmatches=" + nmatches );
 	list[ parseInt(clueLabel) ] = { "word" : word,
 					"clueNumber" : clueLabel,
 					"direction" : direction,
@@ -100,8 +100,8 @@ function addEntry( row, col, direction, list ) {
 				      };
     }
     //TODO: remove following two lines
-    else
-	console.log( "addEntry: '" + word + "' is " + (wordIsComplete(word)? "" : "NOT") + " complete; not adding" );
+    // else
+    // 	console.log( "addEntry: '" + word + "' is " + (wordIsComplete(word)? "" : "NOT") + " complete; not adding" );
 }
 
 function collectEntries( acrossList, downList ) {
@@ -164,65 +164,6 @@ function collectEntries( acrossList, downList ) {
     console.log("exiting collectEntries()");
 }
 
-// function addCrossWords( list, direction ) {
-//     // TODO: delete this unneeded function
-
-//     // For each defined entry in LIST, append to the entry a list of all words
-//     // that cross this entry assuming the entries run in DIRECTION.
-//     let result = [];
-
-//     for( let element in list ) {
-// 	let entry = list[ element ];
-// 	if( entry !== undefined ) {
-// 	    let crossWordClues = [ ];
-// 	    console.log( "addCrossWords: " + " '" + entry.word + "' (" + entry.row + "," + entry.col + ")  " +
-// 			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches );
-
-// 	    if( direction == ACROSS ) {
-// 		for( let j = entry.start; j < entry.end; j++ ) {
-// 		    for( let i = entry.row; i >= 0; i-- ) {
-// 			if( i == 0 || xw.fill[i][j] == BLACK ) {
-// 			    if( xw.fill[i][j] == BLACK ) i++; // adjust for the black cell
-// 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-// 			    let clue = cell.firstChild.innerHTML;
-// 			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + i + "; clue=" + clue);
-// 			    crossWordClues.push( parseInt( clue ) );
-// 			    break;
-// 			}
-
-// 		    }
-// 		}
-// 	    }
-// 	    else {
-// 		for( let i = entry.start; i < entry.end; i++ ) {
-// 		    for( let j = entry.col; j >= 0; j-- ) {
-// 			if( j == 0 || xw.fill[i][j] == BLACK ) {
-// 			    if( xw.fill[i][j] == BLACK ) j++; // adjust for the black cell
-// 			    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-// 			    let clue = cell.firstChild.innerHTML;
-// 			    console.log( "addCrossWords:     (" + i + "," + j + ") found one at " + j + "; clue=" + clue);
-// 			    crossWordClues.push( parseInt( clue ) );
-// 			    break;
-// 			}
-// 		    }
-// 		}
-// 	    }
-// 	    result[ element ] = { "word" : entry.word,
-// 				  "clueNumber" : element,
-// 				  "direction" : direction,
-// 				  "row" : entry.row,
-// 				  "col" : entry.col,
-// 				  "start" : entry.start,
-// 				  "end" : entry.end,
-// 				  "nmatches" : entry.nmatches,
-// 				  "crossWordClues" : crossWordClues
-// 				};
-// 	}
-//     }
-//     return( result );
-// }
-
-
 function computeOptimizedList() {
     // Return an optimized list of answers to visit.
 
@@ -265,8 +206,6 @@ function computeOptimizedList() {
     let downList = [];
     collectEntries( acrossList, downList );
     console.log( "computeOptimizedList: After collectEntries()..." );
-    //printEntries( acrossList, ACROSS );
-    //printEntries( downList, DOWN );
     let optimizedList = acrossList.concat( downList ).
 	filter(entry => entry !== undefined).
 	sort( optimizeSortOrder );
@@ -300,8 +239,8 @@ function toggleAutoFill( force ) {
 	console.log( "toggleAutoFill: toggling on..." );
 
 	let optimizedList = computeOptimizedList();
-	console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
-
+	// console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
+	writeFile('xw')
 	autofillJS( optimizedList, 0, 0 );
     }
     updateUI();
@@ -320,12 +259,10 @@ function printEntries( list, dir ) {
     for( let e in list ) {
 	let entry = list[ e ];
 	if( entry !== undefined ) {
-	    const crosswordClues = (entry.crossWordClues === undefined ? "<none>" : " [" + entry.crossWordClues.join(",") + "]" );
 	    const cluenum = entry.clueNumber === undefined ? "" : (entry.clueNumber + " " + entry.direction);
 	    console.log( "\t" + e + ":  " + cluenum + " '" + entry.word +
 			 "' (" + entry.row + "," + entry.col + ")  " +
-			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches +
-			 " " + crosswordClues );
+			 entry.start + "..." + entry.end + "; nmatches=" + entry.nmatches );
 	}
     }
 }
@@ -354,7 +291,7 @@ function printEntries( list, dir ) {
 // needs to be managed via data structures:
 
 // ENTRIES: a (sorted) list of Objects containing these fields:
-//          {word, clueNumber, direction, row, col, start, end, nmatches, crossWordClues}
+//          {word, clueNumber, direction, row, col, start, end, nmatches}
 // should be:
 //          {word, clueNumber, direction, row, col, start, end, nmatches, candidates, currentCandidate}
 //
@@ -384,7 +321,7 @@ function autofillJS( entries, clueNumber, level ) {
     //   word we added (?) and call tryCandidates() with the next candidate (e.g., "IDEE").
     // 
     const numEntries = entries.length-1;
-    logWithLevel("autofillJS", level, "   attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
+    // logWithLevel("autofillJS", level, "   attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
 
     if( !autoFilling ) {
 	logWithLevel("autofillJS", level, "autoFilling is false; returning false!" );
@@ -423,7 +360,7 @@ function autofillJS( entries, clueNumber, level ) {
     const row = entries[ clueNumber ].row;
     const direction = entries[ clueNumber ].direction;
 
-    logWithLevel( "autofillJS", level, "   word='" + word + "' row=" + row + " col=" + col + " " + direction );
+    //logWithLevel( "autofillJS", level, "   word='" + word + "' row=" + row + " col=" + col + " " + direction );
     const wordInfo = getWordAndIndicesAt( row, col, direction, false );
     if( wordInfo === undefined ) {
 	console.log( "autofillJS: cannot getWordAndIndicesAt(" + row + "," + col + "," + direction + ")");
@@ -433,7 +370,7 @@ function autofillJS( entries, clueNumber, level ) {
 
     const candidates = matchFromWordlist( word, true, true );
     if( candidates.length == 0 ) {
-	logWithLevel( "autofillJS", level, "No candidates for '" + word + "'");
+	//logWithLevel( "autofillJS", level, "No candidates for '" + word + "'");
 	// mark this entry's success as false, undo the parent's entry and 'return' to parent
 	entries[ clueNumber ].success = false;
 	entries[ clueNumber ].candidates = [];
@@ -447,15 +384,15 @@ function autofillJS( entries, clueNumber, level ) {
 	    const parentEnd = entries[ parentClueNumber ].end;
 
 	    const previousWord = entries[ parentClueNumber ].previousWord;
-	    logWithLevel( "autofillJS", level, "replacing previous parent word '" + previousWord + "'" );
+	    //logWithLevel( "autofillJS", level, "replacing previous parent word '" + previousWord + "'" );
 	    fillGridWithMatchAux( previousWord, parentDirection, parentRow, parentCol, parentStart, parentEnd );
 	} else {
-	    logWithLevel( "autofillJS", level, "ERROR! clueNumber==" + clueNumber );
+	    //logWithLevel( "autofillJS", level, "ERROR! clueNumber==" + clueNumber );
 	}
 
 	// TODO: We can never simply return; we must *always* call some function until we are done!!!
 	// DON'T BREAK THE CHAIN!
-	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
+	entries[ clueNumber ].currentCandidate = 0;
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
 	return;
     }
@@ -484,13 +421,6 @@ function autofillJS( entries, clueNumber, level ) {
     entries[clueNumber].candidates = rankedCandidatesList;
 
     window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, level ), 0 );
-
-    // if( autoFilling )
-    // 	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
-    // else {
-    // 	console.log( "bailing out of last one" );
-    // 	return( false );
-    // }
 }
 
 function tryCandidates( entries, clueNumber, candidateNumber, level ) {
@@ -499,17 +429,17 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
     // Report messages using LEVEL.
     const candidates = entries[ clueNumber ].candidates;
 
-    logWithLevel( "tryCandidates", level, "clueNumber = " + clueNumber );
-    logWithLevel( "tryCandidates", level, "candidateNumber = " + candidateNumber + " of " + candidates.length );
+    //logWithLevel( "tryCandidates", level, "clueNumber = " + clueNumber );
+    //logWithLevel( "tryCandidates", level, "candidateNumber = " + candidateNumber + " of " + candidates.length );
 
     if( candidateNumber >= candidates.length ) {
-	logWithLevel( "tryCandidates",
-		      level,
-		      "candidateNumber (" + candidateNumber +
-		      ") >= candidates.length (" + candidates.length +
-		      ")" );
+	// logWithLevel( "tryCandidates",
+	// 	      level,
+	// 	      "candidateNumber (" + candidateNumber +
+	// 	      ") >= candidates.length (" + candidates.length +
+	// 	      ")" );
 	entries[ clueNumber ].success = false;  // we ran out of candidates!
-	entries[ clueNumber ].currentCandidate = 0;  // TODO: do we *need* to restart this?
+	entries[ clueNumber ].currentCandidate = 0;
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
 	return; 
     }
@@ -525,22 +455,19 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
     const candidate = candidates[ candidateNumber ];
 
     if( autoFilling ) {
-	logWithLevel("tryCandidates", level, "'" + word + "' evaluating candidate = '" + candidate + "'");
+	//logWithLevel("tryCandidates", level, "'" + word + "' evaluating candidate = '" + candidate + "'");
 
 	// Actually fill in the grid with 'candidate'
 	const wordInfo = getWordAndIndicesAt( row, col, direction, false );
 	entries[ clueNumber ].previousWord = wordInfo[ 0 ];
 	fillGridWithMatchAux( candidate, direction, row, col, start, end );
 
-	// TODO: this is just for fun?
-	// isMutated = true;
-	// updateUI();
+	// TODO: recalculate entries so we now have the current number
+	// of candidates for each entry (since we may have recently
+	// filled in the grid and reduced the number of candidates for
+	// an entry). Try the next clue number
 
-	// Try the next clue number
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
-
-	// TODO: check (somehow!) whether the previous call failed and if so, call the following:
-	// window.setTimeout( tryCandidates.bind( null, entries, clueNumber, candidateNumber+1, level  ), 0 );
     }
     return;
 }
