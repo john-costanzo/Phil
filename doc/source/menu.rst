@@ -34,8 +34,8 @@ Menu items are found on the left-hand side of the page.
 
 	- **Phil puzzle** (.xw) is the standard format. 
 
-          Note: If |auto-save-count| is greater than zero, the puzzle
-	  will automatically be saved in this format after the
+          Note that if |auto-save-count| is greater than zero, the
+	  puzzle will automatically be saved in this format after the
 	  specified number of changes.
 
 	- **Across Lite** (.puz) is the format used by `Across Lite <https://www.litsoft.com/across/alite/download/>`_
@@ -66,16 +66,19 @@ Menu items are found on the left-hand side of the page.
 	<recommendations.html#recommended-answers>`_  for more details.
 
     |auto-fill-puzzle|
-        Fill in empty grid cells with letters from words drawn from
-        the current dictionary. This function seeks to use words that
-        work in both horizontal and vertical directions, but this may
-        take a *very* long time to run and may, in the end, not even
-        be possible.
+        First, save a copy of the puzzle.
 
-	When the grid has been successfully filled or all possible
-        words have been attempted, "check-duplicates" is run.
+        Next, fill in empty grid cells with letters from words drawn
+        from the current dictionary. This function seeks to use words
+        that work in both horizontal and vertical directions, but this
+        may take a *very* long time to run and may, in the end, not
+        even be possible.
 
-	Click this icon a second time to suspend the operation.
+	Finally, when the grid has been successfully filled or all
+        possible words have been attempted, "check-duplicates" is run.
+
+
+        Click this icon a second time to suspend the operation.
 
     |regular-expression-matching|
         Constrain suggested answers to those meeting regular express
