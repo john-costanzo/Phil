@@ -124,7 +124,8 @@ class Grid {
     update() {
 	for (let i = 0; i < xw.rows; i++) {
 	    for (let j = 0; j < xw.cols; j++) {
-		const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+		const activeCell = grid.querySelector('[data-row="' + i + '"]').
+		      querySelector('[data-col="' + j + '"]');
 		let fill = xw.fill[i][j];
 		if (fill == BLANK && forced != null) {
 		    fill = forced[i][j];
@@ -296,10 +297,12 @@ class Interface {
     }
 }
 
-let shortcutsNotification = new Notification(document.getElementById("shortcuts").innerHTML, 120);
-let suggestionStylingNotification = new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "suggestion-styling");
+let shortcutsNotification =
+    new Notification(document.getElementById("shortcuts").innerHTML, 120);
+let suggestionStylingNotification =
+    new Notification(document.getElementById("suggestion-styling").innerHTML, 120, "suggestion-styling");
 
-let xw = new Crossword( 9, 9 ); // model
+let xw = new Crossword( 15, 15 ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 let redoStack = [];
@@ -320,10 +323,20 @@ undoImmuneIds.forEach(
 	});
     }
 );
-// Ok. This is a hack. But it seems to work.
+// Ok.... The above is a hack. But it seems to work.
 
 //____________________
 // F U N C T I O N S
+
+function cellFromCoords( row, col ) {
+    // Return the cell specified by coordinates (ROW, COL).
+    // TODO: use this function through the code instead of calling inline.
+    const cell = grid.querySelector('[data-row="' + row + '"]').
+	  querySelector('[data-col="' + col + '"]');
+    if( cell === undefined )
+	console.log( "cellFromCoords: ERROR! No such cell at (" + row + ", " + col + ")" );
+    return( cell );
+}
 
 function createNewPuzzle(rows, cols) {
     xw["clues"] = {};
@@ -509,13 +522,15 @@ function clueCountColor( ) {
     //     - All letters must be “keyed”, meaning they are in an across word and a down word.
 
     // Word Count: 
-    //     - The New York Times requires all their weekday 15x15 puzzles to have no more than 78 words, 
-    //       or 72 if the puzzle has no theme.  
+    //     - The New York Times requires all their weekday 15x15 puzzles to have
+    //       no more than 78 words, or
+    //       no more than 72 if the puzzle has no theme.  
 
     // From https://www.nytimes.com/puzzles/submissions/crossword:
     //     - 78 words for a 15×15 (72 for a themeless); 
     //     - 140 for a 21×21. 
-    //     - Maximums may be exceeded slightly at the editor’s discretion, if the theme warrants.
+    //     - Maximums may be exceeded slightly at the editor’s discretion,
+    //       if the theme warrants.
 
     let size = xw.rows;
     let totalClues = Object.keys(xw.clues).length;
@@ -623,10 +638,12 @@ function keyboardHandler(e) {
 	let key = String.fromCharCode(e.which);
 	saveStateForUndo( "typing a  " + key );
 	let oldContent = xw.fill[current.row][current.col];
-	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + key + xw.fill[current.row].slice(current.col + 1);
+	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + key +
+	    xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
 	    if (isSymmetrical) {
-		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
+		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK +
+		    xw.fill[symRow].slice(symCol + 1);
 	    }
 	}
 	// move the cursor
@@ -640,7 +657,9 @@ function keyboardHandler(e) {
     }
     if (e.which == keyboard.showSymmetricBlack) {
 	//alert( "currently at [" + current.row + ", " + current.col + "]  sym at [" + symRow + ", " + symCol + "]" );
-	const symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
+	const symCell =
+	      grid.querySelector('[data-row="' + symRow + '"]').
+	      querySelector('[data-col="' + symCol + '"]');
 
 	const maxTime = 2500;
 	const stepTime = 500;
@@ -649,8 +668,15 @@ function keyboardHandler(e) {
 
 	// Make the symmetric cell "blink"
 	for( var i = 0; i < maxTime; i+=stepTime ) {
-	    setTimeout(function() { symCell.classList.remove(lowlightSym); symCell.classList.add(highlightSym); }, i );
-	    setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.add(lowlightSym); }, i+(stepTime/2) );
+	    setTimeout(function() {
+		symCell.classList.remove(lowlightSym);
+		symCell.classList.add(highlightSym);
+	    }, i );
+
+	    setTimeout(function() {
+		symCell.classList.remove(highlightSym);
+		symCell.classList.add(lowlightSym);
+	    }, i+(stepTime/2) );
 	}
 
 	// Make the symmetric cell active
@@ -660,7 +686,10 @@ function keyboardHandler(e) {
 	symCell.classList.add("active");
 
 	// Then clear the symmetric cell
-	setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.remove(lowlightSym); }, maxTime );
+	setTimeout(function() {
+	    symCell.classList.remove(highlightSym);
+	    symCell.classList.remove(lowlightSym);
+	}, maxTime );
 	isMutated = false;
     }
 
@@ -674,9 +703,11 @@ function keyboardHandler(e) {
 		e.which = keyboard.delete; // make it a white square
 	    } else {
 		saveStateForUndo( "toggling nonblack cell" );
-		xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
+		xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK +
+		    xw.fill[current.row].slice(current.col + 1);
 		if (isSymmetrical) {
-		    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+		    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK +
+			xw.fill[symRow].slice(symCol + 1);
 		}
 	    }
 	    isMutated = true;
@@ -693,10 +724,12 @@ function keyboardHandler(e) {
 	if( e.label === undefined )
 	    label = "deleting a  " + oldContent;
 	saveStateForUndo( label );
-	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
+	xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK +
+	    xw.fill[current.row].slice(current.col + 1);
 	if (oldContent == BLACK) {
             if (isSymmetrical) {
-		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
+		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK +
+		    xw.fill[symRow].slice(symCol + 1);
             }
 	} else { // move the cursor
             e = new Event('keydown');
@@ -710,7 +743,8 @@ function keyboardHandler(e) {
     }
     if (e.which >= keyboard.left && e.which <= keyboard.down) {
 	e.preventDefault();
-	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').
+	      querySelector('[data-col="' + current.col + '"]');
 	previousCell.classList.remove("active");
 	let content = xw.fill[current.row][current.col];
 	switch (e.which) {
@@ -740,7 +774,8 @@ function keyboardHandler(e) {
             break;
 	}
 	console.log("keyboardHandler: [" + current.row + "," + current.col + "]");
-	activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+	activeCell = grid.querySelector('[data-row="' + current.row + '"]').
+	    querySelector('[data-col="' + current.col + '"]');
 	activeCell.classList.add("active");
     }
     updateUI();
@@ -779,7 +814,8 @@ function updateUI() {
 function updateGridUI() {
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
-	    const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+	    const activeCell = grid.querySelector('[data-row="' + i + '"]').
+		  querySelector('[data-col="' + j + '"]');
 	    let fill = xw.fill[i][j];
 	    if (fill == BLANK && forced != null) {
 		fill = forced[i][j];
@@ -813,8 +849,10 @@ function updateCluesUI() {
 	return;
     }
     // Otherwise, assign values
-    const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
-    const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
+    const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').
+	  querySelector('[data-col="' + current.acrossStartIndex + '"]');
+    const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').
+	  querySelector('[data-col="' + current.col + '"]');
     acrossClueNumber.innerHTML = acrossCell.firstChild.innerHTML + "a.";
     downClueNumber.innerHTML = downCell.firstChild.innerHTML + "d.";
     acrossClueText.innerHTML = xw.clues[[current.row, current.acrossStartIndex, ACROSS]];
@@ -892,7 +930,8 @@ function updateLabelsAndClues() {
 		isAcross = isStartOfAcrossWord(i,j);
 	    }
 	    const grid = document.getElementById("grid");
-	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+	    let currentCell = grid.querySelector('[data-row="' + i + '"]').
+		querySelector('[data-col="' + j + '"]');
 	    if (isAcross || isDown) {
 		currentCell.firstChild.innerHTML = count; // Set square's label to the count
 		count++;
@@ -999,20 +1038,23 @@ function updateGridHighlights() {
     // 		 current.downStartIndex + "," + current.downEndIndex );
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
-	    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+	    const square = grid.querySelector('[data-row="' + i + '"]').
+		  querySelector('[data-col="' + j + '"]');
 	    square.classList.remove("highlight", "lowlight");
 	}
     }
     // Highlight across squares
     for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
-	const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + j + '"]');
+	const square = grid.querySelector('[data-row="' + current.row + '"]').
+	      querySelector('[data-col="' + j + '"]');
 	if (j != current.col) {
 	    square.classList.add((current.direction == ACROSS) ? "highlight" : "lowlight");
 	}
     }
     // Highlight down squares
     for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
-	const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + current.col + '"]');
+	const square = grid.querySelector('[data-row="' + i + '"]').
+	      querySelector('[data-col="' + current.col + '"]');
 	if (i != current.row) {
 	    square.classList.add((current.direction == DOWN) ? "highlight" : "lowlight");
 	}
@@ -1022,7 +1064,8 @@ function updateGridHighlights() {
 function updateSidebarHighlights() {
     let acrossHeading = document.getElementById("across-heading");
     let downHeading = document.getElementById("down-heading");
-    const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+    const currentCell = grid.querySelector('[data-row="' + current.row + '"]').
+	  querySelector('[data-col="' + current.col + '"]');
 
     acrossHeading.classList.remove("highlight");
     downHeading.classList.remove("highlight");
@@ -1083,7 +1126,8 @@ function generatePattern( size=15 ) {
 	    const symRow = xw.rows - 1 - row;
 	    const symCol = xw.cols - 1 - col;
 	    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
-	    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+	    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK +
+		xw.fill[symRow].slice(symCol + 1);
 	}
 	isMutated = true;
 	updateUI();
