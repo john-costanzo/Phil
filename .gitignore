@@ -1,3 +1,5 @@
+.gitignore
+.buildinfo
 doc/build/
 .DS_Store
 *.swift
