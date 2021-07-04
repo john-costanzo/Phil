@@ -99,9 +99,6 @@ function addEntry( row, col, direction, list ) {
 					"nmatches" : nmatches
 				      };
     }
-    //TODO: remove following two lines
-    // else
-    // 	console.log( "addEntry: '" + word + "' is " + (wordIsComplete(word)? "" : "NOT") + " complete; not adding" );
 }
 
 function collectEntries( acrossList, downList ) {
@@ -214,6 +211,12 @@ function computeOptimizedList() {
 }
 
 
+function AutoFillException( message ) {
+    // Create an object of type AutoFillException
+    this.message = message;
+    this.name = 'AutoFillException';
+}
+
 function toggleAutoFill( force ) {
     // Start autofilling the puzzle of requested to toggle on;
     // else stop autofilling.
@@ -240,6 +243,15 @@ function toggleAutoFill( force ) {
 
 	let optimizedList = computeOptimizedList();
 	// console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
+	const zeroAnswersList = optimizedList.filter(entry => entry.nmatches==0);
+	if( zeroAnswersList.length > 0 ) {
+	    const noAnswersString = zeroAnswersList.reduce( ( accumulator, currentValue ) =>
+		accumulator + "\n✘" + currentValue.clueNumber.padStart(5) + " " + currentValue.direction + " \"" + currentValue.word + "\""
+	    , "" );
+	    alert( "Using the current dictionary, there are no possible matches for these entries:\n" + noAnswersString );
+	    toggleAutoFill( false );
+	    return;
+	}
 	writeFile('xw')
 	autofillJS( optimizedList, 0, 0 );
     }
@@ -331,7 +343,6 @@ function autofillJS( entries, clueNumber, level ) {
 
     if( clueNumber < 0 ) {  // We've failed
 	logWithLevel( "autofillJS", level, "Failure!!!" );
-	// TODO: Do something. Or undo something.
 	toggleAutoFill( false );
 	reportOnDuplicateAnswers();
 	return;
@@ -346,7 +357,7 @@ function autofillJS( entries, clueNumber, level ) {
 
     if( clueNumber < entries.length-1 ) {
 	const success = entries[ clueNumber+1 ].success;
-	// TODO: if success == false, we have already tried the next clueNumber and it failed.
+	// If success == false, we have already tried the next clueNumber and it failed.
 	// Try the next candidate for this entry.
 	if( success !== undefined && !success ) {
 	    const nextCandidate = entries[ clueNumber ].currentCandidate+1;
@@ -390,7 +401,7 @@ function autofillJS( entries, clueNumber, level ) {
 	    //logWithLevel( "autofillJS", level, "ERROR! clueNumber==" + clueNumber );
 	}
 
-	// TODO: We can never simply return; we must *always* call some function until we are done!!!
+	// We can never simply return; we must *always* call some function until we are done!!!
 	// DON'T BREAK THE CHAIN!
 	entries[ clueNumber ].currentCandidate = 0;
 	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
