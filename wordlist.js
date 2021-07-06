@@ -85,7 +85,12 @@ function openWordlistFile( e ) {
 	removeWordlistDuplicates();
 	invalidateSolverWordlist();
     };
+
+    const wordListButton = document.getElementById("open-wordlist");
+    wordListButton.setAttribute( "data-tooltip", "Change dictionary... (currently:  " + file.name + ")" );
+
     reader.readAsText( file );
+    console.log( "Loaded words up to length " + wordlist.length + " from " + file.name );
 }
 
 function openDefaultWordlist( url ) {
@@ -97,7 +102,7 @@ function openDefaultWordlist( url ) {
 	    const words = textFile.responseText.split( /\s/g );
 	    addToWordlist( words );
 	    sortWordlist();
-	    console.log( "Loaded words up to length " + wordlist.length + " from the default wordlist." )
+	    console.log( "Loaded words up to length " + wordlist.length + " from the default wordlist." );
 	}
     }
     textFile.send( null );
