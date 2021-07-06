@@ -238,6 +238,11 @@ function AutofillException( message ) {
     this.name = 'AutofillException';
 }
 
+function setAutofillStatus( status ) {
+    let afProgress = document.getElementById("af-progress-label");
+    if( afProgress ) afProgress.innerHTML = status;
+}
+
 function updateAutofillElapsedTime( autofillStats, reschedule=false) {
     // Update the elapsed time that autofill() has been running based on
     // the values NUMBERCANDIDATESTRIED and STOPWATCH.
@@ -250,12 +255,10 @@ function updateAutofillElapsedTime( autofillStats, reschedule=false) {
 
     const stopwatch = autofillStats.stopwatch;
 
-    let afProgress = document.getElementById("af-progress-label");
-
     if( current ) {
-	afProgress.innerHTML = numberCandidatesTried.toLocaleString() + " candidates tried in " +
-	    stopwatch.elapsedTime() +
-	    " (" + Math.round( numberCandidatesTried/(current/1000) ) + "/s.)";
+	setAutofillStatus( numberCandidatesTried.toLocaleString() + " candidates tried in " +
+			   stopwatch.elapsedTime() +
+			   " (" + Math.round( numberCandidatesTried/(current/1000) ) + "/s.)" );
 	if( reschedule ) {
 	    updateAutofillElapsedTime.mostRecentCall =
 		window.setTimeout( updateAutofillElapsedTime.bind( null, autofillStats, true ),
@@ -310,6 +313,7 @@ function toggleAutoFill( force ) {
 	}
 	writeFile('xw');
 
+	setAutofillStatus( "" );
 	autofillStats.start();
 	updateAutofillElapsedTime( autofillStats, false );
 	window.setTimeout( updateAutofillElapsedTime.bind( null, autofillStats, true ),
