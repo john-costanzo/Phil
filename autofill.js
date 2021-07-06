@@ -1,5 +1,7 @@
 // Base on an analysis of a Merriam Webster dictionary here is the relative
 // distribution of letters within those words.
+const autofillReportingInterval = 5000; // milliseconds
+
 const letter_frequency = {
     a: 46,
     b: 9,
@@ -28,6 +30,25 @@ const letter_frequency = {
     y: 11,
     z: 2
 }
+
+////////////////////////////////////////////////////////////////////////
+class AutofillStats {
+    constructor( ) {
+	this.numberCandidatesTried = 0;
+	this.stopwatch = new StopWatch();
+    }
+    incrementNumberCandidatesTried() { return( ++this.numberCandidatesTried ); }
+    start() { this.stopwatch.Start(); }
+    current() { return( this.stopwatch.Current() ); }
+    reset() {
+	this.numberCandidatesTried=0;
+	this.stopwatch.Reset();
+    }
+    stop() { this.stopwatch.Stop(); }
+}
+////////////////////////////////////////////////////////////////////////
+
+let autofillStats = new AutofillStats();
 
 function scoreWord( word, freq ) {
     // For each letter in the WORD, sum the relative distribution as
@@ -211,10 +232,40 @@ function computeOptimizedList() {
 }
 
 
-function AutoFillException( message ) {
-    // Create an object of type AutoFillException
+function AutofillException( message ) {
+    // Create an object of type AutofillException
     this.message = message;
-    this.name = 'AutoFillException';
+    this.name = 'AutofillException';
+}
+
+function updateAutofillElapsedTime( autofillStats, reschedule=false) {
+    // Update the elapsed time that autofill() has been running based on
+    // the values NUMBERCANDIDATESTRIED and STOPWATCH.
+    // If RESCHEDULE is true, schedule another call to this function.
+    // If RESCHEDULE is false, do not schedule another call to this function and
+    // cancel the most recent pending call.
+
+    const current = autofillStats.current();
+    const numberCandidatesTried = autofillStats.numberCandidatesTried;
+
+    const stopwatch = autofillStats.stopwatch;
+
+    let afProgress = document.getElementById("af-progress-label");
+
+    if( current ) {
+	afProgress.innerHTML = numberCandidatesTried.toLocaleString() + " candidates tried in " +
+	    stopwatch.elapsedTime() +
+	    " (" + Math.round( numberCandidatesTried/(current/1000) ) + "/s.)";
+	if( reschedule ) {
+	    updateAutofillElapsedTime.mostRecentCall =
+		window.setTimeout( updateAutofillElapsedTime.bind( null, autofillStats, true ),
+				   autofillReportingInterval );
+	} else {
+	    if( updateAutofillElapsedTime.mostRecentCall !== undefined ) {
+		window.clearTimeout( updateAutofillElapsedTime.mostRecentCall );
+	    }
+	}
+    }
 }
 
 function toggleAutoFill( force ) {
@@ -223,37 +274,48 @@ function toggleAutoFill( force ) {
     // If FORCE (a boolean) is given, then use that value instead of toggling.
 
     if( force === undefined ) {
-	autoFilling = !autoFilling;
+	autofilling = !autofilling;
     } else {
-	autoFilling = force;
+	autofilling = force;
     }
 
     // Update UI button
-    let autoFillButton = document.getElementById("toggle-auto-fill");
-    autoFillButton.classList.toggle("button-on");
-    buttonState = autoFillButton.getAttribute("data-state");
+    let autofillButton = document.getElementById("toggle-auto-fill");
+    autofillButton.classList.toggle("button-on");
+    buttonState = autofillButton.getAttribute("data-state");
     console.log("toggleAutoFill: buttonState=" + buttonState)
-    autoFillButton.setAttribute("data-state", autoFilling ? "on" : "off");
-    if( !autoFilling ) {
-	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill on");
+    autofillButton.setAttribute("data-state", autofilling ? "on" : "off");
+    if( !autofilling ) {
+	autofillButton.setAttribute("data-tooltip", "Toggle auto-fill on");
+	updateAutofillElapsedTime( autofillStats, false ),
+	autofillStats.reset();
 	console.log( "toggleAutoFill: toggling off..." );
     } else {
-	autoFillButton.setAttribute("data-tooltip", "Toggle auto-fill off");
+	autofillButton.setAttribute("data-tooltip", "Toggle auto-fill off");
 	console.log( "toggleAutoFill: toggling on..." );
 
 	let optimizedList = computeOptimizedList();
 	// console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
 	const zeroAnswersList = optimizedList.filter(entry => entry.nmatches==0);
+
 	if( zeroAnswersList.length > 0 ) {
 	    const noAnswersString = zeroAnswersList.reduce( ( accumulator, currentValue ) =>
 		accumulator + "\n✘" + currentValue.clueNumber.padStart(5) + " " + currentValue.direction + " \"" + currentValue.word + "\""
-	    , "" );
+		, "" );
 	    alert( "Using the current dictionary, there are no possible matches for these entries:\n" + noAnswersString );
+	    autofillStats.reset();
+	    updateAutofillElapsedTime( autofillStats, false );
 	    toggleAutoFill( false );
 	    return;
 	}
-	writeFile('xw')
-	autofillJS( optimizedList, 0, 0 );
+	writeFile('xw');
+
+	autofillStats.start();
+	updateAutofillElapsedTime( autofillStats, false );
+	window.setTimeout( updateAutofillElapsedTime.bind( null, autofillStats, true ),
+			   autofillReportingInterval );
+
+	autofillJS( optimizedList, 0, autofillStats, 0 );
     }
     updateUI();
 }
@@ -310,8 +372,8 @@ function printEntries( list, dir ) {
 // CANDIDATES: a (sorted) list of candidate answers for a given entry
 //
 
-function autofillJS( entries, clueNumber, level ) {
-    // Autofill the puzzle using ENTRIES as the order list of answers, starting at clue CLUENUMBER.
+function autofillJS( entries, clueNumber, autofillStats, level ) {
+    // Autofill the puzzle using ENTRIES as the order list of answers, starting at clue CLUENUMBER. Update AUTOFILLSTATS as we go along.
     // Print messages with LEVEL leading spaces.
     //
     // Algorithm:
@@ -329,14 +391,15 @@ function autofillJS( entries, clueNumber, level ) {
     //   and we have tried "IDEA" for entries[0] but that forced entries[1] to have no matches.
     //
     //   We would then set entries[0].success=false and call autofillJS(entries, 0, 0) again.
-    //   The next time autofillJS() is run, we see that its success is false. We remove the 
+    //   The next time autofillJS() is run, we see that its success is false. We remove the
     //   word we added (?) and call tryCandidates() with the next candidate (e.g., "IDEE").
-    // 
+    //
+
     const numEntries = entries.length-1;
     // logWithLevel("autofillJS", level, "   attempting to fill, starting at clue number " + clueNumber + " of " + numEntries);
 
-    if( !autoFilling ) {
-	logWithLevel("autofillJS", level, "autoFilling is false; returning false!" );
+    if( !autofilling ) {
+	logWithLevel("autofillJS", level, "autofilling is false; returning false!" );
 	console.log( "bailing out of first one" );
 	return;
     }
@@ -361,7 +424,7 @@ function autofillJS( entries, clueNumber, level ) {
 	// Try the next candidate for this entry.
 	if( success !== undefined && !success ) {
 	    const nextCandidate = entries[ clueNumber ].currentCandidate+1;
-	    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, nextCandidate, level  ), 0 );
+	    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, nextCandidate, autofillStats, level  ), 0 );
 	    return;
 	}
     }
@@ -404,7 +467,7 @@ function autofillJS( entries, clueNumber, level ) {
 	// We can never simply return; we must *always* call some function until we are done!!!
 	// DON'T BREAK THE CHAIN!
 	entries[ clueNumber ].currentCandidate = 0;
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, autofillStats, level-1 ), 0 );
 	return;
     }
 
@@ -431,10 +494,10 @@ function autofillJS( entries, clueNumber, level ) {
 
     entries[clueNumber].candidates = rankedCandidatesList;
 
-    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, level ), 0 );
+    window.setTimeout( tryCandidates.bind( null, entries, clueNumber, 0, autofillStats, level ), 0 );
 }
 
-function tryCandidates( entries, clueNumber, candidateNumber, level ) {
+function tryCandidates( entries, clueNumber, candidateNumber, autofillStats, level ) {
     // Consulting the list of ENTRIES, evaluate the entry at
     // CLUENUMBER, starting at its candidate answer CANDIDATENUMBER.
     // Report messages using LEVEL.
@@ -451,8 +514,8 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 	// 	      ")" );
 	entries[ clueNumber ].success = false;  // we ran out of candidates!
 	entries[ clueNumber ].currentCandidate = 0;
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, level-1 ), 0 );
-	return; 
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber-1, autofillStats, level-1 ), 0 );
+	return;
     }
 
     entries[ clueNumber ].currentCandidate = candidateNumber;
@@ -465,9 +528,10 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
     const end = entries[ clueNumber ].end;
     const candidate = candidates[ candidateNumber ];
 
-    if( autoFilling ) {
+    if( autofilling ) {
 	//logWithLevel("tryCandidates", level, "'" + word + "' evaluating candidate = '" + candidate + "'");
 
+	autofillStats.incrementNumberCandidatesTried();
 	// Actually fill in the grid with 'candidate'
 	const wordInfo = getWordAndIndicesAt( row, col, direction, false );
 	entries[ clueNumber ].previousWord = wordInfo[ 0 ];
@@ -478,9 +542,9 @@ function tryCandidates( entries, clueNumber, candidateNumber, level ) {
 	// filled in the grid and reduced the number of candidates for
 	// an entry). Try the next clue number
 
-	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, level+1 ), 0 );
+	window.setTimeout( autofillJS.bind( null, entries, clueNumber+1, autofillStats, level+1 ), 0 );
     }
     return;
 }
 
-let autoFilling = false;
+let autofilling = false;
