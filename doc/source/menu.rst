@@ -66,17 +66,19 @@ Menu items are found on the left-hand side of the page.
 	<recommendations.html#recommended-answers>`_  for more details.
 
     |auto-fill-puzzle|
-        First, save a copy of the puzzle.
+        First, save a copy of the puzzle (just in case you need to recover
+	the puzzle's state).
 
         Next, fill in empty grid cells with letters from words drawn
-        from the current dictionary. This function seeks to use words
+        from the current dictionary. This option seeks to use words
         that work in both horizontal and vertical directions, but this
         may take a *very* long time to run and may, in the end, not
-        even be possible.
+        even be possible. This options is best used to fill in small 
+	numbers of empty cells, perhaps with a liberal use of 
+	regular expressions to limit the number of candidates to try.
 
 	Finally, when the grid has been successfully filled or all
         possible words have been attempted, "check-duplicates" is run.
-
 
         Click this icon a second time to suspend the operation.
 

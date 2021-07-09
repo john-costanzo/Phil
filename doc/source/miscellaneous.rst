@@ -9,12 +9,24 @@ Puzzle statistics are given in the lower right hand portion of the
 page. It shows how many clues have been completed out of the total
 number (and illustrates this by way of a bar graph). It also shows the
 number of black squares and the proportion they comprise of the entire
-number of squares in the puzzle. For example:
+number of squares in the puzzle.
+
+And if you invoke autofill, you'll see the number of candidate words
+evaluated, the time that autofill has run and the rate it has evaluated
+words during this run.
+ 
+For example:
 
 .. image:: images/Phil-Stats.png
 
 .. note:: Best practices recommend keeping the percentage of black
-	  squares to no more than 16%.
+	  squares to no more than 16%. Getting nearer this number
+	  will cause this statistic to be rendered in orange and above
+	  it in red.
+
+	  Likewise, the total number of clues should be less than 78
+	  (for a 15x15 puzzle) and 140 (for a 21x21 puzzle). Getting
+	  near these values causes orange and then red displays.
 
 Blocked Squares
 ---------------
