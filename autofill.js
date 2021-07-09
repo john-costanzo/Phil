@@ -297,6 +297,8 @@ function toggleAutoFill( force ) {
 	autofillButton.setAttribute("data-tooltip", "Toggle auto-fill off");
 	console.log( "toggleAutoFill: toggling on..." );
 
+	saveStateForUndo( "autofill puzzle" );
+
 	let optimizedList = computeOptimizedList();
 	// console.log( "toggleAutoFill: optimizedList.length=" + optimizedList.length );
 	const zeroAnswersList = optimizedList.filter(entry => entry.nmatches==0);
