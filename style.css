@@ -151,6 +151,12 @@ h1 {
     font-weight: 400;
 }
 
+#grid td.highlight-cell {
+    background-color: yellow;
+    border: 1px solid orange;
+    font-style: italic;
+}
+
 #grid:focus td.highlight {
     border-style: double;
     border: 1px solid var(--red);

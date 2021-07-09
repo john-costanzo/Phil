@@ -13,6 +13,7 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
+// ASCII decimal codes
 const keyboard = {
     "d1":     49, "d2": 50, "d3": 51, "d4": 52, "d5": 53, "d6": 54, "d7": 55, "d8": 56, "d9": 57,
     "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
@@ -28,8 +29,10 @@ const keyboard = {
     "left":   37,
     "up":     38,
     "right":  39,
-    "down":   40
+    "down":   40,
+    "highlight": 222
 };
+
 const BLACK = ".";
 const DASH = "-";
 const BLANK = " ";
@@ -617,6 +620,16 @@ function updateBlackSquareProgress() {
     elabel.innerHTML = msg;
 }
 
+function toggleCurrentCellHighlight() {
+    // toggle the highlighting class of the current cell
+    const cellHighlightClassName = "highlight-cell";
+    let currentCell = cellFromCoords( current.row, current.col );
+    if( currentCell.classList.contains( cellHighlightClassName ) )
+	currentCell.classList.remove( cellHighlightClassName );
+    else
+	currentCell.classList.add( cellHighlightClassName );
+}
+
 function keyboardHandler(e) {
     isMutated = false;
     let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -629,6 +642,11 @@ function keyboardHandler(e) {
 
     if ( (e.ctrlKey || e.metaKey) && e.which === keyboard.z ) {
 	undo();
+	return;
+    }
+
+    if ( e.which === keyboard.highlight ) {
+	toggleCurrentCellHighlight();
 	return;
     }
 
@@ -1195,7 +1213,9 @@ function toggleUsageAssistance() {
 	shortcutsNotification.dismiss();
     } else {
 	shortcutsNotification.post();
-	window.open( "doc/build/html/index.html", "HelpPage", "location=no,menubar=no,status=no,width=600,height=800,left=0,top=0" );
+	window.open( "doc/build/html/index.html",
+		     "HelpPage",
+		     "location=no,menubar=no,status=no,width=600,height=800,left=0,top=0" );
     }
     if( suggestionStylingNotification.isDisplayed ) {
 	suggestionStylingNotification.dismiss();

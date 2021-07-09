@@ -17,6 +17,9 @@ Keystrokes
     ``Enter``
 	Switch direction of travel in grid.
 
+    ``'``
+        Highlight the current cell. This state will not be saved.
+
     ``?``
 	Toggle help panel.
 
@@ -29,3 +32,4 @@ Keystrokes
 
     ``<arrow>``
         Move inside the grid according to the arrow's direction.
+
