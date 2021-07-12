@@ -310,6 +310,7 @@ function convertJSONToPuzzle(puz) {
     // }
     // xw.rows = DEFAULT_SIZE;
     // xw.cols = DEFAULT_SIZE;
+
     // Update puzzle title, author
     xw.title = puz.title || DEFAULT_TITLE;
     if (puz.title.slice(0,8).toUpperCase() == "NY TIMES") {
@@ -325,6 +326,16 @@ function convertJSONToPuzzle(puz) {
 	    new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
 	}
     }
+
+    if( puz.highightedCells !== undefined ) {
+	for( let i=0; i < puz.highightedCells.length; i++ ) {
+	    const hc = puz.highightedCells[i];
+	    console.log( "convertJSONToPuzzle: highightedCells(" + hc[0] + ", " + hc[1] + ")" );
+	    let cell = cellFromCoords( hc[0], hc[1] );
+	    cell.classList.add( cellHighlightClassName );
+	}
+    }
+
     xw.fill = new_fill;
     isMutated = true;
 
@@ -405,9 +416,13 @@ function convertPuzzleToJSON() {
     }
     // Read grid
     puz["grid"] = [];
+    puz["highightedCells"] = [];
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
 	    puz.grid.push(xw.fill[i][j]);
+	    let cell = cellFromCoords( i, j );
+	    if( cell.classList.contains( cellHighlightClassName ) )
+		puz.highightedCells.push( [ i, j ] );
 	}
     }
     return puz;

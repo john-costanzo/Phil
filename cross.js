@@ -62,6 +62,7 @@ let updatesSinceLastSave = 0;
 let clueProgressCounterId = "clue-progress";
 let bsProgressCounterId = "bs-progress";
 let bsMessage = " cells are Black Squares";
+let cellHighlightClassName = "highlight-cell";
 
 
 //____________________
@@ -622,7 +623,6 @@ function updateBlackSquareProgress() {
 
 function toggleCurrentCellHighlight() {
     // toggle the highlighting class of the current cell
-    const cellHighlightClassName = "highlight-cell";
     let currentCell = cellFromCoords( current.row, current.col );
     if( currentCell.classList.contains( cellHighlightClassName ) )
 	currentCell.classList.remove( cellHighlightClassName );
@@ -1379,4 +1379,3 @@ function randomLetter() {
 
 // initialize the progress meter
 updateBlackSquareProgress();
-
