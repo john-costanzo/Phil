@@ -18,7 +18,10 @@ Keystrokes
 	Switch direction of travel in grid.
 
     ``'``
-        Highlight the current cell. This state will not be saved.
+        Highlight the current cell. This may be handy to indicate
+	theme answers or to mark answers that need to be revisited.
+
+	This state is retained across save/restores.
 
     ``?``
 	Toggle help panel.
