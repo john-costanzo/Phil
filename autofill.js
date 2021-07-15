@@ -413,14 +413,14 @@ function autofillJS( entries, clueNumber, autofillStats, level ) {
     if( clueNumber < 0 ) {  // We've failed
 	logWithLevel( "autofillJS", level, "Failure!!!" );
 	toggleAutoFill( false );
-	reportOnDuplicateAnswers();
+	checkPuzzle();
 	return;
     }
 
     if( clueNumber >= entries.length ) {  // We've filled all entries!
 	logWithLevel( "autofillJS", level, "Success!!!" );
 	toggleAutoFill( false );
-	reportOnDuplicateAnswers();
+	checkPuzzle();
 	return;
     }
 

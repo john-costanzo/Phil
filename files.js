@@ -698,19 +698,20 @@ function collectAnswers( clues, dict, direction ) {
     }
 }
 
-function reportOnDuplicateAnswers() {
+function checkPuzzle() {
     // Report on duplicates: either exact dups or substrings.
+    // Report on empty clues.
     const [acrossClues, downClues] = generatePDFClues();
-    let dict = {};
+    let dupDict = {};
     let msg = "";
 
-    collectAnswers( acrossClues, dict, 'a' );
-    collectAnswers( downClues, dict, 'd' );
+    collectAnswers( acrossClues, dupDict, 'a' );
+    collectAnswers( downClues, dupDict, 'd' );
 
-    // At this point, if dict has an entry consisting of an array
+    // At this point, if dupDict has an entry consisting of an array
     // which has a length greater than  1, it is a duplicate answer.
     // Report it.
-    for( const [k,v] of Object.entries( dict ) ) {
+    for( const [k,v] of Object.entries( dupDict ) ) {
 	if( v.length > 1 ) {
 	    let m = "► duplicate answer '" +  k + "' at " + v;
 	    //console.log( m );
@@ -718,17 +719,51 @@ function reportOnDuplicateAnswers() {
 	}
     }
 
-    for( let key in dict ) {
-	const value = dict[ key ];
-	for( let key2 in dict ) {
+    for( let key in dupDict ) {
+	for( let key2 in dupDict ) {
     	    const pattern = new RegExp( key2 );
 	    if( key2 != key && pattern.test( key ) ) {
-		let m = "► " + key2 + " at " + dict[ key2 ] + " is found within " + key + " at " + dict[ key ];
+		let m = "► " + key2 + " at " + dupDict[ key2 ] + " is found within " + key + " at " + dupDict[ key ];
 		// console.log( m );
 		msg = msg + m + "\n"
 	    }
 	}
     }
+
+    const emptyClues = Object.keys(
+	Object.fromEntries(
+	    Object.entries( xw.clues ).filter(
+		( [k,v] ) => v == DEFAULT_CLUE )
+	)
+    );
+
+    if( emptyClues.length > 0 ) {
+	msg = msg + "\nEmpty clues at:\n";
+
+	const pattern = /(\d+),(\d+),(.*)/;
+	let across = [];
+	let down = [];
+	for( clue in emptyClues ) {
+	    parts = pattern.exec( emptyClues[ clue ] );
+	    if( parts.length > 0 ) {
+		const row = parseInt( parts[1] );
+		const col = parseInt( parts[2] );
+		const dir = parts[3];
+		const cell = cellFromCoords( row, col );
+		const clueLabel = cell.firstChild.innerHTML;
+		if( dir == ACROSS )
+		    across.push( parseInt( clueLabel ) );
+		else
+		    down.push( parseInt( clueLabel ) );
+	    }
+	}
+	if( across.length > 0 )
+	    msg = msg + "\n    ACROSS:\n" + across.sort((a, b) => a - b).join(", ") + "\n";
+	if( down.length > 0 )
+	    msg = msg + "\n    DOWN:\n" + down.sort((a, b) => a - b).join(", ") + "\n";
+
+    }
+
     if( msg != "" ) {
 	alert( msg );
     }
