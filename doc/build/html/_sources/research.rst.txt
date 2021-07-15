@@ -3,8 +3,8 @@
 Supporting Research Pages
 =========================
 
-Phil can research answers for you. Hover over a clue and the answer is
-displayed in another window.
+Phil can research answers for you. Single-click on a clue and
+information about that clue will be displayed in another window.
 
 Research Pages Consulted
 ------------------------
@@ -16,7 +16,3 @@ Tracker <http://crosswordtracker.com>`_.
    from `Merriam Webster <https://www.merriam-webster.com/dictionary>`_,
    `Google Translate <https://translate.google.com>`_ and `Google Define
    <https://www.google.com/search?q=define>`_.
-
-.. note:: Pages are shown by single-clicking an answer.
-
-

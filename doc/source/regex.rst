@@ -55,4 +55,4 @@ Then a grid answer may be:
     ``5-16``
         Suggest words that start with either a 'D' or a 'T', have a
 	vowel as the third letter and that same vowel as the final
-	letter (e.g., "dcii", "thee", "twoo", etc).
+	letter (e.g., "dcii", "thee", "tyee", etc).

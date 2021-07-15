@@ -10,5 +10,8 @@ You may undo and redo changes you make to the puzzle. Changes include:
 - selecting a suggested answer
 - selecting a quick layout
 - entering a clue
+- autofilling the grid
 
-Changes that have been undone may be redone by clicking on the Redo icon.
+Changes that have been undone may be redone by clicking on the Redo
+icon. The Redo history is limited to the point of making an undo-able
+change.

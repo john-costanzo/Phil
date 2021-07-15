@@ -14,7 +14,7 @@ Menu items are found on the left-hand side of the page.
 .. |toggle-recommended-answers| image:: images/Toggle-Recommended-Answers.png
 .. |auto-fill-puzzle| image:: images/Auto-Fill-Puzzle.png
 .. |regular-expression-matching| image:: images/Regular-Expression-Matching.png
-.. |check-duplicates| image:: images/Check-Duplicates.png
+.. |check-puzzle| image:: images/Check-Duplicates.png
 .. |change-dictionary| image:: images/Change-Dictionary.png
 .. |undo| image:: images/Undo.png
 .. |redo| image:: images/Redo.png
@@ -27,7 +27,7 @@ Menu items are found on the left-hand side of the page.
         Create a new puzzle.
 
     |open-puzzle|
-        Brings up a previously saved puzzle.
+        Load a previously saved puzzle.
 
     |export-as|
         Save the current puzzle in various formats:
@@ -39,33 +39,35 @@ Menu items are found on the left-hand side of the page.
 	  specified number of changes.
 
 	- **Across Lite** (.puz) is the format used by `Across Lite <https://www.litsoft.com/across/alite/download/>`_
-	- **Printable version** (.pdf) displays the blank grid along with clues
-	- **NYT submission** displays a form suitable for submission
+	- **Printable version** (.pdf) displays the blank grid along with clues.
+	- **NYT submission** displays a format suitable for submission
 	  to the *New York Times*. It includes a blank grid, all clues
 	  and a filled in grid.
 
     |quick-layout|
         Layout an empty grid that is either 15x15 or 21x21. Repeated
-	requests for a quick layout selects from a small set of grid
-	patterns. 
+	requests for a quick layout selects from a small set of
+	pre-defined grid patterns. 
 
     |freeze-pattern|
-        Freezes the pattern from structural changes (i.e., adding or
+        Freeze the pattern from structural changes (i.e., adding or
 	removing black squares).
 
     |clear-white-squares|
-        Clears answers in the white squares.
+        Clear answers in the white squares.
 
     |toggle-symmetry|
         Toggles whether the grid puzzle pattern must be symmetric.
 
     |toggle-recommended-answers|
-        Toggles whether *all* answers matching a the puzzle pattern
+        Toggle whether *all* answers matching a the puzzle pattern
 	are displayed or only moderately- and highly-recommended ones
 	are. See `Recommended Answers
 	<recommendations.html#recommended-answers>`_  for more details.
 
     |auto-fill-puzzle|
+        Toggle auto-fill.
+	
         First, save a copy of the puzzle (just in case you need to recover
 	the puzzle's state).
 
@@ -78,23 +80,29 @@ Menu items are found on the left-hand side of the page.
 	regular expressions to limit the number of candidates to try.
 
 	Finally, when the grid has been successfully filled or all
-        possible words have been attempted, "check-duplicates" is run.
+        possible words have been attempted, "check-puzzle" is run
+	(see below).
 
         Click this icon a second time to suspend the operation.
 
     |regular-expression-matching|
-        Constrain suggested answers to those meeting regular express
+        Constrain suggested answers to those meeting regular expression
 	patterns. See `Regular Expressions
 	<regex.html#regular-expressions-in-phil>`_ for details.
 
-    |check-duplicates|
-        Check for duplicate answers. This reports on answers which are
-	either exact duplicates or where an answer is found as a
-	substring of another answer.
+    |check-puzzle|
+        Check the puzzle for anomalies.
+
+	This reports on answers which are either exact duplicates or
+	where an answer is found as a substring of another answer.
+
+	It also reports on answers that have no clues for them.
 
     |change-dictionary|
         Change the dictionary used for suggesting answers. A
         dictionary file is simply a text file with one word per line.
+
+	Hovering over this icon shows the currently loaded dictionary.
 
     |undo|
         Undo changes you've made. See

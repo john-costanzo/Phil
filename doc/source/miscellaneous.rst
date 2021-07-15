@@ -12,8 +12,8 @@ number of black squares and the proportion they comprise of the entire
 number of squares in the puzzle.
 
 And if you invoke autofill, you'll see the number of candidate words
-evaluated, the time that autofill has run and the rate it has evaluated
-words during this run.
+evaluated, the time that autofill has been running and the rate it has
+evaluated candidate words during this run.
  
 For example:
 

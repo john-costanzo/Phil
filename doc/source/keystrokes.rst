@@ -15,7 +15,7 @@ Keystrokes
 	Temporarily flash the symmetric square and move to it.
 
     ``Enter``
-	Switch direction of travel in grid.
+	Switch direction of travel in the grid.
 
     ``'``
         Highlight the current cell. This may be handy to indicate
@@ -24,10 +24,10 @@ Keystrokes
 	This state is retained across save/restores.
 
     ``?``
-	Toggle help panel.
+	Toggle the help panel.
 
     ``Ctrl-Z`` or ``Meta-Z``
-	Undo the tlast action. See `Undoing and Redoing Changes <undo.html#undoing-and-redoing-changesrecommended>`_
+	Undo the last action. See `Undoing and Redoing Changes <undo.html>`_
 
     ``Backspace``
         Delete the character in the grid and continue along the
